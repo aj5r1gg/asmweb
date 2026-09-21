@@ -1,10 +1,13 @@
 bits 64
 
 global _start
+extern asm_linux_exit
 
 section .text
 
 _start:
-    mov eax, 60
     xor edi, edi
-    syscall
+    call asm_linux_exit
+
+    ; asm_linux_exit is non-returning.
+    ud2
