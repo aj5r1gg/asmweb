@@ -1,0 +1,25 @@
+# Build artefacts
+/build/*
+!/build/.gitkeep
+
+# Assembly outputs
+*.o
+*.lst
+*.map
+
+# Executables
+/asmweb
+
+# Debugging
+core
+core.*
+*.core
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Editor/temporary files
+*~
+*.swp
+*.swo
