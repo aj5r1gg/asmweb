@@ -1,6 +1,7 @@
 bits 64
 
 %include "asmweb/abi.inc"
+%include "asmweb/startup.inc"
 
 global asm_runtime_main
 
@@ -16,15 +17,21 @@ section .text
 ; ABI:
 ;   AsmWeb Internal ABI v1.
 ;
+; Input:
+;   RDI = pointer to validated ASMWEB_STARTUP_INFO
+;
 ; Result:
 ;   RAX = process status.
 ;
-; Current M0 responsibility:
-;   Qualify the initial Internal ABI contract.
+; Current M0 responsibilities:
+;
+;   - accept controlled startup state explicitly;
+;   - verify required startup fields are present;
+;   - qualify the initial Internal ABI contract.
 ;
 ; Exit status:
-;   0 = ABI probe passed.
-;   1 = ABI probe failed.
+;   0 = runtime bootstrap and ABI probe passed.
+;   1 = runtime bootstrap or ABI probe failed.
 ;
 ; Callee-saved registers:
 ;   RBX RBP R12 R13 R14 R15 preserved.
@@ -42,8 +49,24 @@ section .text
 asm_runtime_main:
     cld
 
-    ; Preserve the Internal ABI callee-saved register set used
-    ; by this qualification routine.
+    ; -----------------------------------------------------------------------
+    ; Validate explicit controlled startup state.
+    ; -----------------------------------------------------------------------
+
+    test rdi, rdi
+    jz .early_failure
+
+    cmp qword [rdi + ASMWEB_STARTUP_INFO.page_size], 0
+    je .early_failure
+
+    cmp qword [rdi + ASMWEB_STARTUP_INFO.at_random], 0
+    je .early_failure
+
+    ; -----------------------------------------------------------------------
+    ; Preserve the Internal ABI callee-saved register set used by this
+    ; qualification routine.
+    ; -----------------------------------------------------------------------
+
     push rbx
     push rbp
     push r12
@@ -113,10 +136,8 @@ asm_runtime_main:
     mov eax, 1
 
 .restore:
-    ; Release call-alignment reservation.
     add rsp, 8
 
-    ; Restore this function's caller-visible callee-saved state.
     pop r15
     pop r14
     pop r13
@@ -124,4 +145,9 @@ asm_runtime_main:
     pop rbp
     pop rbx
 
+    ret
+
+.early_failure:
+    cld
+    mov eax, 1
     ret

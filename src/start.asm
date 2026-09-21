@@ -1,11 +1,19 @@
 bits 64
 
 %include "asmweb/abi.inc"
+%include "asmweb/startup.inc"
 
 global _start
 
+extern asm_linux_parse_process_entry
 extern asm_runtime_main
 extern asm_linux_exit
+
+section .bss
+
+align 8
+startup_info:
+    resb ASMWEB_STARTUP_INFO_size
 
 section .text
 
@@ -15,35 +23,51 @@ section .text
 ;
 ; _start is NOT an ordinary AsmWeb Internal ABI function.
 ;
-; Responsibilities at this stage:
+; Responsibilities:
 ;
-;   1. establish required ordinary-call invariants;
-;   2. enter the AsmWeb runtime through Internal ABI v1;
-;   3. terminate through the controlled Linux syscall boundary.
-;
-; Future M0 work will add bounded argc/argv/environment/auxv handling
-; before ordinary runtime entry.
+;   1. preserve the original Linux process-entry stack pointer;
+;   2. establish ordinary-call invariants;
+;   3. parse Linux process-entry state through the controlled boundary;
+;   4. enter the AsmWeb runtime through Internal ABI v1;
+;   5. terminate through the controlled Linux syscall boundary.
 
 _start:
-    ; Linux x86-64 process entry provides RSP aligned to 16 bytes.
-    ;
-    ; AsmWeb ordinary calls follow the System V AMD64 convention:
-    ;
-    ;   immediately before CALL: RSP % 16 == 0
-    ;   ordinary callee entry:    RSP % 16 == 8
-    ;
-    ; CALL itself pushes the 8-byte return address.
+    ; Linux provides the initial stack pointer here.
+    mov r12, rsp
 
     cld
 
+    ; -----------------------------------------------------------------------
+    ; Parse controlled startup state.
+    ;
+    ; RDI = original process-entry stack
+    ; RSI = startup_info
+    ; -----------------------------------------------------------------------
+
+    mov rdi, r12
+    lea rsi, [rel startup_info]
+
+    call asm_linux_parse_process_entry
+
+    test eax, eax
+    jnz .startup_failure
+
+    ; -----------------------------------------------------------------------
+    ; Enter ordinary AsmWeb runtime.
+    ;
+    ; RDI = pointer to validated controlled startup state.
+    ; -----------------------------------------------------------------------
+
+    lea rdi, [rel startup_info]
     call asm_runtime_main
 
-    ; asm_runtime_main returns the desired process status in RAX.
-    ;
-    ; asm_linux_exit receives its first Internal ABI argument in RDI.
     mov edi, eax
-
     call asm_linux_exit
 
-    ; asm_linux_exit is non-returning.
+    ud2
+
+.startup_failure:
+    mov edi, 2
+    call asm_linux_exit
+
     ud2
