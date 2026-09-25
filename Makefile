@@ -12,13 +12,18 @@ INC_DIR := include
 BUILD_DIR := build
 
 NASMFLAGS := -f elf64 -Wall -Werror -Wno-error=reloc-rel-dword -I$(INC_DIR)/
-LDFLAGS :=
+# Explicit ELF process hardening.
+#
+# AsmWeb does not execute code from the process stack. Every production and
+# qualification binary linked through this Makefile SHALL carry an explicit
+# non-executable GNU_STACK policy.
+LDFLAGS := -z noexecstack
 
 SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-elf-hardening
 
 all: $(TARGET)
 
@@ -215,3 +220,11 @@ $(MAPPING_CAPACITY_QUAL_TARGET): \
 
 qualify-mapping-capacity: $(MAPPING_CAPACITY_QUAL_TARGET)
 	$(MAPPING_CAPACITY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — ELF/process hardening
+# ---------------------------------------------------------------------------
+
+qualify-elf-hardening: $(TARGET)
+	./tests/qualification/elf_hardening.sh $(TARGET)
