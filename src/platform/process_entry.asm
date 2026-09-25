@@ -138,13 +138,16 @@ asm_linux_parse_process_entry:
     xor ecx, ecx
 
 .env_loop:
-    cmp rcx, ASMWEB_M0_MAX_ENVP_ENTRIES
-    jae .failure
-
+    ; Inspect the current slot first so that exactly
+    ; ASMWEB_M0_MAX_ENVP_ENTRIES non-NULL entries are permitted,
+    ; followed immediately by the required terminating NULL.
     mov rax, [r15]
 
     test rax, rax
     jz .env_done
+
+    cmp rcx, ASMWEB_M0_MAX_ENVP_ENTRIES
+    jae .failure
 
     inc rcx
 
@@ -169,16 +172,20 @@ asm_linux_parse_process_entry:
     xor ecx, ecx
 
 .auxv_loop:
-    cmp rcx, ASMWEB_M0_MAX_AUXV_ENTRIES
-    jae .failure
-
     ; Each auxv entry is two 64-bit words:
     ; type, value.
+    ;
+    ; Inspect the type first so that exactly
+    ; ASMWEB_M0_MAX_AUXV_ENTRIES non-NULL entries are permitted,
+    ; followed immediately by AT_NULL.
     mov rax, [r15]
     mov rdx, [r15 + 8]
 
     cmp rax, LINUX_AT_NULL
     je .auxv_done
+
+    cmp rcx, ASMWEB_M0_MAX_AUXV_ENTRIES
+    jae .failure
 
     cmp rax, LINUX_AT_PAGESZ
     jne .check_random

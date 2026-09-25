@@ -18,7 +18,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain
+.PHONY: all clean inspect toolchain qualify-process-entry
 
 all: $(TARGET)
 
@@ -57,3 +57,29 @@ toolchain:
 clean:
 	rm -rf $(BUILD_DIR)/*
 	touch $(BUILD_DIR)/.gitkeep
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — controlled Linux process-entry parser
+# ---------------------------------------------------------------------------
+
+PROCESS_ENTRY_QUAL_SOURCE := tests/qualification/process_entry.asm
+PROCESS_ENTRY_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/process_entry.o
+PROCESS_ENTRY_QUAL_TARGET := $(BUILD_DIR)/qualification/process-entry
+
+$(PROCESS_ENTRY_QUAL_OBJECT): $(PROCESS_ENTRY_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(PROCESS_ENTRY_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/process_entry.o \
+		$(PROCESS_ENTRY_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/process_entry.o \
+		$(PROCESS_ENTRY_QUAL_OBJECT)
+
+qualify-process-entry: $(PROCESS_ENTRY_QUAL_TARGET)
+	$(PROCESS_ENTRY_QUAL_TARGET)
