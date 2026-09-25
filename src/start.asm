@@ -3,6 +3,7 @@ bits 64
 %include "asmweb/abi.inc"
 %include "asmweb/startup.inc"
 %include "asmweb/entropy.inc"
+%include "asmweb/cpu.inc"
 
 global _start
 
@@ -19,6 +20,10 @@ startup_info:
 align 8
 entropy_bootstrap:
     resb ASMWEB_ENTROPY_BOOTSTRAP_size
+
+align 8
+cpu_info:
+    resb ASMWEB_CPU_INFO_size
 
 section .text
 
@@ -62,10 +67,12 @@ _start:
     ;
     ; RDI = pointer to validated controlled startup state.
     ; RSI = pointer to AsmWeb-owned entropy bootstrap state.
+    ; RDX = pointer to AsmWeb-owned CPU discovery state.
     ; -----------------------------------------------------------------------
 
     lea rdi, [rel startup_info]
     lea rsi, [rel entropy_bootstrap]
+    lea rdx, [rel cpu_info]
     call asm_runtime_main
 
     mov edi, eax

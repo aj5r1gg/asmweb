@@ -3,11 +3,13 @@ bits 64
 %include "asmweb/abi.inc"
 %include "asmweb/startup.inc"
 %include "asmweb/entropy.inc"
+%include "asmweb/cpu.inc"
 
 global asm_runtime_main
 
 extern asm_abi_probe
 extern asm_entropy_bootstrap
+extern asm_cpu_discover
 
 section .text
 
@@ -22,6 +24,7 @@ section .text
 ; Input:
 ;   RDI = pointer to validated ASMWEB_STARTUP_INFO
 ;   RSI = pointer to writable ASMWEB_ENTROPY_BOOTSTRAP
+;   RDX = pointer to writable ASMWEB_CPU_INFO
 ;
 ; Result:
 ;   RAX = process status.
@@ -62,6 +65,9 @@ asm_runtime_main:
     test rsi, rsi
     jz .early_failure
 
+    test rdx, rdx
+    jz .early_failure
+
     cmp qword [rdi + ASMWEB_STARTUP_INFO.page_size], 0
     je .early_failure
 
@@ -89,6 +95,7 @@ asm_runtime_main:
     ; Preserve explicit bootstrap-state pointers in callee-saved registers.
     mov rbx, rdi
     mov rbp, rsi
+    mov r12, rdx
 
     ; -----------------------------------------------------------------------
     ; Transfer Linux AT_RANDOM material into AsmWeb-owned state.
@@ -107,6 +114,23 @@ asm_runtime_main:
     ; The raw borrowed AT_RANDOM pointer must be invalidated after transfer.
     cmp qword [rbx + ASMWEB_STARTUP_INFO.at_random], 0
     jne .failure
+
+    ; -----------------------------------------------------------------------
+    ; Discover CPU feature state once into AsmWeb-owned storage.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, r12
+    call asm_cpu_discover
+
+    test eax, eax
+    jnz .failure
+
+    cmp qword [r12 + ASMWEB_CPU_INFO.ready], 1
+    jne .failure
+
+    ; M0 x86-64 baseline requires SSE2.
+    bt qword [r12 + ASMWEB_CPU_INFO.features], ASMWEB_CPU_FEATURE_SSE2
+    jnc .failure
 
     ; Seed callee-saved registers with known values for the ABI probe.
     mov rbx, 0x11111111

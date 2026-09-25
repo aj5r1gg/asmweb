@@ -18,7 +18,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu
 
 all: $(TARGET)
 
@@ -109,3 +109,29 @@ $(ENTROPY_QUAL_TARGET): \
 
 qualify-entropy: $(ENTROPY_QUAL_TARGET)
 	$(ENTROPY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — CPU feature discovery
+# ---------------------------------------------------------------------------
+
+CPU_QUAL_SOURCE := tests/qualification/cpu.asm
+CPU_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/cpu.o
+CPU_QUAL_TARGET := $(BUILD_DIR)/qualification/cpu
+
+$(CPU_QUAL_OBJECT): $(CPU_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(CPU_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/cpu.o \
+		$(CPU_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/cpu.o \
+		$(CPU_QUAL_OBJECT)
+
+qualify-cpu: $(CPU_QUAL_TARGET)
+	$(CPU_QUAL_TARGET)
