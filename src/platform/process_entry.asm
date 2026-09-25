@@ -210,9 +210,29 @@ asm_linux_parse_process_entry:
 .auxv_done:
     mov [r13 + ASMWEB_STARTUP_INFO.auxv_count], rcx
 
-    ; AT_PAGESZ is mandatory for the initial AsmWeb platform bootstrap.
-    cmp qword [r13 + ASMWEB_STARTUP_INFO.page_size], 0
-    je .failure
+    ; -----------------------------------------------------------------------
+    ; Validate discovered base page size.
+    ;
+    ; The M0 bootstrap accepts only power-of-two page sizes within the
+    ; provisional supported range.
+    ; -----------------------------------------------------------------------
+
+    mov rax, [r13 + ASMWEB_STARTUP_INFO.page_size]
+
+    cmp rax, ASMWEB_M0_MIN_PAGE_SIZE
+    jb .failure
+
+    cmp rax, ASMWEB_M0_MAX_PAGE_SIZE
+    ja .failure
+
+    ; Power-of-two test:
+    ;
+    ;   n != 0 && (n & (n - 1)) == 0
+    ;
+    ; The range checks above already exclude zero.
+    lea rdx, [rax - 1]
+    test rax, rdx
+    jnz .failure
 
     ; AT_RANDOM is required for later controlled entropy bootstrap.
     cmp qword [r13 + ASMWEB_STARTUP_INFO.at_random], 0

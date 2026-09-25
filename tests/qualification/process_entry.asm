@@ -227,6 +227,63 @@ case_13_auxv_max_plus_one:
     dq LINUX_AT_RANDOM, 0x12345678
     dq LINUX_AT_NULL, 0
 
+; ---------------------------------------------------------------------------
+; Cases 14-18 — page-size startup invariant
+;
+; Contract:
+;
+;   below minimum       = rejected
+;   minimum             = accepted
+;   non-power-of-two    = rejected
+;   maximum             = accepted
+;   above maximum       = rejected
+; ---------------------------------------------------------------------------
+
+align 8
+case_14_pagesz_below_min:
+    dq 0
+    dq 0
+    dq 0
+    dq LINUX_AT_PAGESZ, 2048
+    dq LINUX_AT_RANDOM, 0x12345678
+    dq LINUX_AT_NULL, 0
+
+align 8
+case_15_pagesz_min:
+    dq 0
+    dq 0
+    dq 0
+    dq LINUX_AT_PAGESZ, ASMWEB_M0_MIN_PAGE_SIZE
+    dq LINUX_AT_RANDOM, 0x12345678
+    dq LINUX_AT_NULL, 0
+
+align 8
+case_16_pagesz_not_power_of_two:
+    dq 0
+    dq 0
+    dq 0
+    dq LINUX_AT_PAGESZ, 12288
+    dq LINUX_AT_RANDOM, 0x12345678
+    dq LINUX_AT_NULL, 0
+
+align 8
+case_17_pagesz_max:
+    dq 0
+    dq 0
+    dq 0
+    dq LINUX_AT_PAGESZ, ASMWEB_M0_MAX_PAGE_SIZE
+    dq LINUX_AT_RANDOM, 0x12345678
+    dq LINUX_AT_NULL, 0
+
+align 8
+case_18_pagesz_above_max:
+    dq 0
+    dq 0
+    dq 0
+    dq LINUX_AT_PAGESZ, 131072
+    dq LINUX_AT_RANDOM, 0x12345678
+    dq LINUX_AT_NULL, 0
+
 section .text
 
 ; ---------------------------------------------------------------------------
@@ -445,6 +502,69 @@ _start:
     jne .fail_13
 
     ; =======================================================================
+    ; CASE 14 — page size below minimum rejected
+    ; =======================================================================
+
+    lea rdi, [rel case_14_pagesz_below_min]
+    lea rsi, [rel test_startup_info]
+    call asm_linux_parse_process_entry
+
+    cmp eax, 1
+    jne .fail_14
+
+    ; =======================================================================
+    ; CASE 15 — minimum page size accepted
+    ; =======================================================================
+
+    lea rdi, [rel case_15_pagesz_min]
+    lea rsi, [rel test_startup_info]
+    call asm_linux_parse_process_entry
+
+    test eax, eax
+    jnz .fail_15
+
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.page_size], \
+        ASMWEB_M0_MIN_PAGE_SIZE
+    jne .fail_15
+
+    ; =======================================================================
+    ; CASE 16 — non-power-of-two page size rejected
+    ; =======================================================================
+
+    lea rdi, [rel case_16_pagesz_not_power_of_two]
+    lea rsi, [rel test_startup_info]
+    call asm_linux_parse_process_entry
+
+    cmp eax, 1
+    jne .fail_16
+
+    ; =======================================================================
+    ; CASE 17 — maximum page size accepted
+    ; =======================================================================
+
+    lea rdi, [rel case_17_pagesz_max]
+    lea rsi, [rel test_startup_info]
+    call asm_linux_parse_process_entry
+
+    test eax, eax
+    jnz .fail_17
+
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.page_size], \
+        ASMWEB_M0_MAX_PAGE_SIZE
+    jne .fail_17
+
+    ; =======================================================================
+    ; CASE 18 — page size above maximum rejected
+    ; =======================================================================
+
+    lea rdi, [rel case_18_pagesz_above_max]
+    lea rsi, [rel test_startup_info]
+    call asm_linux_parse_process_entry
+
+    cmp eax, 1
+    jne .fail_18
+
+    ; =======================================================================
     ; PASS
     ; =======================================================================
 
@@ -514,5 +634,30 @@ _start:
 
 .fail_13:
     mov edi, 13
+    call asm_linux_exit
+    ud2
+
+.fail_14:
+    mov edi, 14
+    call asm_linux_exit
+    ud2
+
+.fail_15:
+    mov edi, 15
+    call asm_linux_exit
+    ud2
+
+.fail_16:
+    mov edi, 16
+    call asm_linux_exit
+    ud2
+
+.fail_17:
+    mov edi, 17
+    call asm_linux_exit
+    ud2
+
+.fail_18:
+    mov edi, 18
     call asm_linux_exit
     ud2
