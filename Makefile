@@ -18,7 +18,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy
 
 all: $(TARGET)
 
@@ -83,3 +83,29 @@ $(PROCESS_ENTRY_QUAL_TARGET): \
 
 qualify-process-entry: $(PROCESS_ENTRY_QUAL_TARGET)
 	$(PROCESS_ENTRY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — entropy bootstrap
+# ---------------------------------------------------------------------------
+
+ENTROPY_QUAL_SOURCE := tests/qualification/entropy.asm
+ENTROPY_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/entropy.o
+ENTROPY_QUAL_TARGET := $(BUILD_DIR)/qualification/entropy
+
+$(ENTROPY_QUAL_OBJECT): $(ENTROPY_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(ENTROPY_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/entropy.o \
+		$(ENTROPY_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/entropy.o \
+		$(ENTROPY_QUAL_OBJECT)
+
+qualify-entropy: $(ENTROPY_QUAL_TARGET)
+	$(ENTROPY_QUAL_TARGET)

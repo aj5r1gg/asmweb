@@ -2,6 +2,7 @@ bits 64
 
 %include "asmweb/abi.inc"
 %include "asmweb/startup.inc"
+%include "asmweb/entropy.inc"
 
 global _start
 
@@ -14,6 +15,10 @@ section .bss
 align 8
 startup_info:
     resb ASMWEB_STARTUP_INFO_size
+
+align 8
+entropy_bootstrap:
+    resb ASMWEB_ENTROPY_BOOTSTRAP_size
 
 section .text
 
@@ -56,9 +61,11 @@ _start:
     ; Enter ordinary AsmWeb runtime.
     ;
     ; RDI = pointer to validated controlled startup state.
+    ; RSI = pointer to AsmWeb-owned entropy bootstrap state.
     ; -----------------------------------------------------------------------
 
     lea rdi, [rel startup_info]
+    lea rsi, [rel entropy_bootstrap]
     call asm_runtime_main
 
     mov edi, eax

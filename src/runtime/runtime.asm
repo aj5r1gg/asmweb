@@ -2,10 +2,12 @@ bits 64
 
 %include "asmweb/abi.inc"
 %include "asmweb/startup.inc"
+%include "asmweb/entropy.inc"
 
 global asm_runtime_main
 
 extern asm_abi_probe
+extern asm_entropy_bootstrap
 
 section .text
 
@@ -19,6 +21,7 @@ section .text
 ;
 ; Input:
 ;   RDI = pointer to validated ASMWEB_STARTUP_INFO
+;   RSI = pointer to writable ASMWEB_ENTROPY_BOOTSTRAP
 ;
 ; Result:
 ;   RAX = process status.
@@ -56,6 +59,9 @@ asm_runtime_main:
     test rdi, rdi
     jz .early_failure
 
+    test rsi, rsi
+    jz .early_failure
+
     cmp qword [rdi + ASMWEB_STARTUP_INFO.page_size], 0
     je .early_failure
 
@@ -77,10 +83,32 @@ asm_runtime_main:
     ; Entry is RSP % 16 == 8.
     ; Six pushes consume 48 bytes and preserve that modulus.
     ; Reserve another 8 bytes so RSP is 16-byte aligned
-    ; immediately before the ordinary call below.
+    ; immediately before ordinary calls below.
     sub rsp, 8
 
-    ; Seed callee-saved registers with known values.
+    ; Preserve explicit bootstrap-state pointers in callee-saved registers.
+    mov rbx, rdi
+    mov rbp, rsi
+
+    ; -----------------------------------------------------------------------
+    ; Transfer Linux AT_RANDOM material into AsmWeb-owned state.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, rbx
+    mov rsi, rbp
+    call asm_entropy_bootstrap
+
+    test eax, eax
+    jnz .failure
+
+    cmp qword [rbp + ASMWEB_ENTROPY_BOOTSTRAP.ready], 1
+    jne .failure
+
+    ; The raw borrowed AT_RANDOM pointer must be invalidated after transfer.
+    cmp qword [rbx + ASMWEB_STARTUP_INFO.at_random], 0
+    jne .failure
+
+    ; Seed callee-saved registers with known values for the ABI probe.
     mov rbx, 0x11111111
     mov rbp, 0x22222222
     mov r12, 0x33333333
