@@ -4,6 +4,7 @@ bits 64
 %include "asmweb/startup.inc"
 %include "asmweb/entropy.inc"
 %include "asmweb/cpu.inc"
+%include "asmweb/time.inc"
 
 global _start
 
@@ -24,6 +25,10 @@ entropy_bootstrap:
 align 8
 cpu_info:
     resb ASMWEB_CPU_INFO_size
+
+align 8
+monotonic_time:
+    resb ASMWEB_MONOTONIC_TIME_size
 
 section .text
 
@@ -68,11 +73,13 @@ _start:
     ; RDI = pointer to validated controlled startup state.
     ; RSI = pointer to AsmWeb-owned entropy bootstrap state.
     ; RDX = pointer to AsmWeb-owned CPU discovery state.
+    ; RCX = pointer to AsmWeb-owned monotonic-time state.
     ; -----------------------------------------------------------------------
 
     lea rdi, [rel startup_info]
     lea rsi, [rel entropy_bootstrap]
     lea rdx, [rel cpu_info]
+    lea rcx, [rel monotonic_time]
     call asm_runtime_main
 
     mov edi, eax

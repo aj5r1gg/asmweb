@@ -18,7 +18,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time
 
 all: $(TARGET)
 
@@ -135,3 +135,29 @@ $(CPU_QUAL_TARGET): \
 
 qualify-cpu: $(CPU_QUAL_TARGET)
 	$(CPU_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — monotonic time
+# ---------------------------------------------------------------------------
+
+TIME_QUAL_SOURCE := tests/qualification/time.asm
+TIME_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/time.o
+TIME_QUAL_TARGET := $(BUILD_DIR)/qualification/time
+
+$(TIME_QUAL_OBJECT): $(TIME_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(TIME_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/time.o \
+		$(TIME_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/time.o \
+		$(TIME_QUAL_OBJECT)
+
+qualify-time: $(TIME_QUAL_TARGET)
+	$(TIME_QUAL_TARGET)

@@ -4,12 +4,14 @@ bits 64
 %include "asmweb/startup.inc"
 %include "asmweb/entropy.inc"
 %include "asmweb/cpu.inc"
+%include "asmweb/time.inc"
 
 global asm_runtime_main
 
 extern asm_abi_probe
 extern asm_entropy_bootstrap
 extern asm_cpu_discover
+extern asm_monotonic_now
 
 section .text
 
@@ -25,6 +27,7 @@ section .text
 ;   RDI = pointer to validated ASMWEB_STARTUP_INFO
 ;   RSI = pointer to writable ASMWEB_ENTROPY_BOOTSTRAP
 ;   RDX = pointer to writable ASMWEB_CPU_INFO
+;   RCX = pointer to writable ASMWEB_MONOTONIC_TIME
 ;
 ; Result:
 ;   RAX = process status.
@@ -68,6 +71,9 @@ asm_runtime_main:
     test rdx, rdx
     jz .early_failure
 
+    test rcx, rcx
+    jz .early_failure
+
     cmp qword [rdi + ASMWEB_STARTUP_INFO.page_size], 0
     je .early_failure
 
@@ -96,6 +102,7 @@ asm_runtime_main:
     mov rbx, rdi
     mov rbp, rsi
     mov r12, rdx
+    mov r13, rcx
 
     ; -----------------------------------------------------------------------
     ; Transfer Linux AT_RANDOM material into AsmWeb-owned state.
@@ -131,6 +138,22 @@ asm_runtime_main:
     ; M0 x86-64 baseline requires SSE2.
     bt qword [r12 + ASMWEB_CPU_INFO.features], ASMWEB_CPU_FEATURE_SSE2
     jnc .failure
+
+    ; -----------------------------------------------------------------------
+    ; Establish one controlled CLOCK_MONOTONIC bootstrap sample.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, r13
+    call asm_monotonic_now
+
+    test eax, eax
+    jnz .failure
+
+    cmp qword [r13 + ASMWEB_MONOTONIC_TIME.ready], 1
+    jne .failure
+
+    cmp qword [r13 + ASMWEB_MONOTONIC_TIME.nsec], ASMWEB_NSEC_PER_SEC
+    jae .failure
 
     ; Seed callee-saved registers with known values for the ABI probe.
     mov rbx, 0x11111111
