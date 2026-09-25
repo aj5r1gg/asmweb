@@ -121,6 +121,21 @@ asm_linux_parse_process_entry:
     add r15, rbx
     jc .failure
 
+    ; -----------------------------------------------------------------------
+    ; Explicit argv traversal bound.
+    ;
+    ; Arithmetic validity alone is not sufficient. A very large but
+    ; non-overflowing argc could otherwise direct the parser far beyond the
+    ; real initial process stack before argv[argc] is inspected.
+    ;
+    ; Keep the arithmetic checks above as independent defence-in-depth, then
+    ; enforce the finite M0 vector bound before the first argc-derived
+    ; dereference.
+    ; -----------------------------------------------------------------------
+
+    cmp rax, ASMWEB_M0_MAX_ARGV_ENTRIES
+    ja .failure
+
     ; argv[argc] must be NULL.
     cmp qword [r15], 0
     jne .failure

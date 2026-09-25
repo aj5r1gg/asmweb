@@ -13,6 +13,7 @@
 ;
 ; Until that registry exists, these values prevent raw unbounded scans.
 
+%define ASMWEB_M0_MAX_ARGV_ENTRIES 4096
 %define ASMWEB_M0_MAX_ENVP_ENTRIES 4096
 %define ASMWEB_M0_MAX_AUXV_ENTRIES 256
 

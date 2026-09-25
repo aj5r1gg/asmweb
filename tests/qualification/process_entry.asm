@@ -284,6 +284,50 @@ case_18_pagesz_above_max:
     dq LINUX_AT_RANDOM, 0x12345678
     dq LINUX_AT_NULL, 0
 
+; ---------------------------------------------------------------------------
+; Cases 19-21 — argv traversal boundary
+;
+; Contract:
+;
+;   MAX-1 entries = valid
+;   MAX   entries = valid
+;   MAX+1 entries = rejected
+;
+; These fixtures contain real backing storage for all declared argv slots.
+; This keeps qualification deterministic while proving the parser applies the
+; explicit policy bound before accepting the vector.
+; ---------------------------------------------------------------------------
+
+align 8
+case_19_argv_max_minus_one:
+    dq ASMWEB_M0_MAX_ARGV_ENTRIES - 1
+    times (ASMWEB_M0_MAX_ARGV_ENTRIES - 1) dq 0x11111111
+    dq 0
+    dq 0
+    dq LINUX_AT_PAGESZ, 4096
+    dq LINUX_AT_RANDOM, 0x12345678
+    dq LINUX_AT_NULL, 0
+
+align 8
+case_20_argv_max:
+    dq ASMWEB_M0_MAX_ARGV_ENTRIES
+    times ASMWEB_M0_MAX_ARGV_ENTRIES dq 0x11111111
+    dq 0
+    dq 0
+    dq LINUX_AT_PAGESZ, 4096
+    dq LINUX_AT_RANDOM, 0x12345678
+    dq LINUX_AT_NULL, 0
+
+align 8
+case_21_argv_max_plus_one:
+    dq ASMWEB_M0_MAX_ARGV_ENTRIES + 1
+    times (ASMWEB_M0_MAX_ARGV_ENTRIES + 1) dq 0x11111111
+    dq 0
+    dq 0
+    dq LINUX_AT_PAGESZ, 4096
+    dq LINUX_AT_RANDOM, 0x12345678
+    dq LINUX_AT_NULL, 0
+
 section .text
 
 ; ---------------------------------------------------------------------------
@@ -565,6 +609,64 @@ _start:
     jne .fail_18
 
     ; =======================================================================
+    ; CASE 19 — argv MAX-1 accepted
+    ; =======================================================================
+
+    lea rdi, [rel case_19_argv_max_minus_one]
+    lea rsi, [rel test_startup_info]
+    call asm_linux_parse_process_entry
+
+    test eax, eax
+    jnz .fail_19
+
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.argc],         ASMWEB_M0_MAX_ARGV_ENTRIES - 1
+    jne .fail_19
+
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.env_count], 0
+    jne .fail_19
+
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.auxv_count], 2
+    jne .fail_19
+
+    ; =======================================================================
+    ; CASE 20 — argv MAX accepted
+    ; =======================================================================
+
+    lea rdi, [rel case_20_argv_max]
+    lea rsi, [rel test_startup_info]
+    call asm_linux_parse_process_entry
+
+    test eax, eax
+    jnz .fail_20
+
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.argc],         ASMWEB_M0_MAX_ARGV_ENTRIES
+    jne .fail_20
+
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.env_count], 0
+    jne .fail_20
+
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.auxv_count], 2
+    jne .fail_20
+
+    ; =======================================================================
+    ; CASE 21 — argv MAX+1 rejected
+    ; =======================================================================
+
+    lea rdi, [rel case_21_argv_max_plus_one]
+    lea rsi, [rel test_startup_info]
+    call asm_linux_parse_process_entry
+
+    cmp eax, 1
+    jne .fail_21
+
+    ; Parsing must stop before environment or auxv traversal begins.
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.env_count], 0
+    jne .fail_21
+
+    cmp qword [rel test_startup_info + ASMWEB_STARTUP_INFO.auxv_count], 0
+    jne .fail_21
+
+    ; =======================================================================
     ; PASS
     ; =======================================================================
 
@@ -659,5 +761,20 @@ _start:
 
 .fail_18:
     mov edi, 18
+    call asm_linux_exit
+    ud2
+
+.fail_19:
+    mov edi, 19
+    call asm_linux_exit
+    ud2
+
+.fail_20:
+    mov edi, 20
+    call asm_linux_exit
+    ud2
+
+.fail_21:
+    mov edi, 21
     call asm_linux_exit
     ud2
