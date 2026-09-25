@@ -18,7 +18,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory
 
 all: $(TARGET)
 
@@ -161,3 +161,29 @@ $(TIME_QUAL_TARGET): \
 
 qualify-time: $(TIME_QUAL_TARGET)
 	$(TIME_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — controlled memory mapping
+# ---------------------------------------------------------------------------
+
+MEMORY_QUAL_SOURCE := tests/qualification/memory.asm
+MEMORY_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/memory.o
+MEMORY_QUAL_TARGET := $(BUILD_DIR)/qualification/memory
+
+$(MEMORY_QUAL_OBJECT): $(MEMORY_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(MEMORY_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/memory.o \
+		$(MEMORY_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/memory.o \
+		$(MEMORY_QUAL_OBJECT)
+
+qualify-memory: $(MEMORY_QUAL_TARGET)
+	$(MEMORY_QUAL_TARGET)

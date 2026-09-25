@@ -4,6 +4,8 @@ bits 64
 
 global asm_linux_exit
 global asm_linux_clock_gettime
+global asm_linux_mmap
+global asm_linux_munmap
 
 section .text
 
@@ -65,5 +67,63 @@ asm_linux_exit:
 
 asm_linux_clock_gettime:
     mov eax, LINUX_SYS_clock_gettime
+    syscall
+    ret
+
+
+; ---------------------------------------------------------------------------
+; asm_linux_mmap
+;
+; Controlled Linux x86-64 mmap syscall boundary.
+;
+; Internal ABI input:
+;
+;   RDI = address hint
+;   RSI = length
+;   RDX = protection flags
+;   RCX = mapping flags
+;   R8  = file descriptor
+;   R9  = offset
+;
+; Linux syscall ABI requires argument four in R10 rather than RCX.
+;
+; Result:
+;
+;   RAX = mapped address on success
+;   RAX = negative errno on failure
+;
+; Clobbers:
+;
+;   RAX
+;   RCX
+;   R10
+;   R11
+;
+; All are caller-saved under Internal ABI v1.
+
+asm_linux_mmap:
+    mov r10, rcx
+    mov eax, LINUX_SYS_mmap
+    syscall
+    ret
+
+
+; ---------------------------------------------------------------------------
+; asm_linux_munmap
+;
+; Controlled Linux x86-64 munmap syscall boundary.
+;
+; Internal ABI input:
+;
+;   RDI = mapping base
+;   RSI = mapping length
+;
+; Result:
+;
+;   RAX = 0 on success
+;   RAX = negative errno on failure
+
+asm_linux_munmap:
+    mov eax, LINUX_SYS_munmap
     syscall
     ret
