@@ -18,7 +18,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity
 
 all: $(TARGET)
 
@@ -187,3 +187,31 @@ $(MEMORY_QUAL_TARGET): \
 
 qualify-memory: $(MEMORY_QUAL_TARGET)
 	$(MEMORY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — bounded mapping capacity/accounting
+# ---------------------------------------------------------------------------
+
+MAPPING_CAPACITY_QUAL_SOURCE := tests/qualification/mapping_capacity.asm
+MAPPING_CAPACITY_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/mapping_capacity.o
+MAPPING_CAPACITY_QUAL_TARGET := $(BUILD_DIR)/qualification/mapping-capacity
+
+$(MAPPING_CAPACITY_QUAL_OBJECT): $(MAPPING_CAPACITY_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(MAPPING_CAPACITY_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/memory.o \
+		$(BUILD_DIR)/runtime/mapping_capacity.o \
+		$(MAPPING_CAPACITY_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/memory.o \
+		$(BUILD_DIR)/runtime/mapping_capacity.o \
+		$(MAPPING_CAPACITY_QUAL_OBJECT)
+
+qualify-mapping-capacity: $(MAPPING_CAPACITY_QUAL_TARGET)
+	$(MAPPING_CAPACITY_QUAL_TARGET)
