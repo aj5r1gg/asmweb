@@ -23,7 +23,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-rrr qualify-runtime-rules qualify-runtime-rules-spec qualify-elf-hardening
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-rrr qualify-runtime-rules qualify-runtime-rules-spec qualify-process-runtime qualify-elf-hardening
 
 all: $(TARGET)
 
@@ -220,6 +220,32 @@ $(MAPPING_CAPACITY_QUAL_TARGET): \
 
 qualify-mapping-capacity: $(MAPPING_CAPACITY_QUAL_TARGET)
 	$(MAPPING_CAPACITY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — process runtime state and memory epochs
+# ---------------------------------------------------------------------------
+
+PROCESS_RUNTIME_QUAL_SOURCE := tests/qualification/process_runtime.asm
+PROCESS_RUNTIME_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/process_runtime.o
+PROCESS_RUNTIME_QUAL_TARGET := $(BUILD_DIR)/qualification/process-runtime
+
+$(PROCESS_RUNTIME_QUAL_OBJECT): $(PROCESS_RUNTIME_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(PROCESS_RUNTIME_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/process_runtime.o \
+		$(PROCESS_RUNTIME_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/process_runtime.o \
+		$(PROCESS_RUNTIME_QUAL_OBJECT)
+
+qualify-process-runtime: $(PROCESS_RUNTIME_QUAL_TARGET)
+	$(PROCESS_RUNTIME_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
