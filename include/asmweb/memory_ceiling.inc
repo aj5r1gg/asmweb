@@ -38,4 +38,25 @@
 ; ===========================================================================
 
 
+; ===========================================================================
+; MOT-derived direct-memory capacity
+;
+; asm_memory_direct_capacity_from_mot derives the arithmetic process ceiling
+; directly from a bounded Maximum-Object Table projection.
+;
+; Only ACTIVE MOT entries contribute. Other valid lifecycle states are
+; ignored. Invalid lifecycle values, malformed pointer/count state, per-class
+; arithmetic failure or aggregate overflow fail deterministically.
+;
+; This routine derives from the authoritative MOT arithmetic operands:
+;
+;   effective_stride_bytes
+;   maximum_count
+;   pool_metadata_bytes
+;   mapping_overhead_bytes
+;
+; It does not invent or consume a separately writable maximum_bytes value.
+; ===========================================================================
+
+
 %endif

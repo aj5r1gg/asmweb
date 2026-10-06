@@ -9,6 +9,7 @@ global _start
 
 extern asm_memory_fixed_class_capacity
 extern asm_memory_direct_capacity_sum
+extern asm_memory_direct_capacity_from_mot
 extern asm_linux_exit
 
 
@@ -42,6 +43,169 @@ sum_late_overflow:
     dq 100
     dq 200
     dq 0xFFFFFFFFFFFFFED4
+
+
+
+
+
+; ===========================================================================
+; MOT-derived capacity fixtures
+; ===========================================================================
+
+align 8
+
+; One ACTIVE class:
+;
+;   64 * 10 + 32 + 4096 = 4768
+mot_one_active:
+    dq 0x5001
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq 0x6001
+    dq 64
+    dq 64
+    dq 32
+    dq 4096
+    dq 10
+    dq 10
+    dq 10
+    dq 0
+
+
+; Three entries:
+;
+;   ACTIVE   = 64 * 10 + 32 + 4096 = 4768
+;   DEFERRED = ignored
+;   ACTIVE   = 128 * 2 + 16 + 4096 = 4368
+;
+; total = 9136
+mot_mixed:
+    dq 0x5101
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq 0x6101
+    dq 64
+    dq 64
+    dq 32
+    dq 4096
+    dq 10
+    dq 10
+    dq 10
+    dq 0
+
+    dq 0x5102
+    dq ASMWEB_REGISTRY_STATUS_DEFERRED
+    dq 0x6102
+    dq 1
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0
+    dq 0
+    dq 0
+
+    dq 0x5103
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq 0x6103
+    dq 128
+    dq 128
+    dq 16
+    dq 4096
+    dq 2
+    dq 2
+    dq 2
+    dq 0
+
+
+; Valid lifecycle state but no ACTIVE entries.
+mot_all_inactive:
+    dq 0x5201
+    dq ASMWEB_REGISTRY_STATUS_DEFERRED
+    dq 0x6201
+    dq 1
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0
+    dq 0
+    dq 0
+
+
+; Exact aggregate UINT64_MAX.
+mot_exact_max:
+    dq 0x5301
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq 0x6301
+    dq 1
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0
+    dq 0
+    dq 1
+    dq 1
+    dq 1
+    dq 0
+
+
+; Per-class multiplication overflow:
+;
+;   2 * 2^63 = 2^64
+mot_class_overflow:
+    dq 0x5401
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq 0x6401
+    dq 2
+    dq 2
+    dq 0
+    dq 0
+    dq 0x8000000000000000
+    dq 1
+    dq 1
+    dq 0
+
+
+; Aggregate overflow:
+;
+;   first class  = UINT64_MAX
+;   second class = 1
+mot_aggregate_overflow:
+    dq 0x5501
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq 0x6501
+    dq 1
+    dq 0xFFFFFFFFFFFFFFFF
+    dq 0
+    dq 0
+    dq 1
+    dq 1
+    dq 1
+    dq 0
+
+    dq 0x5502
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq 0x6502
+    dq 1
+    dq 1
+    dq 0
+    dq 0
+    dq 1
+    dq 1
+    dq 1
+    dq 0
+
+
+; Invalid lifecycle representation.
+mot_invalid_status:
+    dq 0x5601
+    dq 0
+    dq 0x6601
+    dq 1
+    dq 1
+    dq 0
+    dq 0
+    dq 1
+    dq 1
+    dq 1
+    dq 0
 
 
 section .text
@@ -412,6 +576,197 @@ _start:
     jnz .fail_21
 
 
+    ; =======================================================================
+    ; MOT-DERIVED DIRECT CAPACITY
+    ; =======================================================================
+
+
+    ; CASE 22 — canonical empty MOT produces zero
+    xor edi, edi
+    xor esi, esi
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_22
+
+    test rdx, rdx
+    jne .fail_22
+
+
+    ; CASE 23 — non-NULL + zero count rejected
+    lea rdi, [rel mot_one_active]
+    xor esi, esi
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_23
+
+    test rdx, rdx
+    jne .fail_23
+
+
+    ; CASE 24 — NULL + non-zero count rejected
+    xor edi, edi
+    mov esi, 1
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_24
+
+    test rdx, rdx
+    jne .fail_24
+
+
+    ; CASE 25 — one ACTIVE MOT class derives correctly
+    lea rdi, [rel mot_one_active]
+    mov esi, 1
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_25
+
+    cmp rdx, 4768
+    jne .fail_25
+
+
+    ; CASE 26 — only ACTIVE entries contribute
+    lea rdi, [rel mot_mixed]
+    mov esi, 3
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_26
+
+    cmp rdx, 9136
+    jne .fail_26
+
+
+    ; CASE 27 — valid all-inactive MOT produces zero
+    lea rdi, [rel mot_all_inactive]
+    mov esi, 1
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_27
+
+    test rdx, rdx
+    jne .fail_27
+
+
+    ; CASE 28 — exact UINT64_MAX aggregate succeeds
+    lea rdi, [rel mot_exact_max]
+    mov esi, 1
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_28
+
+    cmp rdx, ASMWEB_U64_MAX
+    jne .fail_28
+
+
+    ; CASE 29 — per-class arithmetic overflow rejected
+    lea rdi, [rel mot_class_overflow]
+    mov esi, 1
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_29
+
+    test rdx, rdx
+    jne .fail_29
+
+
+    ; CASE 30 — aggregate overflow across ACTIVE classes rejected
+    lea rdi, [rel mot_aggregate_overflow]
+    mov esi, 2
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_30
+
+    test rdx, rdx
+    jne .fail_30
+
+
+    ; CASE 31 — MOT count above M0 bound rejected before traversal
+    lea rdi, [rel mot_one_active]
+    mov esi, ASMWEB_M0_MAX_MOT_ENTRIES + 1
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_31
+
+    test rdx, rdx
+    jne .fail_31
+
+
+    ; CASE 32 — invalid lifecycle representation rejected
+    lea rdi, [rel mot_invalid_status]
+    mov esi, 1
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_32
+
+    test rdx, rdx
+    jne .fail_32
+
+
+    ; CASE 33 — MOT-derived routine preserves Internal ABI state
+    mov rbx, 0x11111111
+    mov rbp, 0x22222222
+    mov r12, 0x33333333
+    mov r13, 0x44444444
+    mov r14, 0x55555555
+    mov r15, 0x66666666
+
+    lea rdi, [rel mot_mixed]
+    mov esi, 3
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_33
+
+    cmp rdx, 9136
+    jne .fail_33
+
+    cmp rbx, 0x11111111
+    jne .fail_33
+
+    cmp rbp, 0x22222222
+    jne .fail_33
+
+    cmp r12, 0x33333333
+    jne .fail_33
+
+    cmp r13, 0x44444444
+    jne .fail_33
+
+    cmp r14, 0x55555555
+    jne .fail_33
+
+    cmp r15, 0x66666666
+    jne .fail_33
+
+    pushfq
+    pop rax
+    test rax, 1 << 10
+    jnz .fail_33
+
+
     xor edi, edi
     call asm_linux_exit
     ud2
@@ -499,5 +854,66 @@ _start:
     ud2
 .fail_21:
     mov edi, 21
+    call asm_linux_exit
+    ud2
+
+
+.fail_22:
+    mov edi, 22
+    call asm_linux_exit
+    ud2
+
+.fail_23:
+    mov edi, 23
+    call asm_linux_exit
+    ud2
+
+.fail_24:
+    mov edi, 24
+    call asm_linux_exit
+    ud2
+
+.fail_25:
+    mov edi, 25
+    call asm_linux_exit
+    ud2
+
+.fail_26:
+    mov edi, 26
+    call asm_linux_exit
+    ud2
+
+.fail_27:
+    mov edi, 27
+    call asm_linux_exit
+    ud2
+
+.fail_28:
+    mov edi, 28
+    call asm_linux_exit
+    ud2
+
+.fail_29:
+    mov edi, 29
+    call asm_linux_exit
+    ud2
+
+.fail_30:
+    mov edi, 30
+    call asm_linux_exit
+    ud2
+
+.fail_31:
+    mov edi, 31
+    call asm_linux_exit
+    ud2
+
+.fail_32:
+    mov edi, 32
+    call asm_linux_exit
+    ud2
+
+.fail_33:
+    mov edi, 33
     call asm_linux_exit
     ud2
