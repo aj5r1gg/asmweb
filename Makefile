@@ -23,7 +23,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-rrr qualify-runtime-rules qualify-runtime-rules-spec qualify-process-runtime qualify-elf-hardening
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-rrr qualify-runtime-rules qualify-runtime-rules-spec qualify-process-runtime qualify-arithmetic qualify-elf-hardening
 
 all: $(TARGET)
 
@@ -220,6 +220,32 @@ $(MAPPING_CAPACITY_QUAL_TARGET): \
 
 qualify-mapping-capacity: $(MAPPING_CAPACITY_QUAL_TARGET)
 	$(MAPPING_CAPACITY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — checked unsigned capacity arithmetic
+# ---------------------------------------------------------------------------
+
+ARITHMETIC_QUAL_SOURCE := tests/qualification/arithmetic.asm
+ARITHMETIC_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/arithmetic.o
+ARITHMETIC_QUAL_TARGET := $(BUILD_DIR)/qualification/arithmetic
+
+$(ARITHMETIC_QUAL_OBJECT): $(ARITHMETIC_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(ARITHMETIC_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(ARITHMETIC_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(ARITHMETIC_QUAL_OBJECT)
+
+qualify-arithmetic: $(ARITHMETIC_QUAL_TARGET)
+	$(ARITHMETIC_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
