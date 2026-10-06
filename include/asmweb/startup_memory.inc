@@ -23,6 +23,33 @@
 ; Startup orchestration is responsible for using this account only for the
 ; applicable INITIALISATION lifetime. Epoch enforcement is not performed by
 ; this arithmetic/accounting primitive itself.
+;
+; A startup account begins numerically empty because the accounting object must
+; first be structurally initialised. That zero state does NOT imply that the
+; process has zero registered memory at that instant.
+;
+; asm_startup_memory_account_baseline reconciles direct registered memory that
+; already exists when startup accounting becomes authoritative, including
+; applicable process-persistent fixed state.
+;
+; Baseline establishment is distinct from acquisition:
+;
+;   baseline:
+;       reconciles already-retained registered bytes;
+;
+;   acquire:
+;       charges newly retained registered bytes after baseline establishment;
+;
+;   release:
+;       removes bytes no longer retained while preserving historical peak.
+;
+; Baseline may be established only while:
+;
+;   initialised   = 1
+;   current_bytes = 0
+;   peak_bytes    = 0
+;
+; This prevents later rebasing from silently rewriting accounting history.
 ; ===========================================================================
 
 

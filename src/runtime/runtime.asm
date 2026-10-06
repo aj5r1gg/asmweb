@@ -8,6 +8,8 @@ bits 64
 %include "asmweb/time.inc"
 %include "asmweb/process_runtime.inc"
 %include "asmweb/startup_memory.inc"
+%include "asmweb/registry.inc"
+%include "asmweb/memory_ceiling.inc"
 
 global asm_runtime_main
 
@@ -21,6 +23,9 @@ extern asm_process_runtime_validate
 extern asm_process_runtime_publish_ready
 
 extern asm_startup_memory_account_init
+extern asm_startup_memory_account_baseline
+
+extern asm_memory_direct_capacity_from_mot
 
 extern asm_runtime_rules_init
 extern asm_runtime_rules_get
@@ -149,9 +154,12 @@ asm_runtime_main:
     ; -----------------------------------------------------------------------
     ; Establish startup direct-memory accounting state.
     ;
-    ; This initialises the accounting authority used by READY publication.
-    ; Actual startup-object acquisition/release charging remains a later
-    ; integration slice; current_bytes and peak_bytes therefore begin at zero.
+    ; This first creates the structurally valid empty accounting authority.
+    ; After the canonical production registry has published, the account is
+    ; reconciled to the MOT-derived fixed registered state already retained
+    ; during INITIALISATION.
+    ;
+    ; Future startup-only acquisitions may raise peak_bytes above that baseline.
     ; -----------------------------------------------------------------------
 
     mov rdi, r15
@@ -198,6 +206,39 @@ asm_runtime_main:
     jz .failure
 
     mov [rsp], rax
+
+
+    ; -----------------------------------------------------------------------
+    ; Reconcile startup accounting with registered fixed state that already
+    ; exists during INITIALISATION.
+    ;
+    ; The baseline is mechanically derived from the authoritative production
+    ; MOT. No separately maintained byte total is permitted here.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, [rax + ASMWEB_REGISTRY_VALIDATION_SET.mot_ptr]
+    mov rsi, [rax + ASMWEB_REGISTRY_VALIDATION_SET.mot_count]
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
+
+    ; Current production M0 contains registered fixed retained state.
+    test rdx, rdx
+    jz .failure
+
+    mov rdi, r15
+    mov rsi, rdx
+
+    call asm_startup_memory_account_baseline
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
+
+    ; The baseline primitive returns its established current byte count.
+    test rdx, rdx
+    jz .failure
 
 
     ; -----------------------------------------------------------------------
@@ -274,6 +315,18 @@ asm_runtime_main:
     ; A zero derived direct capacity would contradict that authority.
     test rdx, rdx
     jz .failure
+
+    ; At READY, current startup-account occupancy must have returned to the
+    ; persistent registered direct-memory baseline represented by the MOT.
+    ;
+    ; peak_bytes may be greater than this in future once temporary startup
+    ; acquisitions are introduced, but it may never be smaller.
+    cmp [r15 + ASMWEB_STARTUP_MEMORY_ACCOUNT.current_bytes], rdx
+    jne .failure
+
+    mov r10, [r15 + ASMWEB_STARTUP_MEMORY_ACCOUNT.peak_bytes]
+    cmp r10, rdx
+    jb .failure
 
 
     ; -----------------------------------------------------------------------

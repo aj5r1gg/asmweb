@@ -7,6 +7,7 @@ bits 64
 
 
 global asm_startup_memory_account_init
+global asm_startup_memory_account_baseline
 global asm_startup_memory_account_validate
 global asm_startup_memory_account_acquire
 global asm_startup_memory_account_release
@@ -55,6 +56,70 @@ asm_startup_memory_account_init:
 
 
 .init_fail:
+    mov eax, ASMWEB_RESOURCE_INTEGRITY
+    ret
+
+
+; ===========================================================================
+; asm_startup_memory_account_baseline
+;
+; RDI = ASMWEB_STARTUP_MEMORY_ACCOUNT *
+; RSI = direct registered bytes already retained when startup accounting
+;       becomes authoritative
+;
+; Returns:
+;
+;   RAX = ASMWEB_RESOURCE_OK
+;         ASMWEB_RESOURCE_INTEGRITY
+;
+;   RDX = established current_bytes on success
+;         zero on failure
+;
+; Preconditions:
+;
+;   account != NULL
+;   initialised   == 1
+;   current_bytes == 0
+;   peak_bytes    == 0
+;
+; Semantics:
+;
+;   current_bytes = baseline_bytes
+;   peak_bytes    = baseline_bytes
+;
+; This is reconciliation of already-retained registered state. It is not an
+; acquisition event.
+;
+; Re-baselining after accounting has begun is rejected. Failure leaves the
+; account unchanged.
+; ===========================================================================
+
+asm_startup_memory_account_baseline:
+    cld
+
+    test rdi, rdi
+    jz .baseline_fail
+
+    cmp qword [rdi + ASMWEB_STARTUP_MEMORY_ACCOUNT.initialised], 1
+    jne .baseline_fail
+
+    cmp qword [rdi + ASMWEB_STARTUP_MEMORY_ACCOUNT.current_bytes], 0
+    jne .baseline_fail
+
+    cmp qword [rdi + ASMWEB_STARTUP_MEMORY_ACCOUNT.peak_bytes], 0
+    jne .baseline_fail
+
+    ; Every fallible prerequisite has succeeded. These stores cannot fail.
+    mov [rdi + ASMWEB_STARTUP_MEMORY_ACCOUNT.current_bytes], rsi
+    mov [rdi + ASMWEB_STARTUP_MEMORY_ACCOUNT.peak_bytes], rsi
+
+    mov rdx, rsi
+    mov eax, ASMWEB_RESOURCE_OK
+    ret
+
+
+.baseline_fail:
+    xor edx, edx
     mov eax, ASMWEB_RESOURCE_INTEGRITY
     ret
 

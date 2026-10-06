@@ -7,6 +7,7 @@ bits 64
 global _start
 
 extern asm_startup_memory_account_init
+extern asm_startup_memory_account_baseline
 extern asm_startup_memory_account_validate
 extern asm_startup_memory_account_acquire
 extern asm_startup_memory_account_release
@@ -49,6 +50,15 @@ exact_max_account:
     resb ASMWEB_STARTUP_MEMORY_ACCOUNT_size
 
 uninitialised_account:
+    resb ASMWEB_STARTUP_MEMORY_ACCOUNT_size
+
+baseline_account:
+    resb ASMWEB_STARTUP_MEMORY_ACCOUNT_size
+
+baseline_uninitialised_account:
+    resb ASMWEB_STARTUP_MEMORY_ACCOUNT_size
+
+baseline_abi_account:
     resb ASMWEB_STARTUP_MEMORY_ACCOUNT_size
 
 
@@ -455,7 +465,226 @@ _start:
     jnz .fail_19
 
 
+    ; =======================================================================
+    ; CASE 20 — NULL baseline rejected
+    ; =======================================================================
+
     xor edi, edi
+    mov esi, 4096
+
+    call asm_startup_memory_account_baseline
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_20
+
+    test rdx, rdx
+    jne .fail_20
+
+
+    ; =======================================================================
+    ; CASE 21 — uninitialised baseline rejected without mutation
+    ; =======================================================================
+
+    lea rdi, [rel baseline_uninitialised_account]
+    mov esi, 4096
+
+    call asm_startup_memory_account_baseline
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_21
+
+    test rdx, rdx
+    jne .fail_21
+
+    cmp qword [rel baseline_uninitialised_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.current_bytes], 0
+    jne .fail_21
+
+    cmp qword [rel baseline_uninitialised_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.peak_bytes], 0
+    jne .fail_21
+
+    cmp qword [rel baseline_uninitialised_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.initialised], 0
+    jne .fail_21
+
+
+    ; =======================================================================
+    ; CASE 22 — baseline establishes already-retained registered bytes
+    ; =======================================================================
+
+    lea rdi, [rel baseline_account]
+    call asm_startup_memory_account_init
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_22
+
+    lea rdi, [rel baseline_account]
+    mov esi, 4096
+
+    call asm_startup_memory_account_baseline
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_22
+
+    cmp rdx, 4096
+    jne .fail_22
+
+    cmp qword [rel baseline_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.current_bytes], 4096
+    jne .fail_22
+
+    cmp qword [rel baseline_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.peak_bytes], 4096
+    jne .fail_22
+
+    lea rdi, [rel baseline_account]
+    call asm_startup_memory_account_validate
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_22
+
+
+    ; =======================================================================
+    ; CASE 23 — re-baselining is rejected without rewriting history
+    ; =======================================================================
+
+    lea rdi, [rel baseline_account]
+    mov esi, 1
+
+    call asm_startup_memory_account_baseline
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_23
+
+    test rdx, rdx
+    jne .fail_23
+
+    cmp qword [rel baseline_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.current_bytes], 4096
+    jne .fail_23
+
+    cmp qword [rel baseline_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.peak_bytes], 4096
+    jne .fail_23
+
+
+    ; =======================================================================
+    ; CASE 24 — acquisition/release operate above an established baseline
+    ; =======================================================================
+
+    lea rdi, [rel baseline_account]
+    mov esi, 512
+
+    call asm_startup_memory_account_acquire
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_24
+
+    cmp rdx, 4608
+    jne .fail_24
+
+    cmp qword [rel baseline_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.current_bytes], 4608
+    jne .fail_24
+
+    cmp qword [rel baseline_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.peak_bytes], 4608
+    jne .fail_24
+
+    lea rdi, [rel baseline_account]
+    mov esi, 512
+
+    call asm_startup_memory_account_release
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_24
+
+    cmp rdx, 4096
+    jne .fail_24
+
+    cmp qword [rel baseline_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.current_bytes], 4096
+    jne .fail_24
+
+    cmp qword [rel baseline_account + ASMWEB_STARTUP_MEMORY_ACCOUNT.peak_bytes], 4608
+    jne .fail_24
+
+
+    ; =======================================================================
+    ; CASE 25 — baseline preserves Internal ABI callee-saved state and DF
+    ; =======================================================================
+
+    lea rdi, [rel baseline_abi_account]
+    call asm_startup_memory_account_init
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_25
+
+    mov rbx, 0x11111111
+    mov rbp, 0x22222222
+    mov r12, 0x33333333
+    mov r13, 0x44444444
+    mov r14, 0x55555555
+    mov r15, 0x66666666
+
+    lea rdi, [rel baseline_abi_account]
+    mov esi, 2048
+
+    call asm_startup_memory_account_baseline
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_25
+
+    cmp rdx, 2048
+    jne .fail_25
+
+    cmp rbx, 0x11111111
+    jne .fail_25
+
+    cmp rbp, 0x22222222
+    jne .fail_25
+
+    cmp r12, 0x33333333
+    jne .fail_25
+
+    cmp r13, 0x44444444
+    jne .fail_25
+
+    cmp r14, 0x55555555
+    jne .fail_25
+
+    cmp r15, 0x66666666
+    jne .fail_25
+
+    pushfq
+    pop rax
+    test rax, 1 << 10
+    jnz .fail_25
+
+
+    xor edi, edi
+    call asm_linux_exit
+    ud2
+
+
+.fail_20:
+    mov edi, 20
+    call asm_linux_exit
+    ud2
+
+.fail_21:
+    mov edi, 21
+    call asm_linux_exit
+    ud2
+
+.fail_22:
+    mov edi, 22
+    call asm_linux_exit
+    ud2
+
+.fail_23:
+    mov edi, 23
+    call asm_linux_exit
+    ud2
+
+.fail_24:
+    mov edi, 24
+    call asm_linux_exit
+    ud2
+
+.fail_25:
+    mov edi, 25
     call asm_linux_exit
     ud2
 
