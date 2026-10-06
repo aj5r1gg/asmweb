@@ -33,6 +33,8 @@ valid_mot:
     dq 0x1001
     dq 64
     dq 64
+    dq 32
+    dq 4096
     dq 8
     dq 8
     dq 4
@@ -98,6 +100,8 @@ stale_mot:
     dq 0x1301
     dq 72
     dq 72
+    dq 0
+    dq 0
     dq 4
     dq 4
     dq 4
@@ -121,11 +125,42 @@ capacity_mot:
     dq 0x1401
     dq 32
     dq 32
+    dq 0
+    dq 0
     dq 8
     dq 4
     dq 5
     dq 0
 
+
+
+; Active MOT whose fixed-class direct-memory calculation overflows.
+;
+;   stride = 2
+;   maximum_count = 2^63
+;
+; payload multiplication therefore requires 2^64 bytes and must be rejected.
+overflow_mot_olr:
+    dq 0x1501
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq ASMWEB_LAYOUT_STATUS_QUALIFIED
+    dq 2
+    dq 2
+    dq 1
+    dq 0x2501
+
+overflow_mot:
+    dq 0x2501
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq 0x1501
+    dq 2
+    dq 2
+    dq 0
+    dq 0
+    dq 0x8000000000000000
+    dq 1
+    dq 1
+    dq 0
 
 
 ; Memory-bearing RCT with neither MOT linkage nor justification.
@@ -170,6 +205,8 @@ owner_mot:
     dq 0x1701
     dq 16
     dq 16
+    dq 0
+    dq 0
     dq 4
     dq 4
     dq 4
@@ -184,6 +221,8 @@ orphan_mot:
     dq 0x1801
     dq 16
     dq 16
+    dq 0
+    dq 0
     dq 4
     dq 4
     dq 4
@@ -232,6 +271,8 @@ duplicate_mot:
     dq 0x1A01
     dq 16
     dq 16
+    dq 0
+    dq 0
     dq 4
     dq 4
     dq 4
@@ -242,6 +283,8 @@ duplicate_mot:
     dq 0x1A02
     dq 16
     dq 16
+    dq 0
+    dq 0
     dq 4
     dq 4
     dq 4
@@ -366,6 +409,9 @@ stale_set:
 capacity_set:
     resb ASMWEB_REGISTRY_VALIDATION_SET_size
 
+overflow_mot_set:
+    resb ASMWEB_REGISTRY_VALIDATION_SET_size
+
 unlinked_rct_set:
     resb ASMWEB_REGISTRY_VALIDATION_SET_size
 
@@ -470,6 +516,15 @@ _start:
     lea rax, [rel capacity_mot]
     mov [rel capacity_set + ASMWEB_REGISTRY_VALIDATION_SET.mot_ptr], rax
     mov qword [rel capacity_set + ASMWEB_REGISTRY_VALIDATION_SET.mot_count], 1
+
+    ; overflow_mot_set
+    lea rax, [rel overflow_mot_olr]
+    mov [rel overflow_mot_set + ASMWEB_REGISTRY_VALIDATION_SET.olr_ptr], rax
+    mov qword [rel overflow_mot_set + ASMWEB_REGISTRY_VALIDATION_SET.olr_count], 1
+
+    lea rax, [rel overflow_mot]
+    mov [rel overflow_mot_set + ASMWEB_REGISTRY_VALIDATION_SET.mot_ptr], rax
+    mov qword [rel overflow_mot_set + ASMWEB_REGISTRY_VALIDATION_SET.mot_count], 1
 
     ; unlinked_rct_set
     lea rax, [rel unlinked_rct]
@@ -855,6 +910,17 @@ _start:
     jnz .fail_24
 
 
+    ; =======================================================================
+    ; CASE 25 — active MOT arithmetic overflow rejected
+    ; =======================================================================
+
+    lea rdi, [rel overflow_mot_set]
+    call asm_registry_validate
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_25
+
+
     xor edi, edi
     call asm_linux_exit
     ud2
@@ -977,5 +1043,11 @@ _start:
 
 .fail_24:
     mov edi, 24
+    call asm_linux_exit
+    ud2
+
+
+.fail_25:
+    mov edi, 25
     call asm_linux_exit
     ud2

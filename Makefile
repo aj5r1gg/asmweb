@@ -316,12 +316,16 @@ $(RUNTIME_RULES_QUAL_OBJECT): $(RUNTIME_RULES_QUAL_SOURCE)
 
 $(RUNTIME_RULES_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
 		$(BUILD_DIR)/runtime/registry.o \
 		$(BUILD_DIR)/runtime/runtime_rules.o \
 		$(RUNTIME_RULES_QUAL_OBJECT)
 	mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -o $@ \
 		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
 		$(BUILD_DIR)/runtime/registry.o \
 		$(BUILD_DIR)/runtime/runtime_rules.o \
 		$(RUNTIME_RULES_QUAL_OBJECT)
@@ -347,11 +351,15 @@ $(RRR_QUAL_OBJECT): $(RRR_QUAL_SOURCE)
 
 $(RRR_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
 		$(BUILD_DIR)/runtime/registry.o \
 		$(RRR_QUAL_OBJECT)
 	mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -o $@ \
 		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
 		$(BUILD_DIR)/runtime/registry.o \
 		$(RRR_QUAL_OBJECT)
 
@@ -373,11 +381,15 @@ $(REGISTRY_QUAL_OBJECT): $(REGISTRY_QUAL_SOURCE)
 
 $(REGISTRY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
 		$(BUILD_DIR)/runtime/registry.o \
 		$(REGISTRY_QUAL_OBJECT)
 	mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -o $@ \
 		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
 		$(BUILD_DIR)/runtime/registry.o \
 		$(REGISTRY_QUAL_OBJECT)
 

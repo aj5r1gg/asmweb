@@ -196,6 +196,12 @@ endstruc
 ; actual_size_bytes / effective_stride_bytes:
 ;   Must agree with the corresponding qualified OLR values.
 ;
+; pool_metadata_bytes:
+;   Out-of-band pool-management metadata attributable to this class.
+;
+; mapping_overhead_bytes:
+;   Mapping-level direct userspace overhead attributable to this class.
+;
 ; maximum_count:
 ;   Absolute represented count bound.
 ;
@@ -211,15 +217,17 @@ endstruc
 ; ---------------------------------------------------------------------------
 
 struc ASMWEB_MOT_VALIDATION_ENTRY
-    .limit_id:               resq 1
-    .status:                 resq 1
-    .object_id:              resq 1
-    .actual_size_bytes:      resq 1
-    .effective_stride_bytes: resq 1
-    .maximum_count:          resq 1
-    .physical_capacity:      resq 1
-    .configured_capacity:    resq 1
-    .owner_resource_id:      resq 1
+    .limit_id:                resq 1
+    .status:                  resq 1
+    .object_id:               resq 1
+    .actual_size_bytes:       resq 1
+    .effective_stride_bytes:  resq 1
+    .pool_metadata_bytes:     resq 1
+    .mapping_overhead_bytes:  resq 1
+    .maximum_count:           resq 1
+    .physical_capacity:       resq 1
+    .configured_capacity:     resq 1
+    .owner_resource_id:       resq 1
 endstruc
 
 

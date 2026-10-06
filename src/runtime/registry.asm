@@ -6,6 +6,8 @@ bits 64
 
 global asm_registry_validate
 
+extern asm_memory_fixed_class_capacity
+
 section .text
 
 
@@ -37,6 +39,7 @@ section .text
 ;   - OLR/MOT size and stride agreement;
 ;   - stride >= actual object size;
 ;   - MOT configured <= physical <= maximum count;
+;   - active MOT fixed-class direct-memory arithmetic is representable;
 ;   - MOT owning resource -> RCT resolution;
 ;   - RCT configured <= physical;
 ;   - RCT reserved <= configured;
@@ -340,6 +343,34 @@ asm_registry_validate:
 
     cmp rcx, rdx
     ja .integrity
+
+    ; -----------------------------------------------------------------------
+    ; Active fixed-class direct-memory arithmetic must itself be representable.
+    ;
+    ; Preserve the caller-saved validator state required after the nested call.
+    ;
+    ; At this point the validator frame has six saved registers, so entry
+    ; alignment is RSP % 16 == 8. Three additional pushes place RSP % 16 == 0
+    ; for the Internal ABI v1 CALL boundary.
+    ; -----------------------------------------------------------------------
+
+    push r8
+    push r9
+    push r11
+
+    mov rdi, [r9 + ASMWEB_MOT_VALIDATION_ENTRY.effective_stride_bytes]
+    mov rsi, [r9 + ASMWEB_MOT_VALIDATION_ENTRY.maximum_count]
+    mov rdx, [r9 + ASMWEB_MOT_VALIDATION_ENTRY.pool_metadata_bytes]
+    mov rcx, [r9 + ASMWEB_MOT_VALIDATION_ENTRY.mapping_overhead_bytes]
+
+    call asm_memory_fixed_class_capacity
+
+    pop r11
+    pop r9
+    pop r8
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .integrity
 
     ; Optional owning resource must resolve.
     mov r10, [r9 + ASMWEB_MOT_VALIDATION_ENTRY.owner_resource_id]
