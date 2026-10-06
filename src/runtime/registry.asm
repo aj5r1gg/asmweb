@@ -557,6 +557,7 @@ asm_registry_validate:
 ;   - no trailing '-' and no consecutive '-';
 ;   - lifecycle-state validity;
 ;   - qualification-state validity;
+;   - non-empty bounded atomic normative statement;
 ;   - duplicate textual identity rejection.
 ;
 ; This validator intentionally does not yet claim complete RRR traceability
@@ -633,6 +634,18 @@ asm_rrr_validate:
     jb .rrr_integrity
 
     cmp rax, ASMWEB_QUAL_STATE_NOT_APPLICABLE
+    ja .rrr_integrity
+
+    ; Atomic normative statement must be explicitly present and bounded.
+    mov rax, [r15 + ASMWEB_RRR_VALIDATION_ENTRY.normative_statement_ptr]
+    test rax, rax
+    jz .rrr_integrity
+
+    mov rax, [r15 + ASMWEB_RRR_VALIDATION_ENTRY.normative_statement_length]
+    test rax, rax
+    jz .rrr_integrity
+
+    cmp rax, ASMWEB_M0_MAX_RULE_STATEMENT_BYTES
     ja .rrr_integrity
 
     ; Encoded namespace value.

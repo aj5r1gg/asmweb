@@ -23,7 +23,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-rrr qualify-elf-hardening
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-rrr qualify-runtime-rules qualify-runtime-rules-spec qualify-elf-hardening
 
 all: $(TARGET)
 
@@ -220,6 +220,37 @@ $(MAPPING_CAPACITY_QUAL_TARGET): \
 
 qualify-mapping-capacity: $(MAPPING_CAPACITY_QUAL_TARGET)
 	$(MAPPING_CAPACITY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — canonical Runtime & Memory v0.3 Runtime Rule Registry
+# ---------------------------------------------------------------------------
+
+RUNTIME_RULES_QUAL_SOURCE := tests/qualification/runtime_rules.asm
+RUNTIME_RULES_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/runtime_rules.o
+RUNTIME_RULES_QUAL_TARGET := $(BUILD_DIR)/qualification/runtime-rules
+
+$(RUNTIME_RULES_QUAL_OBJECT): $(RUNTIME_RULES_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(RUNTIME_RULES_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(BUILD_DIR)/runtime/runtime_rules.o \
+		$(RUNTIME_RULES_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(BUILD_DIR)/runtime/runtime_rules.o \
+		$(RUNTIME_RULES_QUAL_OBJECT)
+
+qualify-runtime-rules: $(RUNTIME_RULES_QUAL_TARGET)
+	$(RUNTIME_RULES_QUAL_TARGET)
+
+qualify-runtime-rules-spec:
+	python3 tests/qualification/runtime_rules_spec.py
 
 
 # ---------------------------------------------------------------------------

@@ -90,9 +90,10 @@
 ; providing controlled headroom without creating an unbounded string model.
 ; ---------------------------------------------------------------------------
 
-%define ASMWEB_M0_MAX_RRR_ENTRIES       256
-%define ASMWEB_M0_MAX_RULE_ID_BYTES      64
-%define ASMWEB_M0_MIN_RULE_ID_BYTES       9
+%define ASMWEB_M0_MAX_RRR_ENTRIES         256
+%define ASMWEB_M0_MAX_RULE_ID_BYTES        64
+%define ASMWEB_M0_MIN_RULE_ID_BYTES         9
+%define ASMWEB_M0_MAX_RULE_STATEMENT_BYTES 512
 
 
 ; ---------------------------------------------------------------------------
@@ -112,14 +113,19 @@
 ;
 ; qualification_state:
 ;   Independent project qualification/implementation state.
+;
+; normative_statement_ptr / normative_statement_length:
+;   Explicit bounded atomic normative statement represented by this rule.
 ; ---------------------------------------------------------------------------
 
 struc ASMWEB_RRR_VALIDATION_ENTRY
-    .rule_id_ptr:          resq 1
-    .rule_id_length:       resq 1
-    .namespace:            resq 1
-    .status:               resq 1
-    .qualification_state:  resq 1
+    .rule_id_ptr:                resq 1
+    .rule_id_length:             resq 1
+    .namespace:                  resq 1
+    .status:                     resq 1
+    .qualification_state:        resq 1
+    .normative_statement_ptr:    resq 1
+    .normative_statement_length: resq 1
 endstruc
 
 

@@ -126,6 +126,11 @@ ns_chg:
 ns_chg_len equ $ - ns_chg
 
 
+fixture_statement:
+    db "Qualification fixture normative statement."
+fixture_statement_len equ $ - fixture_statement
+
+
 section .bss
 
 align 8
@@ -182,6 +187,10 @@ section .text
     mov qword [r10 + ASMWEB_RRR_VALIDATION_ENTRY.namespace], %4
     mov qword [r10 + ASMWEB_RRR_VALIDATION_ENTRY.status], %5
     mov qword [r10 + ASMWEB_RRR_VALIDATION_ENTRY.qualification_state], %6
+
+    lea rax, [rel fixture_statement]
+    mov [r10 + ASMWEB_RRR_VALIDATION_ENTRY.normative_statement_ptr], rax
+    mov qword [r10 + ASMWEB_RRR_VALIDATION_ENTRY.normative_statement_length], fixture_statement_len
 %endmacro
 
 
@@ -300,6 +309,10 @@ _start:
         ASMWEB_REGISTRY_STATUS_ACTIVE
     mov qword [r10 + ASMWEB_RRR_VALIDATION_ENTRY.qualification_state], \
         ASMWEB_QUAL_STATE_IMPLEMENTED
+
+    lea rax, [rel fixture_statement]
+    mov [r10 + ASMWEB_RRR_VALIDATION_ENTRY.normative_statement_ptr], rax
+    mov qword [r10 + ASMWEB_RRR_VALIDATION_ENTRY.normative_statement_length], fixture_statement_len
 
     INIT_RRR_ENTRY \
         too_long_entry, \

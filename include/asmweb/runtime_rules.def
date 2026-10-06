@@ -1,0 +1,129 @@
+; ===========================================================================
+; AsmWeb Runtime Rule Registry — canonical atomic rule source
+;
+; Authority:
+;   AsmWeb — Runtime & Memory Specification v0.3
+;
+; This file is the machine-readable authority for the atomic MEM-* rule
+; population currently defined by Runtime & Memory v0.3.
+;
+; Consumers SHALL define:
+;
+;   ASMWEB_RUNTIME_RULE token,
+;                       rule_id,
+;                       namespace,
+;                       definition_status,
+;                       qualification_state,
+;                       normative_statement
+;
+; before including this file.
+;
+; The Runtime & Memory prose remains the canonical explanation of semantics.
+; This registry is the canonical machine-readable rule identity/traceability
+; source.
+; ===========================================================================
+
+
+ASMWEB_RUNTIME_RULE \
+    GOV_AUTHORITY, \
+    `MEM-GOV-AUTHORITY`, \
+    ASMWEB_RRR_NAMESPACE_GOV, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `Runtime behaviour defined here SHALL NOT silently override behaviour owned by another authoritative specification.`
+
+ASMWEB_RUNTIME_RULE \
+    GOV_REGISTRATION, \
+    `MEM-GOV-REGISTRATION`, \
+    ASMWEB_RRR_NAMESPACE_GOV, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `A long-lived, externally influenceable or capacity-relevant runtime resource SHALL NOT be introduced without registration in the applicable runtime registry.`
+
+ASMWEB_RUNTIME_RULE \
+    GOV_DEFERRED, \
+    `MEM-GOV-DEFERRED`, \
+    ASMWEB_RRR_NAMESPACE_GOV, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `An unresolved design or numerical value SHALL remain explicitly unresolved rather than being replaced by an arbitrary implementation convenience.`
+
+ASMWEB_RUNTIME_RULE \
+    OBJ_LAYOUT_VERIFY, \
+    `MEM-OBJ-LAYOUT-VERIFY`, \
+    ASMWEB_RRR_NAMESPACE_OBJ, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `Before an object layout contributes to a qualified memory ceiling, its actual assembled size, alignment and effective pool stride SHALL be mechanically derived or verified against the built artefact.`
+
+ASMWEB_RUNTIME_RULE \
+    CAP_NO_HEAP, \
+    `MEM-CAP-NO-HEAP`, \
+    ASMWEB_RRR_NAMESPACE_CAP, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `Steady-state request processing SHALL NOT depend upon unbounded general-purpose allocation.`
+
+ASMWEB_RUNTIME_RULE \
+    CAP_REGISTERED_ACQUISITION, \
+    `MEM-CAP-REGISTERED-ACQUISITION`, \
+    ASMWEB_RRR_NAMESPACE_CAP, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `Steady-state acquisition SHALL come from a registered bounded mechanism or explicitly bounded/qualified provider boundary.`
+
+ASMWEB_RUNTIME_RULE \
+    POL_VARIABLE_BOUND, \
+    `MEM-POL-VARIABLE-BOUND`, \
+    ASMWEB_RRR_NAMESPACE_POL, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `Every variable-size runtime allocator SHALL have a calculable upper memory bound.`
+
+ASMWEB_RUNTIME_RULE \
+    POL_TOO_LARGE, \
+    `MEM-POL-TOO-LARGE`, \
+    ASMWEB_RRR_NAMESPACE_POL, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `Failure because one requested object exceeds every supported size class SHALL be distinguishable from aggregate resource exhaustion.`
+
+ASMWEB_RUNTIME_RULE \
+    LIFE_ACQUIRE_ROLLBACK, \
+    `MEM-LIFE-ACQUIRE-ROLLBACK`, \
+    ASMWEB_RRR_NAMESPACE_LIFE, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `Failed multi-resource acquisition SHALL leave no unowned or unaccounted retained resource.`
+
+ASMWEB_RUNTIME_RULE \
+    LIFE_TERMINAL, \
+    `MEM-LIFE-TERMINAL`, \
+    ASMWEB_RRR_NAMESPACE_LIFE, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `An object that has reached a terminal state and has no remaining ownership, borrow, protocol or external-completion dependency SHALL become reclaimable.`
+
+ASMWEB_RUNTIME_RULE \
+    LIFE_STREAM_ABANDONED, \
+    `MEM-LIFE-STREAM-ABANDONED`, \
+    ASMWEB_RRR_NAMESPACE_LIFE, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `Abandoned stream state SHALL progress toward deterministic reclamation under bounded policy.`
+
+ASMWEB_RUNTIME_RULE \
+    LIFE_CONNECTION_CLOSURE, \
+    `MEM-LIFE-CONNECTION-CLOSURE`, \
+    ASMWEB_RRR_NAMESPACE_LIFE, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `A connection SHALL NOT disappear while ownership of a connection-dependent resource becomes undefined.`
+
+ASMWEB_RUNTIME_RULE \
+    CAP_DEPENDENCY, \
+    `MEM-CAP-DEPENDENCY`, \
+    ASMWEB_RRR_NAMESPACE_CAP, \
+    ASMWEB_REGISTRY_STATUS_ACTIVE, \
+    ASMWEB_QUAL_STATE_NOT_STARTED, \
+    `A configuration SHALL NOT enter READY when its full capacity dependency graph cannot be provisioned or validly bounded.`
