@@ -23,4 +23,19 @@
 ; ===========================================================================
 
 
+; ===========================================================================
+; Direct-capacity accumulation
+;
+; A bounded list of already-resolved direct-memory class contributions may be
+; summed to form the arithmetic component of:
+;
+;   M_direct_capacity_max
+;
+; Applicability, registry state, shared/dependent backing relationships and
+; provenance remain responsibilities of their governing layers.
+;
+; The M0 accumulation count is bounded by the existing MOT safety ceiling.
+; ===========================================================================
+
+
 %endif

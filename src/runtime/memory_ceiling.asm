@@ -3,6 +3,7 @@ bits 64
 %include "asmweb/abi.inc"
 %include "asmweb/resource.inc"
 %include "asmweb/arithmetic.inc"
+%include "asmweb/registry.inc"
 %include "asmweb/memory_ceiling.inc"
 
 global asm_memory_fixed_class_capacity
@@ -104,6 +105,119 @@ asm_memory_fixed_class_capacity:
 .fail:
     add rsp, 24
 
+    xor edx, edx
+    mov eax, ASMWEB_RESOURCE_INTEGRITY
+    ret
+
+
+; ===========================================================================
+; asm_memory_direct_capacity_sum
+;
+; Inputs:
+;
+;   RDI = pointer to contiguous uint64 class contributions
+;   RSI = contribution count
+;
+; Canonical empty input:
+;
+;   RDI = NULL
+;   RSI = 0
+;
+; Result:
+;
+;   RAX = ASMWEB_RESOURCE_OK
+;         ASMWEB_RESOURCE_INTEGRITY
+;
+;   RDX = checked sum on success
+;         zero on failure
+;
+; Constraints:
+;
+;   - count SHALL NOT exceed ASMWEB_M0_MAX_MOT_ENTRIES;
+;   - NULL + non-zero count is invalid;
+;   - non-NULL + zero count is non-canonical and invalid;
+;   - every addition is performed by asm_u64_add_checked;
+;   - arithmetic overflow fails deterministically.
+;
+; This routine does not decide which MOT entries are active or applicable.
+; It sums an already-selected bounded contribution vector.
+; ===========================================================================
+
+global asm_memory_direct_capacity_sum
+
+
+asm_memory_direct_capacity_sum:
+    cld
+
+    ; Canonical empty vector.
+    test rsi, rsi
+    jnz .sum_nonempty
+
+    test rdi, rdi
+    jnz .sum_fail
+
+    xor edx, edx
+    mov eax, ASMWEB_RESOURCE_OK
+    ret
+
+
+.sum_nonempty:
+    test rdi, rdi
+    jz .sum_fail
+
+    cmp rsi, ASMWEB_M0_MAX_MOT_ENTRIES
+    ja .sum_fail
+
+
+    ; Function entry:
+    ;   RSP % 16 == 8
+    ;
+    ; Preserve three callee-saved registers. After three pushes:
+    ;   RSP % 16 == 0
+    ;
+    ; so nested CALL sites satisfy Internal ABI v1.
+    push rbx
+    push r12
+    push r13
+
+    mov rbx, rdi
+    mov r12, rsi
+    xor r13d, r13d
+
+
+.sum_loop:
+    mov rdi, r13
+    mov rsi, [rbx]
+
+    call asm_u64_add_checked
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .sum_fail_preserved
+
+    mov r13, rdx
+
+    add rbx, 8
+    dec r12
+    jnz .sum_loop
+
+
+    mov rdx, r13
+
+    pop r13
+    pop r12
+    pop rbx
+
+    mov eax, ASMWEB_RESOURCE_OK
+    ret
+
+
+.sum_fail_preserved:
+    pop r13
+    pop r12
+    pop rbx
+
+
+.sum_fail:
     xor edx, edx
     mov eax, ASMWEB_RESOURCE_INTEGRITY
     ret
