@@ -23,7 +23,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-rrr qualify-runtime-rules qualify-runtime-rules-spec qualify-process-runtime qualify-arithmetic qualify-memory-ceiling qualify-elf-hardening
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-rrr qualify-runtime-rules qualify-runtime-rules-spec qualify-process-runtime qualify-arithmetic qualify-memory-ceiling qualify-elf-hardening qualify-production-registry
 
 all: $(TARGET)
 
@@ -274,6 +274,39 @@ $(ARITHMETIC_QUAL_TARGET): \
 
 qualify-arithmetic: $(ARITHMETIC_QUAL_TARGET)
 	$(ARITHMETIC_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — canonical production OLR / MOT / RCT projection
+# ---------------------------------------------------------------------------
+
+PRODUCTION_REGISTRY_QUAL_SOURCE := tests/qualification/production_registry.asm
+PRODUCTION_REGISTRY_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/production_registry.o
+PRODUCTION_REGISTRY_QUAL_TARGET := $(BUILD_DIR)/qualification/production-registry
+
+$(PRODUCTION_REGISTRY_QUAL_OBJECT): $(PRODUCTION_REGISTRY_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(PRODUCTION_REGISTRY_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(BUILD_DIR)/runtime/production_registry.o \
+		$(PRODUCTION_REGISTRY_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(BUILD_DIR)/runtime/production_registry.o \
+		$(PRODUCTION_REGISTRY_QUAL_OBJECT)
+
+.PHONY: qualify-production-registry
+qualify-production-registry: $(PRODUCTION_REGISTRY_QUAL_TARGET)
+	$(PRODUCTION_REGISTRY_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
