@@ -1,10 +1,13 @@
 bits 64
 
 %include "asmweb/abi.inc"
+%include "asmweb/resource.inc"
 %include "asmweb/startup.inc"
 %include "asmweb/entropy.inc"
 %include "asmweb/cpu.inc"
 %include "asmweb/time.inc"
+%include "asmweb/process_runtime.inc"
+%include "asmweb/startup_memory.inc"
 
 global asm_runtime_main
 
@@ -12,6 +15,18 @@ extern asm_abi_probe
 extern asm_entropy_bootstrap
 extern asm_cpu_discover
 extern asm_monotonic_now
+
+extern asm_process_runtime_init
+extern asm_process_runtime_validate
+extern asm_process_runtime_publish_ready
+
+extern asm_startup_memory_account_init
+
+extern asm_runtime_rules_init
+extern asm_runtime_rules_get
+
+extern asm_production_registry_init
+extern asm_production_registry_get
 
 section .text
 
@@ -28,6 +43,8 @@ section .text
 ;   RSI = pointer to writable ASMWEB_ENTROPY_BOOTSTRAP
 ;   RDX = pointer to writable ASMWEB_CPU_INFO
 ;   RCX = pointer to writable ASMWEB_MONOTONIC_TIME
+;   R8  = pointer to writable ASMWEB_PROCESS_RUNTIME
+;   R9  = pointer to writable ASMWEB_STARTUP_MEMORY_ACCOUNT
 ;
 ; Result:
 ;   RAX = process status.
@@ -35,12 +52,17 @@ section .text
 ; Current M0 responsibilities:
 ;
 ;   - accept controlled startup state explicitly;
-;   - verify required startup fields are present;
+;   - initialise process-runtime and startup-memory accounting state;
+;   - publish the canonical Runtime Rule Registry;
+;   - publish the canonical production OLR/MOT/RCT projection;
+;   - establish entropy, CPU and monotonic-time bootstrap state;
+;   - publish READY only through the controlled READY gate;
+;   - validate the resulting production process-runtime state;
 ;   - qualify the initial Internal ABI contract.
 ;
 ; Exit status:
-;   0 = runtime bootstrap and ABI probe passed.
-;   1 = runtime bootstrap or ABI probe failed.
+;   0 = runtime bootstrap, controlled READY publication and ABI probe passed.
+;   1 = runtime bootstrap, READY publication or ABI probe failed.
 ;
 ; Callee-saved registers:
 ;   RBX RBP R12 R13 R14 R15 preserved.
@@ -74,6 +96,12 @@ asm_runtime_main:
     test rcx, rcx
     jz .early_failure
 
+    test r8, r8
+    jz .early_failure
+
+    test r9, r9
+    jz .early_failure
+
     cmp qword [rdi + ASMWEB_STARTUP_INFO.page_size], 0
     je .early_failure
 
@@ -103,6 +131,74 @@ asm_runtime_main:
     mov rbp, rsi
     mov r12, rdx
     mov r13, rcx
+    mov r14, r8
+    mov r15, r9
+
+
+    ; -----------------------------------------------------------------------
+    ; Establish canonical process-runtime state.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, r14
+    call asm_process_runtime_init
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
+
+
+    ; -----------------------------------------------------------------------
+    ; Establish startup direct-memory accounting state.
+    ;
+    ; This initialises the accounting authority used by READY publication.
+    ; Actual startup-object acquisition/release charging remains a later
+    ; integration slice; current_bytes and peak_bytes therefore begin at zero.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, r15
+    call asm_startup_memory_account_init
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
+
+
+    ; -----------------------------------------------------------------------
+    ; Materialise and publish the canonical Runtime Rule Registry.
+    ; -----------------------------------------------------------------------
+
+    call asm_runtime_rules_init
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
+
+    call asm_runtime_rules_get
+
+    test rax, rax
+    jz .failure
+
+    test rdx, rdx
+    jz .failure
+
+
+    ; -----------------------------------------------------------------------
+    ; Materialise, validate and publish the canonical production OLR/MOT/RCT
+    ; projection.
+    ;
+    ; Preserve the published registry-set pointer in the existing eight-byte
+    ; stack slot until all remaining bootstrap prerequisites have completed.
+    ; -----------------------------------------------------------------------
+
+    call asm_production_registry_init
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
+
+    call asm_production_registry_get
+
+    test rax, rax
+    jz .failure
+
+    mov [rsp], rax
+
 
     ; -----------------------------------------------------------------------
     ; Transfer Linux AT_RANDOM material into AsmWeb-owned state.
@@ -154,6 +250,61 @@ asm_runtime_main:
 
     cmp qword [r13 + ASMWEB_MONOTONIC_TIME.nsec], ASMWEB_NSEC_PER_SEC
     jae .failure
+
+
+    ; -----------------------------------------------------------------------
+    ; Publish the real production process READY state.
+    ;
+    ; Every currently established M0 production bootstrap prerequisite above
+    ; has succeeded. The READY gate re-validates the production registry,
+    ; derives M_direct_capacity_max with checked arithmetic, validates startup
+    ; memory accounting and commits READY failure-atomically.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, r14
+    mov rsi, [rsp]
+    mov rdx, r15
+
+    call asm_process_runtime_publish_ready
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
+
+    ; The current production MOT contains active fixed retained state.
+    ; A zero derived direct capacity would contradict that authority.
+    test rdx, rdx
+    jz .failure
+
+
+    ; -----------------------------------------------------------------------
+    ; Independently validate the resulting published runtime state.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, r14
+    call asm_process_runtime_validate
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
+
+    cmp qword [r14 + ASMWEB_PROCESS_RUNTIME.lifecycle_state],         ASMWEB_PROCESS_STATE_READY
+    jne .failure
+
+    cmp qword [r14 + ASMWEB_PROCESS_RUNTIME.memory_epoch],         ASMWEB_MEMORY_EPOCH_STEADY_STATE
+    jne .failure
+
+    cmp qword [r14 + ASMWEB_PROCESS_RUNTIME.ready], 1
+    jne .failure
+
+    cmp qword [r14 + ASMWEB_PROCESS_RUNTIME.transition_count], 1
+    jne .failure
+
+
+    ; -----------------------------------------------------------------------
+    ; The production runtime has now earned READY.
+    ;
+    ; The ABI probe remains temporarily in the ordinary runtime path as the
+    ; final M0 foundation check.
+    ; -----------------------------------------------------------------------
 
     ; Seed callee-saved registers with known values for the ABI probe.
     mov rbx, 0x11111111

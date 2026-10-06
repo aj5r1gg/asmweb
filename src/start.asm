@@ -5,6 +5,8 @@ bits 64
 %include "asmweb/entropy.inc"
 %include "asmweb/cpu.inc"
 %include "asmweb/time.inc"
+%include "asmweb/process_runtime.inc"
+%include "asmweb/startup_memory.inc"
 
 global _start
 
@@ -29,6 +31,14 @@ cpu_info:
 align 8
 monotonic_time:
     resb ASMWEB_MONOTONIC_TIME_size
+
+align 8
+process_runtime:
+    resb ASMWEB_PROCESS_RUNTIME_size
+
+align 8
+startup_memory_account:
+    resb ASMWEB_STARTUP_MEMORY_ACCOUNT_size
 
 section .text
 
@@ -74,12 +84,16 @@ _start:
     ; RSI = pointer to AsmWeb-owned entropy bootstrap state.
     ; RDX = pointer to AsmWeb-owned CPU discovery state.
     ; RCX = pointer to AsmWeb-owned monotonic-time state.
+    ; R8  = pointer to AsmWeb process-runtime state.
+    ; R9  = pointer to startup direct-memory accounting state.
     ; -----------------------------------------------------------------------
 
     lea rdi, [rel startup_info]
     lea rsi, [rel entropy_bootstrap]
     lea rdx, [rel cpu_info]
     lea rcx, [rel monotonic_time]
+    lea r8,  [rel process_runtime]
+    lea r9,  [rel startup_memory_account]
     call asm_runtime_main
 
     mov edi, eax
