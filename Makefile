@@ -23,7 +23,7 @@ SOURCES := $(shell find $(SRC_DIR) -type f -name '*.asm' | sort)
 OBJECTS := $(patsubst $(SRC_DIR)/%.asm,$(BUILD_DIR)/%.o,$(SOURCES))
 TARGET := $(BUILD_DIR)/$(PROJECT)
 
-.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-elf-hardening
+.PHONY: all clean inspect toolchain qualify-process-entry qualify-entropy qualify-cpu qualify-time qualify-memory qualify-mapping-capacity qualify-registry qualify-rrr qualify-elf-hardening
 
 all: $(TARGET)
 
@@ -220,6 +220,32 @@ $(MAPPING_CAPACITY_QUAL_TARGET): \
 
 qualify-mapping-capacity: $(MAPPING_CAPACITY_QUAL_TARGET)
 	$(MAPPING_CAPACITY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — Runtime Rule Registry identity/status foundation
+# ---------------------------------------------------------------------------
+
+RRR_QUAL_SOURCE := tests/qualification/rrr.asm
+RRR_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/rrr.o
+RRR_QUAL_TARGET := $(BUILD_DIR)/qualification/rrr
+
+$(RRR_QUAL_OBJECT): $(RRR_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(RRR_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(RRR_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(RRR_QUAL_OBJECT)
+
+qualify-rrr: $(RRR_QUAL_TARGET)
+	$(RRR_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------

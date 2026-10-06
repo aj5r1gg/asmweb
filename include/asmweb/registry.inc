@@ -35,6 +35,95 @@
 
 
 ; ---------------------------------------------------------------------------
+; Runtime Rule Registry qualification state
+;
+; Runtime & Memory requires qualification state to remain distinct from
+; registry definition/lifecycle state.
+;
+; These values consume the project-wide implementation/qualification-state
+; vocabulary defined by Qualification & Verification v0.3.
+; ---------------------------------------------------------------------------
+
+%define ASMWEB_QUAL_STATE_NOT_STARTED           1
+%define ASMWEB_QUAL_STATE_IN_PROGRESS           2
+%define ASMWEB_QUAL_STATE_IMPLEMENTED           3
+%define ASMWEB_QUAL_STATE_QUALIFICATION_PENDING 4
+%define ASMWEB_QUAL_STATE_QUALIFIED             5
+%define ASMWEB_QUAL_STATE_FAILED                6
+%define ASMWEB_QUAL_STATE_BLOCKED               7
+%define ASMWEB_QUAL_STATE_DEFERRED              8
+%define ASMWEB_QUAL_STATE_NOT_APPLICABLE        9
+
+
+; ---------------------------------------------------------------------------
+; Runtime Rule Registry namespace identity
+; ---------------------------------------------------------------------------
+
+%define ASMWEB_RRR_NAMESPACE_GOV   1
+%define ASMWEB_RRR_NAMESPACE_OBJ   2
+%define ASMWEB_RRR_NAMESPACE_POL   3
+%define ASMWEB_RRR_NAMESPACE_CAP   4
+%define ASMWEB_RRR_NAMESPACE_OWN   5
+%define ASMWEB_RRR_NAMESPACE_LIFE  6
+%define ASMWEB_RRR_NAMESPACE_BUF   7
+%define ASMWEB_RRR_NAMESPACE_ASY   8
+%define ASMWEB_RRR_NAMESPACE_EVT   9
+%define ASMWEB_RRR_NAMESPACE_TMR  10
+%define ASMWEB_RRR_NAMESPACE_ACC  11
+%define ASMWEB_RRR_NAMESPACE_PRS  12
+%define ASMWEB_RRR_NAMESPACE_EXT  13
+%define ASMWEB_RRR_NAMESPACE_CFG  14
+%define ASMWEB_RRR_NAMESPACE_QUI  15
+%define ASMWEB_RRR_NAMESPACE_SEC  16
+%define ASMWEB_RRR_NAMESPACE_QUA  17
+%define ASMWEB_RRR_NAMESPACE_CHG  18
+
+%define ASMWEB_RRR_NAMESPACE_MIN ASMWEB_RRR_NAMESPACE_GOV
+%define ASMWEB_RRR_NAMESPACE_MAX ASMWEB_RRR_NAMESPACE_CHG
+
+
+; ---------------------------------------------------------------------------
+; Initial RRR bounds
+;
+; The current Runtime & Memory v0.3 rule population has a longest observed
+; rule identity of 30 bytes. 64 bytes is the bounded M0 validator ceiling,
+; providing controlled headroom without creating an unbounded string model.
+; ---------------------------------------------------------------------------
+
+%define ASMWEB_M0_MAX_RRR_ENTRIES       256
+%define ASMWEB_M0_MAX_RULE_ID_BYTES      64
+%define ASMWEB_M0_MIN_RULE_ID_BYTES       9
+
+
+; ---------------------------------------------------------------------------
+; RRR validation descriptor
+;
+; This is the machine-validation subset required for the first M0 RRR slice.
+; It is not yet the complete descriptive/traceability schema.
+;
+; rule_id_ptr / rule_id_length:
+;   Explicit non-NUL-terminated byte identity.
+;
+; namespace:
+;   Must agree with the namespace encoded textually in rule_id.
+;
+; status:
+;   Registry definition/lifecycle state.
+;
+; qualification_state:
+;   Independent project qualification/implementation state.
+; ---------------------------------------------------------------------------
+
+struc ASMWEB_RRR_VALIDATION_ENTRY
+    .rule_id_ptr:          resq 1
+    .rule_id_length:       resq 1
+    .namespace:            resq 1
+    .status:               resq 1
+    .qualification_state:  resq 1
+endstruc
+
+
+; ---------------------------------------------------------------------------
 ; Object-layout qualification state
 ; ---------------------------------------------------------------------------
 
