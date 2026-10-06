@@ -398,6 +398,35 @@ qualify-registry: $(REGISTRY_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — startup peak direct-memory accounting
+# ---------------------------------------------------------------------------
+
+STARTUP_MEMORY_QUAL_SOURCE := tests/qualification/startup_memory.asm
+STARTUP_MEMORY_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/startup_memory.o
+STARTUP_MEMORY_QUAL_TARGET := $(BUILD_DIR)/qualification/startup-memory
+
+$(STARTUP_MEMORY_QUAL_OBJECT): $(STARTUP_MEMORY_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(STARTUP_MEMORY_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/startup_memory.o \
+		$(STARTUP_MEMORY_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/startup_memory.o \
+		$(STARTUP_MEMORY_QUAL_OBJECT)
+
+.PHONY: qualify-startup-memory
+qualify-startup-memory: $(STARTUP_MEMORY_QUAL_TARGET)
+	$(STARTUP_MEMORY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — ELF/process hardening
 # ---------------------------------------------------------------------------
 
