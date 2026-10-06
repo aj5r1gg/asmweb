@@ -69,9 +69,9 @@
 ;   explicitly introduced.
 ;
 ; transition_count:
-;   Reserved bounded historical counter for later lifecycle-transition
-;   machinery. M0 initialisation begins at zero and does not yet expose a
-;   transition API.
+;   Bounded historical count of controlled lifecycle publications/transitions.
+;   M0 initialisation begins at zero. The READY publication gate increments
+;   this count exactly once on successful STARTING -> READY publication.
 ; ===========================================================================
 
 struc ASMWEB_PROCESS_RUNTIME
@@ -82,6 +82,36 @@ struc ASMWEB_PROCESS_RUNTIME
     .generation:       resq 1
     .transition_count: resq 1
 endstruc
+
+
+; ===========================================================================
+; READY publication gate
+;
+; asm_process_runtime_publish_ready is the controlled M0 publication boundary.
+;
+; It may publish READY only from the canonical initial process state:
+;
+;   lifecycle_state  = STARTING
+;   memory_epoch     = INITIALISATION
+;   ready            = 0
+;   initialised      = 1
+;   generation       != 0
+;
+; Before publication it requires:
+;
+;   - the process-runtime object itself is valid;
+;   - the supplied OLR/MOT/RCT registry set validates;
+;   - M_direct_capacity_max can be derived from the authoritative MOT;
+;   - the startup-memory account validates;
+;   - transition_count can be incremented without overflow.
+;
+; Publication is failure-atomic at the logical API boundary: no READY-state
+; field is mutated until every prerequisite has succeeded.
+;
+; The gate does NOT currently prove that every startup-only temporary
+; allocation has been reclaimed. The startup account does not yet classify
+; retained bytes as temporary versus legitimate persistent steady-state state.
+; ===========================================================================
 
 
 %endif

@@ -2,10 +2,20 @@ bits 64
 
 %include "asmweb/abi.inc"
 %include "asmweb/resource.inc"
+%include "asmweb/arithmetic.inc"
 %include "asmweb/process_runtime.inc"
+%include "asmweb/registry.inc"
+%include "asmweb/startup_memory.inc"
 
 global asm_process_runtime_init
 global asm_process_runtime_validate
+global asm_process_runtime_publish_ready
+
+
+extern asm_registry_validate
+extern asm_memory_direct_capacity_from_mot
+extern asm_startup_memory_account_validate
+extern asm_u64_add_checked
 
 
 ; ===========================================================================
@@ -210,5 +220,192 @@ asm_process_runtime_validate:
 
 
 .validate_integrity:
+    mov eax, ASMWEB_RESOURCE_INTEGRITY
+    ret
+
+
+
+; ===========================================================================
+; asm_process_runtime_publish_ready
+;
+; Inputs:
+;
+;   RDI = ASMWEB_PROCESS_RUNTIME *
+;   RSI = ASMWEB_REGISTRY_VALIDATION_SET *
+;   RDX = ASMWEB_STARTUP_MEMORY_ACCOUNT *
+;
+; Result:
+;
+;   RAX = ASMWEB_RESOURCE_OK
+;         ASMWEB_RESOURCE_INTEGRITY
+;
+;   RDX = derived M_direct_capacity_max on success
+;         zero on failure
+;
+; Controlled publication sequence:
+;
+;   1. validate current process-runtime state;
+;   2. require canonical STARTING / INITIALISATION / unpublished pre-state;
+;   3. validate the authoritative registry set;
+;   4. derive M_direct_capacity_max from its MOT projection;
+;   5. validate startup-memory accounting state;
+;   6. checked-increment transition_count;
+;   7. publish STEADY_STATE / READY / ready=1.
+;
+; Failure atomicity:
+;
+;   No ASMWEB_PROCESS_RUNTIME field is modified until all validation,
+;   derivation and transition-count arithmetic have succeeded.
+;
+; This M0 gate does not enforce startup-temporary reclamation because the
+; current startup-memory account does not distinguish temporary retained bytes
+; from legitimate persistent state created during startup.
+; ===========================================================================
+
+asm_process_runtime_publish_ready:
+    cld
+
+    test rdi, rdi
+    jz .publish_fail
+
+    test rsi, rsi
+    jz .publish_fail
+
+    test rdx, rdx
+    jz .publish_fail
+
+
+    ; Entry RSP % 16 == 8.
+    ; Five pushes consume 40 bytes -> RSP % 16 == 0 before nested calls.
+    push rbx
+    push r12
+    push r13
+    push r14
+    push r15
+
+    mov rbx, rdi
+    mov r12, rsi
+    mov r13, rdx
+
+
+    ; -----------------------------------------------------------------------
+    ; Validate the existing process-runtime object before using its fields.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, rbx
+    call asm_process_runtime_validate
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .publish_fail_preserved
+
+
+    ; The only M0 READY-publication source state.
+    cmp qword [rbx + ASMWEB_PROCESS_RUNTIME.lifecycle_state], \
+        ASMWEB_PROCESS_STATE_STARTING
+    jne .publish_fail_preserved
+
+    cmp qword [rbx + ASMWEB_PROCESS_RUNTIME.memory_epoch], \
+        ASMWEB_MEMORY_EPOCH_INITIALISATION
+    jne .publish_fail_preserved
+
+    cmp qword [rbx + ASMWEB_PROCESS_RUNTIME.ready], 0
+    jne .publish_fail_preserved
+
+
+    ; -----------------------------------------------------------------------
+    ; Validate authoritative OLR / MOT / RCT state.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, r12
+    call asm_registry_validate
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .publish_fail_preserved
+
+
+    ; -----------------------------------------------------------------------
+    ; Derive the process direct-memory capacity from authoritative MOT state.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, [r12 + ASMWEB_REGISTRY_VALIDATION_SET.mot_ptr]
+    mov rsi, [r12 + ASMWEB_REGISTRY_VALIDATION_SET.mot_count]
+
+    call asm_memory_direct_capacity_from_mot
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .publish_fail_preserved
+
+    mov r14, rdx
+
+
+    ; -----------------------------------------------------------------------
+    ; Validate startup high-water accounting.
+    ;
+    ; current_bytes need not be zero: persistent state created during startup
+    ; may legitimately survive publication.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, r13
+    call asm_startup_memory_account_validate
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .publish_fail_preserved
+
+
+    ; -----------------------------------------------------------------------
+    ; Prepare the historical transition count without mutating runtime state.
+    ; -----------------------------------------------------------------------
+
+    mov rdi, [rbx + ASMWEB_PROCESS_RUNTIME.transition_count]
+    mov esi, 1
+
+    call asm_u64_add_checked
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .publish_fail_preserved
+
+    mov r15, rdx
+
+
+    ; -----------------------------------------------------------------------
+    ; Logical publication commit point.
+    ;
+    ; Every fallible prerequisite has completed. These stores cannot fail.
+    ; The ready marker is written last.
+    ; -----------------------------------------------------------------------
+
+    mov qword [rbx + ASMWEB_PROCESS_RUNTIME.memory_epoch], \
+        ASMWEB_MEMORY_EPOCH_STEADY_STATE
+
+    mov qword [rbx + ASMWEB_PROCESS_RUNTIME.lifecycle_state], \
+        ASMWEB_PROCESS_STATE_READY
+
+    mov [rbx + ASMWEB_PROCESS_RUNTIME.transition_count], r15
+
+    mov qword [rbx + ASMWEB_PROCESS_RUNTIME.ready], 1
+
+
+    mov rdx, r14
+
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop rbx
+
+    mov eax, ASMWEB_RESOURCE_OK
+    ret
+
+
+.publish_fail_preserved:
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop rbx
+
+
+.publish_fail:
+    xor edx, edx
     mov eax, ASMWEB_RESOURCE_INTEGRITY
     ret

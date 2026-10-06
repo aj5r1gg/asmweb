@@ -290,11 +290,19 @@ $(PROCESS_RUNTIME_QUAL_OBJECT): $(PROCESS_RUNTIME_QUAL_SOURCE)
 
 $(PROCESS_RUNTIME_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(BUILD_DIR)/runtime/startup_memory.o \
 		$(BUILD_DIR)/runtime/process_runtime.o \
 		$(PROCESS_RUNTIME_QUAL_OBJECT)
 	mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -o $@ \
 		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(BUILD_DIR)/runtime/startup_memory.o \
 		$(BUILD_DIR)/runtime/process_runtime.o \
 		$(PROCESS_RUNTIME_QUAL_OBJECT)
 
