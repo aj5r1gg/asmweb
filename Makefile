@@ -526,6 +526,33 @@ qualify-pool: $(POOL_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — ownership / publication semantics
+# ---------------------------------------------------------------------------
+
+OWNERSHIP_PUBLICATION_QUAL_SOURCE := tests/qualification/ownership_publication.asm
+OWNERSHIP_PUBLICATION_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/ownership_publication.o
+OWNERSHIP_PUBLICATION_QUAL_TARGET := $(BUILD_DIR)/qualification/ownership-publication
+
+$(OWNERSHIP_PUBLICATION_QUAL_OBJECT): $(OWNERSHIP_PUBLICATION_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(OWNERSHIP_PUBLICATION_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(OWNERSHIP_PUBLICATION_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(OWNERSHIP_PUBLICATION_QUAL_OBJECT)
+
+.PHONY: qualify-ownership-publication
+qualify-ownership-publication: $(OWNERSHIP_PUBLICATION_QUAL_TARGET)
+	$(OWNERSHIP_PUBLICATION_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — transactional multi-resource acquisition rollback
 # ---------------------------------------------------------------------------
 
