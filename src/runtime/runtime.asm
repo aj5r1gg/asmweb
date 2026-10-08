@@ -10,6 +10,7 @@ bits 64
 %include "asmweb/startup_memory.inc"
 %include "asmweb/registry.inc"
 %include "asmweb/memory_ceiling.inc"
+%include "asmweb/config_dependency.inc"
 
 global asm_runtime_main
 
@@ -26,6 +27,7 @@ extern asm_startup_memory_account_init
 extern asm_startup_memory_account_baseline
 
 extern asm_memory_direct_capacity_from_mot
+extern asm_capacity_dependency_validate
 
 extern asm_runtime_rules_init
 extern asm_runtime_rules_get
@@ -291,6 +293,33 @@ asm_runtime_main:
 
     cmp qword [r13 + ASMWEB_MONOTONIC_TIME.nsec], ASMWEB_NSEC_PER_SEC
     jae .failure
+
+
+    ; -----------------------------------------------------------------------
+    ; Validate the complete current production capacity-dependency graph.
+    ;
+    ; The present M0 production graph is canonically empty:
+    ;
+    ;   - the production RCT is empty;
+    ;   - current production MOT entries are fixed process-persistent count-1
+    ;     objects;
+    ;   - no cross-capacity production dependency has yet been introduced.
+    ;
+    ; An empty graph is still passed through the authoritative dependency
+    ; validator before READY. When production dependent capacities are added,
+    ; this call site is the required startup gate and must receive that
+    ; resolved graph rather than being bypassed.
+    ; -----------------------------------------------------------------------
+
+    xor edi, edi
+    xor esi, esi
+    xor edx, edx
+    xor ecx, ecx
+
+    call asm_capacity_dependency_validate
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
 
 
     ; -----------------------------------------------------------------------

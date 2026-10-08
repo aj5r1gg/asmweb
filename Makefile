@@ -526,6 +526,35 @@ qualify-pool: $(POOL_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — configuration capacity dependencies
+# ---------------------------------------------------------------------------
+
+CONFIG_DEPENDENCY_QUAL_SOURCE := tests/qualification/config_dependency.asm
+CONFIG_DEPENDENCY_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/config_dependency.o
+CONFIG_DEPENDENCY_QUAL_TARGET := $(BUILD_DIR)/qualification/config-dependency
+
+$(CONFIG_DEPENDENCY_QUAL_OBJECT): $(CONFIG_DEPENDENCY_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(CONFIG_DEPENDENCY_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/config_dependency.o \
+		$(CONFIG_DEPENDENCY_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/config_dependency.o \
+		$(CONFIG_DEPENDENCY_QUAL_OBJECT)
+
+.PHONY: qualify-config-dependency
+qualify-config-dependency: $(CONFIG_DEPENDENCY_QUAL_TARGET)
+	$(CONFIG_DEPENDENCY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — quiescence machinery
 # ---------------------------------------------------------------------------
 
