@@ -526,6 +526,35 @@ qualify-pool: $(POOL_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — stale-reference identity candidate
+# ---------------------------------------------------------------------------
+
+STALE_CANDIDATE_QUAL_SOURCE := tests/qualification/stale_candidate.asm
+STALE_CANDIDATE_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/stale_candidate.o
+STALE_CANDIDATE_QUAL_TARGET := $(BUILD_DIR)/qualification/stale-candidate
+
+$(STALE_CANDIDATE_QUAL_OBJECT): $(STALE_CANDIDATE_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(STALE_CANDIDATE_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(BUILD_DIR)/runtime/stale_candidate.o \
+		$(STALE_CANDIDATE_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(BUILD_DIR)/runtime/stale_candidate.o \
+		$(STALE_CANDIDATE_QUAL_OBJECT)
+
+.PHONY: qualify-stale-candidate
+qualify-stale-candidate: $(STALE_CANDIDATE_QUAL_TARGET)
+	$(STALE_CANDIDATE_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — ELF/process hardening
 # ---------------------------------------------------------------------------
 
