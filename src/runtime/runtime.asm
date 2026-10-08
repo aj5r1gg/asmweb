@@ -11,6 +11,7 @@ bits 64
 %include "asmweb/registry.inc"
 %include "asmweb/memory_ceiling.inc"
 %include "asmweb/config_dependency.inc"
+%include "asmweb/runtime_invariant.inc"
 
 global asm_runtime_main
 
@@ -28,6 +29,7 @@ extern asm_startup_memory_account_baseline
 
 extern asm_memory_direct_capacity_from_mot
 extern asm_capacity_dependency_validate
+extern asm_runtime_invariant_validate_ready
 
 extern asm_runtime_rules_init
 extern asm_runtime_rules_get
@@ -129,9 +131,18 @@ asm_runtime_main:
 
     ; Entry is RSP % 16 == 8.
     ; Six pushes consume 48 bytes and preserve that modulus.
-    ; Reserve another 8 bytes so RSP is 16-byte aligned
-    ; immediately before ordinary calls below.
-    sub rsp, 8
+    ;
+    ; Local frame:
+    ;
+    ;   [rsp + 0]   published registry-set pointer
+    ;   [rsp + 8]   temporary ASMWEB_RUNTIME_INVARIANT_VIEW
+    ;   [rsp + 96]  alignment/padding
+    ;
+    ; ASMWEB_RUNTIME_INVARIANT_VIEW is currently 88 bytes.
+    ;
+    ; Total local frame = 104 bytes.
+    ; 104 mod 16 == 8, therefore RSP is 16-byte aligned before CALL.
+    sub rsp, 104
 
     ; Preserve explicit bootstrap-state pointers in callee-saved registers.
     mov rbx, rdi
@@ -340,45 +351,42 @@ asm_runtime_main:
     cmp eax, ASMWEB_RESOURCE_OK
     jne .failure
 
-    ; The current production MOT contains active fixed retained state.
-    ; A zero derived direct capacity would contradict that authority.
-    test rdx, rdx
-    jz .failure
-
-    ; At READY, current startup-account occupancy must have returned to the
-    ; persistent registered direct-memory baseline represented by the MOT.
+    ; -----------------------------------------------------------------------
+    ; Compose and validate the global M0 READY invariant set.
     ;
-    ; peak_bytes may be greater than this in future once temporary startup
-    ; acquisitions are introduced, but it may never be smaller.
-    cmp [r15 + ASMWEB_STARTUP_MEMORY_ACCOUNT.current_bytes], rdx
-    jne .failure
-
-    mov r10, [r15 + ASMWEB_STARTUP_MEMORY_ACCOUNT.peak_bytes]
-    cmp r10, rdx
-    jb .failure
-
-
-    ; -----------------------------------------------------------------------
-    ; Independently validate the resulting published runtime state.
+    ; The view is temporary stack-local state. It borrows authoritative
+    ; runtime objects and owns none of them.
+    ;
+    ; Current production dependency graph remains canonically empty.
     ; -----------------------------------------------------------------------
 
-    mov rdi, r14
-    call asm_process_runtime_validate
+    lea r10, [rsp + 8]
+
+    mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.startup_info_ptr], rbx
+    mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.entropy_ptr], rbp
+    mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.cpu_ptr], r12
+    mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.time_ptr], r13
+
+    mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.process_runtime_ptr], r14
+    mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.startup_memory_ptr], r15
+
+    mov rax, [rsp]
+    mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.registry_ptr], rax
+
+    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_nodes_ptr], 0
+    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_node_count], 0
+    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_edges_ptr], 0
+    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_edge_count], 0
+
+    mov rdi, r10
+    call asm_runtime_invariant_validate_ready
 
     cmp eax, ASMWEB_RESOURCE_OK
     jne .failure
 
-    cmp qword [r14 + ASMWEB_PROCESS_RUNTIME.lifecycle_state],         ASMWEB_PROCESS_STATE_READY
-    jne .failure
-
-    cmp qword [r14 + ASMWEB_PROCESS_RUNTIME.memory_epoch],         ASMWEB_MEMORY_EPOCH_STEADY_STATE
-    jne .failure
-
-    cmp qword [r14 + ASMWEB_PROCESS_RUNTIME.ready], 1
-    jne .failure
-
-    cmp qword [r14 + ASMWEB_PROCESS_RUNTIME.transition_count], 1
-    jne .failure
+    ; Current production MOT contains registered fixed retained state.
+    test rdx, rdx
+    jz .failure
 
 
     ; -----------------------------------------------------------------------
@@ -444,7 +452,7 @@ asm_runtime_main:
     mov eax, 1
 
 .restore:
-    add rsp, 8
+    add rsp, 104
 
     pop r15
     pop r14
