@@ -6,9 +6,11 @@ bits 64
 %include "linux/syscall.inc"
 
 global asm_memory_map_rw
+global asm_memory_protect_none
 global asm_memory_unmap
 
 extern asm_linux_mmap
+extern asm_linux_mprotect
 extern asm_linux_munmap
 
 section .text
@@ -196,6 +198,82 @@ asm_memory_map_rw:
     ret
 
 .failure_no_destination:
+    mov eax, 1
+    ret
+
+
+; ---------------------------------------------------------------------------
+; asm_memory_protect_none
+;
+; Purpose:
+;   Convert one complete page-aligned owned mapping range to inaccessible
+;   protection for guard-page use.
+;
+; Input:
+;
+;   RDI = page-aligned base
+;   RSI = non-zero page-aligned length
+;   RDX = validated runtime page size
+;
+; Result:
+;
+;   RAX = 0 on success
+;   RAX = 1 on validation or mprotect failure
+;
+; This primitive does not acquire or release mapping ownership. The caller
+; retains ownership of the underlying mapping throughout.
+;
+; Direction flag:
+;   Clear on return.
+; ---------------------------------------------------------------------------
+
+asm_memory_protect_none:
+    cld
+
+    test rdi, rdi
+    jz .protect_none_failure
+
+    test rsi, rsi
+    jz .protect_none_failure
+
+    cmp rdx, ASMWEB_M0_MIN_PAGE_SIZE
+    jb .protect_none_failure
+
+    cmp rdx, ASMWEB_M0_MAX_PAGE_SIZE
+    ja .protect_none_failure
+
+    mov rax, rdx
+    lea rcx, [rax - 1]
+    test rax, rcx
+    jnz .protect_none_failure
+
+    ; Base must be aligned to the runtime page size.
+    mov rax, rdi
+    dec rdx
+    test rax, rdx
+    jnz .protect_none_failure
+
+    ; Length must be an exact multiple of the runtime page size.
+    mov rax, rsi
+    test rax, rdx
+    jnz .protect_none_failure
+
+    xor edx, edx                    ; LINUX_PROT_NONE
+
+    ; Ordinary entry sees RSP % 16 == 8.
+    ; Reserve eight bytes for the nested Internal ABI call boundary.
+    sub rsp, 8
+    call asm_linux_mprotect
+    add rsp, 8
+
+    test rax, rax
+    jnz .protect_none_failure
+
+    xor eax, eax
+    ret
+
+
+.protect_none_failure:
     mov eax, 1
     ret
 

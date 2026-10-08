@@ -468,6 +468,37 @@ qualify-startup-memory: $(STARTUP_MEMORY_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — guarded stack provisioning foundation
+# ---------------------------------------------------------------------------
+
+STACK_QUAL_SOURCE := tests/qualification/stack.asm
+STACK_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/stack.o
+STACK_QUAL_TARGET := $(BUILD_DIR)/qualification/stack
+
+$(STACK_QUAL_OBJECT): $(STACK_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(STACK_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/memory.o \
+		$(BUILD_DIR)/runtime/mapping_capacity.o \
+		$(BUILD_DIR)/runtime/stack.o \
+		$(STACK_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/memory.o \
+		$(BUILD_DIR)/runtime/mapping_capacity.o \
+		$(BUILD_DIR)/runtime/stack.o \
+		$(STACK_QUAL_OBJECT)
+
+.PHONY: qualify-stack
+qualify-stack: $(STACK_QUAL_TARGET)
+	$(STACK_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — ELF/process hardening
 # ---------------------------------------------------------------------------
 

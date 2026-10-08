@@ -5,6 +5,7 @@ bits 64
 global asm_linux_exit
 global asm_linux_clock_gettime
 global asm_linux_mmap
+global asm_linux_mprotect
 global asm_linux_munmap
 
 section .text
@@ -104,6 +105,31 @@ asm_linux_clock_gettime:
 asm_linux_mmap:
     mov r10, rcx
     mov eax, LINUX_SYS_mmap
+    syscall
+    ret
+
+
+; ---------------------------------------------------------------------------
+; asm_linux_mprotect
+;
+; Controlled Linux x86-64 mprotect syscall boundary.
+;
+; Internal ABI input:
+;
+;   RDI = mapping base
+;   RSI = mapping length
+;   RDX = protection flags
+;
+; Result:
+;
+;   RAX = 0 on success
+;   RAX = negative errno on failure
+;
+; Linux syscall ABI clobbers RCX and R11.
+; ---------------------------------------------------------------------------
+
+asm_linux_mprotect:
+    mov eax, LINUX_SYS_mprotect
     syscall
     ret
 

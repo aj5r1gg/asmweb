@@ -7,6 +7,7 @@
 ; Add syscall numbers only when implementation actually requires them.
 
 %define LINUX_SYS_mmap           9
+%define LINUX_SYS_mprotect      10
 %define LINUX_SYS_munmap        11
 %define LINUX_SYS_exit          60
 %define LINUX_SYS_clock_gettime 228
@@ -20,6 +21,7 @@
 ; Linux mmap protection and mapping flags used by M0.
 ; ---------------------------------------------------------------------------
 
+%define LINUX_PROT_NONE          0x0
 %define LINUX_PROT_READ          0x1
 %define LINUX_PROT_WRITE         0x2
 
