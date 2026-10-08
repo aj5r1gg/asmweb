@@ -526,6 +526,33 @@ qualify-pool: $(POOL_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — transactional multi-resource acquisition rollback
+# ---------------------------------------------------------------------------
+
+ACQUISITION_ROLLBACK_QUAL_SOURCE := tests/qualification/acquisition_rollback.asm
+ACQUISITION_ROLLBACK_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/acquisition_rollback.o
+ACQUISITION_ROLLBACK_QUAL_TARGET := $(BUILD_DIR)/qualification/acquisition-rollback
+
+$(ACQUISITION_ROLLBACK_QUAL_OBJECT): $(ACQUISITION_ROLLBACK_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(ACQUISITION_ROLLBACK_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(ACQUISITION_ROLLBACK_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(ACQUISITION_ROLLBACK_QUAL_OBJECT)
+
+.PHONY: qualify-acquisition-rollback
+qualify-acquisition-rollback: $(ACQUISITION_ROLLBACK_QUAL_TARGET)
+	$(ACQUISITION_ROLLBACK_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — stale-reference identity candidate
 # ---------------------------------------------------------------------------
 
