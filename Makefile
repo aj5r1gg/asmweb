@@ -499,6 +499,33 @@ qualify-stack: $(STACK_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — typed bounded-pool foundation
+# ---------------------------------------------------------------------------
+
+POOL_QUAL_SOURCE := tests/qualification/pool.asm
+POOL_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/pool.o
+POOL_QUAL_TARGET := $(BUILD_DIR)/qualification/pool
+
+$(POOL_QUAL_OBJECT): $(POOL_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(POOL_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(POOL_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(POOL_QUAL_OBJECT)
+
+.PHONY: qualify-pool
+qualify-pool: $(POOL_QUAL_TARGET)
+	$(POOL_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — ELF/process hardening
 # ---------------------------------------------------------------------------
 
