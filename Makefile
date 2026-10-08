@@ -526,6 +526,39 @@ qualify-pool: $(POOL_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — quiescence machinery
+# ---------------------------------------------------------------------------
+
+QUIESCENCE_QUAL_SOURCE := tests/qualification/quiescence.asm
+QUIESCENCE_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/quiescence.o
+QUIESCENCE_QUAL_TARGET := $(BUILD_DIR)/qualification/quiescence
+
+$(QUIESCENCE_QUAL_OBJECT): $(QUIESCENCE_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(QUIESCENCE_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(BUILD_DIR)/runtime/quiescence.o \
+		$(BUILD_DIR)/runtime/startup_memory.o \
+		$(QUIESCENCE_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(BUILD_DIR)/runtime/quiescence.o \
+		$(BUILD_DIR)/runtime/startup_memory.o \
+		$(QUIESCENCE_QUAL_OBJECT)
+
+.PHONY: qualify-quiescence
+qualify-quiescence: $(QUIESCENCE_QUAL_TARGET)
+	$(QUIESCENCE_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — ownership / publication semantics
 # ---------------------------------------------------------------------------
 
