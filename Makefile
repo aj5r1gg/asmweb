@@ -526,6 +526,51 @@ qualify-pool: $(POOL_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — telemetry foundations
+# ---------------------------------------------------------------------------
+
+TELEMETRY_QUAL_SOURCE := tests/qualification/telemetry.asm
+TELEMETRY_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/telemetry.o
+TELEMETRY_QUAL_TARGET := $(BUILD_DIR)/qualification/telemetry
+
+$(TELEMETRY_QUAL_OBJECT): $(TELEMETRY_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -o $@ $<
+
+$(TELEMETRY_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/memory.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(BUILD_DIR)/runtime/process_runtime.o \
+		$(BUILD_DIR)/runtime/startup_memory.o \
+		$(BUILD_DIR)/runtime/mapping_capacity.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(BUILD_DIR)/runtime/quiescence.o \
+		$(BUILD_DIR)/runtime/telemetry.o \
+		$(TELEMETRY_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/platform/memory.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(BUILD_DIR)/runtime/process_runtime.o \
+		$(BUILD_DIR)/runtime/startup_memory.o \
+		$(BUILD_DIR)/runtime/mapping_capacity.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(BUILD_DIR)/runtime/quiescence.o \
+		$(BUILD_DIR)/runtime/telemetry.o \
+		$(TELEMETRY_QUAL_OBJECT)
+
+.PHONY: qualify-telemetry
+qualify-telemetry: $(TELEMETRY_QUAL_TARGET)
+	$(TELEMETRY_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — runtime READY invariant composition
 # ---------------------------------------------------------------------------
 

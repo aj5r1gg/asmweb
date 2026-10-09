@@ -6,6 +6,7 @@ bits 64
 %include "asmweb/resource.inc"
 
 global asm_mapping_capacity_init
+global asm_mapping_capacity_validate
 global asm_memory_map_rw_bounded
 global asm_memory_unmap_bounded
 
@@ -123,6 +124,120 @@ asm_mapping_capacity_init:
     ret
 
 .init_integrity:
+    mov eax, ASMWEB_RESOURCE_INTEGRITY
+    ret
+
+
+; ---------------------------------------------------------------------------
+; asm_mapping_capacity_validate
+;
+; RDI = ASMWEB_MAPPING_CAPACITY *
+;
+; Returns:
+;
+;   RAX = ASMWEB_RESOURCE_OK
+;         ASMWEB_RESOURCE_INTEGRITY
+;
+; Validates the complete M0 logical accounting representation without
+; acquiring or releasing any kernel resource.
+;
+; Invariants:
+;
+;   ready == 1
+;
+;   configured_count > 0
+;   configured_bytes > 0
+;
+;   page_size obeys M0 page-size policy
+;   configured_bytes is page aligned
+;
+;   current_count <= high_water_count <= configured_count
+;   current_bytes <= high_water_bytes <= configured_bytes
+;
+;   acquisition_count >= release_count
+;   acquisition_count - release_count == current_count
+;
+; rejection_count is historical refusal/failure state and is not derivable
+; from occupancy.
+; ---------------------------------------------------------------------------
+
+asm_mapping_capacity_validate:
+    cld
+
+    test rdi, rdi
+    jz .validate_integrity
+
+    cmp qword [rdi + ASMWEB_MAPPING_CAPACITY.ready], 1
+    jne .validate_integrity
+
+    mov r8, [rdi + ASMWEB_MAPPING_CAPACITY.configured_count]
+    test r8, r8
+    jz .validate_integrity
+
+    mov r9, [rdi + ASMWEB_MAPPING_CAPACITY.configured_bytes]
+    test r9, r9
+    jz .validate_integrity
+
+    mov r10, [rdi + ASMWEB_MAPPING_CAPACITY.page_size]
+
+    cmp r10, ASMWEB_M0_MIN_PAGE_SIZE
+    jb .validate_integrity
+
+    cmp r10, ASMWEB_M0_MAX_PAGE_SIZE
+    ja .validate_integrity
+
+    lea rax, [r10 - 1]
+    test r10, rax
+    jnz .validate_integrity
+
+    ; configured_bytes must be page aligned.
+    test r9, rax
+    jnz .validate_integrity
+
+
+    ; Count occupancy / high-water.
+
+    mov rax, [rdi + ASMWEB_MAPPING_CAPACITY.current_count]
+    mov rcx, [rdi + ASMWEB_MAPPING_CAPACITY.high_water_count]
+
+    cmp rax, rcx
+    ja .validate_integrity
+
+    cmp rcx, r8
+    ja .validate_integrity
+
+
+    ; Byte occupancy / high-water.
+
+    mov rax, [rdi + ASMWEB_MAPPING_CAPACITY.current_bytes]
+    mov rcx, [rdi + ASMWEB_MAPPING_CAPACITY.high_water_bytes]
+
+    cmp rax, rcx
+    ja .validate_integrity
+
+    cmp rcx, r9
+    ja .validate_integrity
+
+
+    ; Historical acquisition/release reconciliation.
+
+    mov rax, [rdi + ASMWEB_MAPPING_CAPACITY.acquisition_count]
+    mov rcx, [rdi + ASMWEB_MAPPING_CAPACITY.release_count]
+
+    cmp rax, rcx
+    jb .validate_integrity
+
+    sub rax, rcx
+
+    cmp rax, [rdi + ASMWEB_MAPPING_CAPACITY.current_count]
+    jne .validate_integrity
+
+
+    mov eax, ASMWEB_RESOURCE_OK
+    ret
+
+
+.validate_integrity:
     mov eax, ASMWEB_RESOURCE_INTEGRITY
     ret
 
