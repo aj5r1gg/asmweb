@@ -66,6 +66,38 @@ def qrr_entry(rule_id: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# CASE 0 — repository path identity normalises both relative and absolute
+# representations to the same canonical repository-relative value.
+# ---------------------------------------------------------------------------
+
+import importlib.util
+
+spec = importlib.util.spec_from_file_location(
+    "qualification_foundation_module",
+    TOOL,
+)
+
+if spec is None or spec.loader is None:
+    raise SystemExit("CASE 0 failed: unable to load qualification tool")
+
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+
+relative_identity = module.repo_relative(Path("build/asmweb"))
+absolute_identity = module.repo_relative(ROOT / "build/asmweb")
+
+if relative_identity != "build/asmweb":
+    raise SystemExit(
+        f"CASE 0 failed: relative identity={relative_identity!r}"
+    )
+
+if absolute_identity != "build/asmweb":
+    raise SystemExit(
+        f"CASE 0 failed: absolute identity={absolute_identity!r}"
+    )
+
+
+# ---------------------------------------------------------------------------
 # CASE 1 — canonical vocabulary / M0 record validate.
 # ---------------------------------------------------------------------------
 

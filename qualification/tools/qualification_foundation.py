@@ -435,6 +435,38 @@ def validate_manifest(path: Path) -> None:
             raise ValidationError("invalid artifact SHA-256 digest")
 
 
+def repo_absolute(path: Path) -> Path:
+    """
+    Return an absolute repository-grounded path.
+
+    Relative qualification paths are interpreted relative to ROOT rather than
+    relative to the caller's incidental working-directory representation.
+    """
+    if path.is_absolute():
+        return path.resolve()
+
+    return (ROOT / path).resolve()
+
+
+def repo_relative(path: Path) -> str:
+    """
+    Return canonical repository-relative artifact identity.
+
+    Both absolute and relative inputs are accepted, but the resolved path must
+    remain within ROOT.
+    """
+    absolute = repo_absolute(path)
+
+    try:
+        relative = absolute.relative_to(ROOT)
+    except ValueError as exc:
+        raise ValidationError(
+            f"artifact path escapes repository root: {path}"
+        ) from exc
+
+    return relative.as_posix()
+
+
 def emit_m0_foundation(out_root: Path) -> Path:
     validate_vocabulary()
     validate_m0()
@@ -460,18 +492,26 @@ def emit_m0_foundation(out_root: Path) -> Path:
         f"M0-foundation-{commit[:12]}-{binary_hash[:12]}-{compact}"
     )
 
-    out_dir = out_root / qualification_id
+    output_root = repo_absolute(out_root)
+    final_dir = output_root / qualification_id
+    staging_dir = output_root / f".{qualification_id}.tmp"
 
-    if out_dir.exists():
+    if final_dir.exists():
         raise ValidationError(
             f"qualification identity already exists: {qualification_id}"
         )
 
-    out_dir.mkdir(parents=True)
+    if staging_dir.exists():
+        raise ValidationError(
+            f"staging qualification identity already exists: "
+            f"{staging_dir.name}"
+        )
+
+    output_root.mkdir(parents=True, exist_ok=True)
 
     milestone = load_json(M0_PATH)
 
-    binary_rel = str(PRODUCTION_BINARY.relative_to(ROOT))
+    binary_rel = repo_relative(PRODUCTION_BINARY)
 
     artifact_digests = [
         {
@@ -484,13 +524,20 @@ def emit_m0_foundation(out_root: Path) -> Path:
     manifest = {
         "qualification_id": qualification_id,
         "AsmWeb_version": "M0-development",
-        "requirements_baseline": "AsmWeb — Requirements & Scope Specification v0.3",
-        "architecture_baseline": "AsmWeb — Architecture & Engineering Specification v0.4",
-        "assembly_standard_version": "AsmWeb — Assembly Engineering Standard v0.3",
-        "runtime_specification_version": "AsmWeb — Runtime & Memory Specification v0.3",
-        "security_specification_version": "AsmWeb — Security & Threat Model Specification v0.3",
-        "limits_register_version": "AsmWeb — Invariants & Limits Register v0.3",
-        "protocol_specification_version": "AsmWeb — Protocol & Semantic Specification v0.3",
+        "requirements_baseline":
+            "AsmWeb — Requirements & Scope Specification v0.3",
+        "architecture_baseline":
+            "AsmWeb — Architecture & Engineering Specification v0.4",
+        "assembly_standard_version":
+            "AsmWeb — Assembly Engineering Standard v0.3",
+        "runtime_specification_version":
+            "AsmWeb — Runtime & Memory Specification v0.3",
+        "security_specification_version":
+            "AsmWeb — Security & Threat Model Specification v0.3",
+        "limits_register_version":
+            "AsmWeb — Invariants & Limits Register v0.3",
+        "protocol_specification_version":
+            "AsmWeb — Protocol & Semantic Specification v0.3",
         "qualification_specification_version": QUALIFICATION_SPEC,
         "capability_profile_version": None,
         "standards_register_version": None,
@@ -558,47 +605,72 @@ def emit_m0_foundation(out_root: Path) -> Path:
         "timestamp": timestamp
     }
 
-    manifest_path = out_dir / "qualification-manifest.json"
-    dump_json(manifest_path, manifest)
-    validate_manifest(manifest_path)
+    try:
+        staging_dir.mkdir()
 
-    evidence_manifest = {
-        "schema_version": 1,
-        "qualification_id": qualification_id,
-        "source_commit": commit,
-        "artifacts": artifact_digests,
-        "notes": [
-            "This foundation evidence does not establish M0 closure.",
-            "The M0 milestone remains BLOCKED.",
-            "Re-running evidence generation creates a new qualification identity."
+        manifest_path = staging_dir / "qualification-manifest.json"
+        evidence_path = staging_dir / "evidence-manifest.json"
+        index_path = staging_dir / "artifact-index.json"
+
+        dump_json(manifest_path, manifest)
+        validate_manifest(manifest_path)
+
+        evidence_manifest = {
+            "schema_version": 1,
+            "qualification_id": qualification_id,
+            "source_commit": commit,
+            "artifacts": artifact_digests,
+            "notes": [
+                "This foundation evidence does not establish M0 closure.",
+                "The M0 milestone remains BLOCKED.",
+                "Re-running evidence generation creates a new "
+                "qualification identity."
+            ]
+        }
+
+        dump_json(evidence_path, evidence_manifest)
+
+        # Artifact names identify their final published locations rather than
+        # the temporary staging paths.
+        generated = [
+            (
+                manifest_path,
+                final_dir / "qualification-manifest.json"
+            ),
+            (
+                evidence_path,
+                final_dir / "evidence-manifest.json"
+            ),
         ]
-    }
 
-    evidence_path = out_dir / "evidence-manifest.json"
-    dump_json(evidence_path, evidence_manifest)
+        index = {
+            "schema_version": 1,
+            "qualification_id": qualification_id,
+            "artifacts": [
+                {
+                    "artifact": repo_relative(published_path),
+                    "algorithm": "SHA-256",
+                    "digest": sha256_file(staged_path)
+                }
+                for staged_path, published_path in generated
+            ]
+        }
 
-    # Add digests of generated evidence artifacts after writing them.
-    generated = [
-        manifest_path,
-        evidence_path,
-    ]
+        dump_json(index_path, index)
 
-    index = {
-        "schema_version": 1,
-        "qualification_id": qualification_id,
-        "artifacts": [
-            {
-                "artifact": str(path.relative_to(ROOT)),
-                "algorithm": "SHA-256",
-                "digest": sha256_file(path)
-            }
-            for path in generated
-        ]
-    }
+        # Publication occurs only after every required artifact exists and
+        # validates. rename() is atomic within this filesystem.
+        staging_dir.rename(final_dir)
 
-    dump_json(out_dir / "artifact-index.json", index)
+    except Exception:
+        # A failed run SHALL NOT leave a visible half-published evidence run.
+        if staging_dir.exists():
+            import shutil
+            shutil.rmtree(staging_dir)
 
-    return out_dir
+        raise
+
+    return final_dir
 
 
 def cmd_validate_foundation(_: argparse.Namespace) -> int:
