@@ -811,3 +811,7 @@ qualify-qualification-foundation:
 qualification-m0-foundation-evidence: $(TARGET)
 	python3 qualification/tools/qualification_foundation.py \
 		emit-m0-foundation
+
+.PHONY: qualify-qrr-slice
+qualify-qrr-slice:
+	python3 tests/qualification/qrr_slice.py
