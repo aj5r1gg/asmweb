@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "authority": "AsmWeb — Qualification & Verification Specification v0.3",
+  "implementation_states": [
+    "NOT_STARTED",
+    "IN_PROGRESS",
+    "IMPLEMENTED",
+    "QUALIFICATION_PENDING",
+    "QUALIFIED",
+    "FAILED",
+    "BLOCKED",
+    "DEFERRED",
+    "NOT_APPLICABLE"
+  ],
+  "qualification_results": [
+    "PASS",
+    "FAIL",
+    "UNSUPPORTED",
+    "NOT_RUN",
+    "INCONCLUSIVE",
+    "EXPECTED_REJECTION"
+  ],
+  "qrr_rule_statuses": [
+    "ACTIVE",
+    "DEFERRED",
+    "SUPERSEDED",
+    "RETIRED"
+  ],
+  "verification_classes": [
+    "INSPECTION",
+    "TEST",
+    "CONFORMANCE",
+    "INTEROPERABILITY",
+    "BROWSER",
+    "FUZZ",
+    "RESOURCE",
+    "BENCHMARK",
+    "ENDURANCE"
+  ]
+}

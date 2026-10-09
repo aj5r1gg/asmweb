@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "milestone_id": "M0",
+  "implementation_state": "BLOCKED",
+  "closure_status": "BLOCKED",
+  "first_mandatory_requirement_refs": [],
+  "inherited_regression_refs": [],
+  "prerequisite_refs": [],
+  "new_rule_refs": [],
+  "required_verification_refs": [],
+  "result_refs": [],
+  "known_failures": [],
+  "blocked_items": [
+    {
+      "blocker_id": "M0-BLOCK-QRR",
+      "description": "Authoritative complete Qualification Rule Registry population, exact QUA-* membership validation and authoritative-reference resolution are not yet established."
+    },
+    {
+      "blocker_id": "M0-BLOCK-IR",
+      "description": "Authoritative Invariant Register machinery is not yet established."
+    },
+    {
+      "blocker_id": "M0-BLOCK-LR",
+      "description": "Authoritative Limit Register machinery is not yet established."
+    },
+    {
+      "blocker_id": "M0-BLOCK-ELM",
+      "description": "Effective Limit Manifest derivation and deterministic representation are not yet established."
+    },
+    {
+      "blocker_id": "M0-BLOCK-DIAGNOSTICS",
+      "description": "Common M0 diagnostics foundation is incomplete; current failure classifications are subsystem-local."
+    },
+    {
+      "blocker_id": "M0-BLOCK-CONFIGURATION",
+      "description": "M0 configuration/provenance authority is incomplete; configured capacities and dependency validation exist but no common published effective-configuration identity exists."
+    }
+  ],
+  "waivers": [],
+  "deferred_items": [],
+  "evidence_refs": [],
+  "notes": [
+    "Runtime & Memory §78 implementation machinery is substantially present.",
+    "This record SHALL NOT be interpreted as M0 qualification or closure.",
+    "Formal closure requires all mandatory M0 blockers to receive valid dispositions."
+  ]
+}

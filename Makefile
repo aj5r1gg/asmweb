@@ -796,3 +796,18 @@ qualify-stale-candidate: $(STALE_CANDIDATE_QUAL_TARGET)
 
 qualify-elf-hardening: $(TARGET)
 	./tests/qualification/elf_hardening.sh $(TARGET)
+
+
+# ---------------------------------------------------------------------------
+# M0 qualification — formal qualification infrastructure foundation
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-qualification-foundation
+qualify-qualification-foundation:
+	python3 tests/qualification/qualification_foundation.py
+
+
+.PHONY: qualification-m0-foundation-evidence
+qualification-m0-foundation-evidence: $(TARGET)
+	python3 qualification/tools/qualification_foundation.py \
+		emit-m0-foundation
