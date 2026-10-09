@@ -699,6 +699,42 @@ qualify-ownership-publication: $(OWNERSHIP_PUBLICATION_QUAL_TARGET)
 
 
 # ---------------------------------------------------------------------------
+# M0 qualification — controlled qualification fault hooks
+# ---------------------------------------------------------------------------
+
+FAULT_HOOK_COMMON_SOURCE := tests/qualification/fault_hook.asm
+FAULT_HOOK_COMMON_OBJECT := $(BUILD_DIR)/tests/qualification/fault_hook.o
+
+FAULT_HOOK_QUAL_SOURCE := tests/qualification/fault_hook_qualification.asm
+FAULT_HOOK_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/fault_hook_qualification.o
+FAULT_HOOK_QUAL_TARGET := $(BUILD_DIR)/qualification/fault-hook
+
+$(FAULT_HOOK_COMMON_OBJECT): $(FAULT_HOOK_COMMON_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -Itests/qualification/ -o $@ $<
+
+$(FAULT_HOOK_QUAL_OBJECT): $(FAULT_HOOK_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -Itests/qualification/ -o $@ $<
+
+$(FAULT_HOOK_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(FAULT_HOOK_COMMON_OBJECT) \
+		$(FAULT_HOOK_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/pool.o \
+		$(FAULT_HOOK_COMMON_OBJECT) \
+		$(FAULT_HOOK_QUAL_OBJECT)
+
+.PHONY: qualify-fault-hook
+qualify-fault-hook: $(FAULT_HOOK_QUAL_TARGET)
+	$(FAULT_HOOK_QUAL_TARGET)
+
+
+# ---------------------------------------------------------------------------
 # M0 qualification — transactional multi-resource acquisition rollback
 # ---------------------------------------------------------------------------
 
