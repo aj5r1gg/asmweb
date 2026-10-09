@@ -22,6 +22,9 @@ QRR_SCHEMA_PATH = ROOT / "qualification/qrr/qrr-schema.json"
 QRR_MEMBERSHIP_PATH = (
     ROOT / "qualification/qrr/qrr-membership-v0.3.json"
 )
+QRR_SOURCE_PATH = (
+    ROOT / "qualification/qrr/qrr-source-v0.3.json"
+)
 M0_PATH = ROOT / "qualification/milestones/M0.json"
 
 PRODUCTION_BINARY = ROOT / "build/asmweb"
@@ -300,6 +303,115 @@ def validate_qrr_membership_authority() -> set[str]:
         )
 
     return set(rule_ids)
+
+
+def canonical_rule_text_digest(
+    entries: list[dict[str, object]]
+) -> str:
+    payload = "".join(
+        (
+            f"{entry['rule_id']}\t"
+            f"{entry['normative_statement']}\n"
+        )
+        for entry in entries
+    )
+
+    return hashlib.sha256(
+        payload.encode("utf-8")
+    ).hexdigest()
+
+
+def validate_qrr_source_authority() -> dict[str, str]:
+    membership_data = load_json(QRR_MEMBERSHIP_PATH)
+    membership_ids = membership_data["rule_ids"]
+
+    source = load_json(QRR_SOURCE_PATH)
+
+    if not isinstance(source, dict):
+        raise ValidationError(
+            "QRR source authority root must be an object"
+        )
+
+    entries = source.get("entries")
+
+    if not isinstance(entries, list):
+        raise ValidationError(
+            "QRR source authority entries must be an array"
+        )
+
+    if source.get("rule_count") != len(entries):
+        raise ValidationError(
+            "QRR source declared count does not match entries"
+        )
+
+    if len(entries) != len(membership_ids):
+        raise ValidationError(
+            "QRR source count does not match membership authority"
+        )
+
+    by_id: dict[str, str] = {}
+
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise ValidationError(
+                f"QRR source entry {index} must be an object"
+            )
+
+        rule_id = entry.get("rule_id")
+        statement = entry.get("normative_statement")
+
+        if not isinstance(rule_id, str):
+            raise ValidationError(
+                f"QRR source entry {index} has invalid rule_id"
+            )
+
+        if not isinstance(statement, str) or not statement.strip():
+            raise ValidationError(
+                f"{rule_id}: empty normative statement"
+            )
+
+        if rule_id in by_id:
+            raise ValidationError(
+                f"duplicate QRR source identity: {rule_id}"
+            )
+
+        by_id[rule_id] = statement
+
+    actual_ids = list(by_id)
+
+    if actual_ids != membership_ids:
+        raise ValidationError(
+            "QRR source order/membership does not exactly match "
+            "membership authority"
+        )
+
+    expected_digest = source.get(
+        "canonical_rule_text_sha256"
+    )
+
+    actual_digest = canonical_rule_text_digest(
+        entries
+    )
+
+    if expected_digest != actual_digest:
+        raise ValidationError(
+            "QRR source canonical text digest mismatch: "
+            f"expected={expected_digest!r} "
+            f"actual={actual_digest!r}"
+        )
+
+    frozen_v03_digest = (
+        "464b32f9f01f60ef5f145bd393b715cc"
+        "bcab46171e53df864796c92fd75429f6"
+    )
+
+    if actual_digest != frozen_v03_digest:
+        raise ValidationError(
+            "QRR source does not match frozen Qualification "
+            "Specification v0.3 rule-text authority"
+        )
+
+    return by_id
 
 
 def validate_qrr_exact_membership(path: Path) -> None:
@@ -812,6 +924,7 @@ def cmd_validate_foundation(_: argparse.Namespace) -> int:
     validate_m0()
 
     membership = validate_qrr_membership_authority()
+    source_rules = validate_qrr_source_authority()
 
     schema = load_json(QRR_SCHEMA_PATH)
 
@@ -835,6 +948,17 @@ def cmd_validate_foundation(_: argparse.Namespace) -> int:
     print(
         "qrr_membership_digest="
         f"{canonical_membership_digest(sorted(membership))}"
+    )
+    print(
+        "qrr_source_rule_count="
+        f"{len(source_rules)}"
+    )
+
+    source_data = load_json(QRR_SOURCE_PATH)
+
+    print(
+        "qrr_source_rule_text_digest="
+        f"{source_data['canonical_rule_text_sha256']}"
     )
     print("m0_closure_status=BLOCKED")
     return 0

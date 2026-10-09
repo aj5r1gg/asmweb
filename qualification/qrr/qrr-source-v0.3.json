@@ -1,0 +1,947 @@
+{
+  "schema_version": 1,
+  "authority": "AsmWeb — Qualification & Verification Specification v0.3",
+  "source_document": "AsmWeb-Qualification-n-VerificationSpecification-v0.3.odt",
+  "source_document_sha256": "c70fa5766af6161b068b9925f5fbdac305e6ccf4c396934f1a58acdd12316434",
+  "rule_count": 234,
+  "canonical_rule_text_sha256": "464b32f9f01f60ef5f145bd393b715ccbcab46171e53df864796c92fd75429f6",
+  "canonicalisation": "UTF-8; frozen membership-authority order; exactly one complete normative QUA identity per ODT text element; whitespace-normalised same-element statement; rule_id + TAB + normative_statement + LF",
+  "entries": [
+    {
+      "rule_id": "QUA-GOV-001",
+      "normative_statement": "A formal qualification decision SHALL be supported by attributable evidence."
+    },
+    {
+      "rule_id": "QUA-GOV-002",
+      "normative_statement": "Evidence SHALL demonstrate the claim being made rather than an easier adjacent claim."
+    },
+    {
+      "rule_id": "QUA-GOV-003",
+      "normative_statement": "Qualification SHALL distinguish implementation existence from demonstrated satisfaction."
+    },
+    {
+      "rule_id": "QUA-GOV-004",
+      "normative_statement": "Missing mandatory evidence SHALL remain missing rather than be inferred from unrelated success."
+    },
+    {
+      "rule_id": "QUA-GOV-005",
+      "normative_statement": "Qualification SHALL NOT silently weaken or reinterpret a governing requirement to make an implementation pass."
+    },
+    {
+      "rule_id": "QUA-GOV-006",
+      "normative_statement": "A verification procedure SHALL reference the authoritative rule or claim it evaluates."
+    },
+    {
+      "rule_id": "QUA-GOV-007",
+      "normative_statement": "Where another specification owns an acceptance criterion, registry, matrix or authoritative value, this specification SHALL consume that authority rather than create an independent competing authority."
+    },
+    {
+      "rule_id": "QUA-REG-001",
+      "normative_statement": "Duplicate QRR rule identities SHALL fail validation."
+    },
+    {
+      "rule_id": "QUA-REG-002",
+      "normative_statement": "Unknown authoritative references SHALL fail validation."
+    },
+    {
+      "rule_id": "QUA-REG-003",
+      "normative_statement": "Active mandatory qualification rules SHALL identify at least one credible verification mechanism."
+    },
+    {
+      "rule_id": "QUA-REG-004",
+      "normative_statement": "Every normative QUA-* identity present in this specification SHALL occur exactly once in the authoritative QRR."
+    },
+    {
+      "rule_id": "QUA-CLS-001",
+      "normative_statement": "Verification class SHALL match the nature of the claim."
+    },
+    {
+      "rule_id": "QUA-CLS-002",
+      "normative_statement": "No verification class SHALL be treated as universally sufficient."
+    },
+    {
+      "rule_id": "QUA-CLS-003",
+      "normative_statement": "Multiple classes SHALL be used where one class cannot demonstrate the complete claim."
+    },
+    {
+      "rule_id": "QUA-CLS-004",
+      "normative_statement": "A requirement SHALL NOT be qualified solely through an inappropriate verification class."
+    },
+    {
+      "rule_id": "QUA-CLS-005",
+      "normative_statement": "Specialised verification-method vocabularies SHALL map deterministically into the canonical qualification-class model."
+    },
+    {
+      "rule_id": "QUA-CLS-006",
+      "normative_statement": "No single result SHALL be treated as proof of all qualification dimensions."
+    },
+    {
+      "rule_id": "QUA-CLS-007",
+      "normative_statement": "Each formal release claim SHALL identify the dimensions relevant to it."
+    },
+    {
+      "rule_id": "QUA-PLN-001",
+      "normative_statement": "Mandatory pass criteria SHALL be defined before a formal result is interpreted as PASS."
+    },
+    {
+      "rule_id": "QUA-PLN-002",
+      "normative_statement": "Verification SHALL identify the claim under test before execution."
+    },
+    {
+      "rule_id": "QUA-PLN-003",
+      "normative_statement": "Expected rejection tests SHALL define both expected rejection class and acceptable failure scope."
+    },
+    {
+      "rule_id": "QUA-PLN-004",
+      "normative_statement": "Verification procedures SHALL identify environmental assumptions capable of affecting the result."
+    },
+    {
+      "rule_id": "QUA-PLN-005",
+      "normative_statement": "Where qualification depends upon a selectable implementation path, the verification plan SHALL identify the path or paths exercised."
+    },
+    {
+      "rule_id": "QUA-PLN-006",
+      "normative_statement": "A qualification item SHALL identify mandatory prerequisite decisions, capability classifications and controlled artifacts required before execution."
+    },
+    {
+      "rule_id": "QUA-PLN-007",
+      "normative_statement": "Qualification SHALL NOT silently invent a capability classification merely because a test happens to succeed or fail."
+    },
+    {
+      "rule_id": "QUA-STS-001",
+      "normative_statement": "IMPLEMENTED SHALL NOT imply PASS."
+    },
+    {
+      "rule_id": "QUA-STS-002",
+      "normative_statement": "QUALIFIED SHALL require applicable qualification evidence."
+    },
+    {
+      "rule_id": "QUA-STS-003",
+      "normative_statement": "NOT_APPLICABLE SHALL require justification for an otherwise mandatory item."
+    },
+    {
+      "rule_id": "QUA-STS-004",
+      "normative_statement": "Implementation state SHALL NOT be substituted for formal result state."
+    },
+    {
+      "rule_id": "QUA-STS-005",
+      "normative_statement": "PASS SHALL NOT be recorded when mandatory evidence is absent."
+    },
+    {
+      "rule_id": "QUA-STS-006",
+      "normative_statement": "Harness failure SHALL NOT be reported as UNSUPPORTED merely to avoid FAIL or INCONCLUSIVE."
+    },
+    {
+      "rule_id": "QUA-STS-007",
+      "normative_statement": "NOT_RUN SHALL remain distinct from UNSUPPORTED."
+    },
+    {
+      "rule_id": "QUA-STS-008",
+      "normative_statement": "INCONCLUSIVE SHALL NOT become PASS through aggregation."
+    },
+    {
+      "rule_id": "QUA-STS-009",
+      "normative_statement": "EXPECTED_REJECTION SHALL require the expected class of rejection."
+    },
+    {
+      "rule_id": "QUA-STS-010",
+      "normative_statement": "EXPECTED_REJECTION SHALL require acceptable failure scope."
+    },
+    {
+      "rule_id": "QUA-STS-011",
+      "normative_statement": "Unexpected process termination SHALL NOT satisfy EXPECTED_REJECTION."
+    },
+    {
+      "rule_id": "QUA-STS-012",
+      "normative_statement": "Waived failures SHALL remain visible as waivers rather than being rewritten as PASS."
+    },
+    {
+      "rule_id": "QUA-STS-013",
+      "normative_statement": "Crash-evidence collection MAY preserve diagnostics after such failure but SHALL NOT convert the failure into protocol recovery or PASS."
+    },
+    {
+      "rule_id": "QUA-IDN-001",
+      "normative_statement": "Unknown binaries SHALL NOT support formal release claims."
+    },
+    {
+      "rule_id": "QUA-IDN-002",
+      "normative_statement": "Evidence SHALL remain attributable to the binary and configuration actually tested."
+    },
+    {
+      "rule_id": "QUA-IDN-003",
+      "normative_statement": "Replacing the tested binary SHALL require a new qualification identity unless equivalence is itself formally established."
+    },
+    {
+      "rule_id": "QUA-IDN-004",
+      "normative_statement": "Instrumented and production binaries SHALL not be silently treated as identical evidence subjects when instrumentation changes relevant behaviour or limits."
+    },
+    {
+      "rule_id": "QUA-IDN-005",
+      "normative_statement": "Evidence dependent upon a selectable implementation path SHALL identify the path exercised."
+    },
+    {
+      "rule_id": "QUA-EVD-001",
+      "normative_statement": "Requirement-level results SHALL be traceable from the Qualification Manifest."
+    },
+    {
+      "rule_id": "QUA-EVD-002",
+      "normative_statement": "Known failures SHALL NOT be silently omitted."
+    },
+    {
+      "rule_id": "QUA-EVD-003",
+      "normative_statement": "Unsupported capabilities SHALL be represented explicitly."
+    },
+    {
+      "rule_id": "QUA-EVD-004",
+      "normative_statement": "Formal evidence artifacts SHALL have integrity identities or cryptographic digests where practical."
+    },
+    {
+      "rule_id": "QUA-EVD-005",
+      "normative_statement": "An evidence manifest SHALL identify artifacts belonging to the qualification run."
+    },
+    {
+      "rule_id": "QUA-EVD-006",
+      "normative_statement": "Artifact substitution SHALL be detectable where release claims depend upon artifact identity."
+    },
+    {
+      "rule_id": "QUA-EVD-007",
+      "normative_statement": "Historical qualification results SHOULD be retained immutably, append-only or otherwise tamper-evidently where practical."
+    },
+    {
+      "rule_id": "QUA-EVD-008",
+      "normative_statement": "Re-running qualification SHALL create a new result identity rather than silently rewriting historical evidence."
+    },
+    {
+      "rule_id": "QUA-EVD-009",
+      "normative_statement": "Evidence retention SHALL obey secret-handling requirements."
+    },
+    {
+      "rule_id": "QUA-EVD-010",
+      "normative_statement": "Missing evidence SHALL remain visibly missing rather than be silently reconstructed from unrelated later runs."
+    },
+    {
+      "rule_id": "QUA-EVD-017",
+      "normative_statement": "Production qualification SHALL contain evidence that core-dump handling for secret-bearing processes has been explicitly considered under the governing security/operations policy."
+    },
+    {
+      "rule_id": "QUA-TRC-001",
+      "normative_statement": "Orphan mandatory requirements SHALL be detectable."
+    },
+    {
+      "rule_id": "QUA-TRC-002",
+      "normative_statement": "Duplicate or unknown requirement/rule identities SHALL be detectable."
+    },
+    {
+      "rule_id": "QUA-TRC-003",
+      "normative_statement": "Dangling implementation, test, evidence or claim references SHALL be detectable."
+    },
+    {
+      "rule_id": "QUA-TRC-004",
+      "normative_statement": "A mandatory item marked QUALIFIED SHALL have applicable evidence."
+    },
+    {
+      "rule_id": "QUA-TRC-005",
+      "normative_statement": "A release claim SHALL reference at least one governing requirement."
+    },
+    {
+      "rule_id": "QUA-TRC-006",
+      "normative_statement": "Formal tests SHALL identify applicable requirements/rules they verify."
+    },
+    {
+      "rule_id": "QUA-TRC-007",
+      "normative_statement": "Registry-validation failure SHALL prevent formal release qualification."
+    },
+    {
+      "rule_id": "QUA-TRC-015",
+      "normative_statement": "Unresolved mandatory qualification prerequisites SHALL be detectable."
+    },
+    {
+      "rule_id": "QUA-EVD-011",
+      "normative_statement": "Evidence from a superseded implementation SHALL NOT automatically qualify its replacement."
+    },
+    {
+      "rule_id": "QUA-EVD-012",
+      "normative_statement": "Evidence MAY be reused only when qualification-impact analysis establishes continuing applicability."
+    },
+    {
+      "rule_id": "QUA-EVD-013",
+      "normative_statement": "A stronger-looking but irrelevant test SHALL NOT substitute for the verification class required by the claim."
+    },
+    {
+      "rule_id": "QUA-INS-001",
+      "normative_statement": "Inspection evidence SHALL identify exactly what was inspected."
+    },
+    {
+      "rule_id": "QUA-INS-002",
+      "normative_statement": "Inspection SHALL NOT claim dynamic behaviour it cannot demonstrate."
+    },
+    {
+      "rule_id": "QUA-INS-003",
+      "normative_statement": "Analysis SHALL state assumptions and authoritative inputs."
+    },
+    {
+      "rule_id": "QUA-INS-004",
+      "normative_statement": "Analytical arithmetic SHALL use governing limit/expression semantics rather than informal approximations where exactness is required."
+    },
+    {
+      "rule_id": "QUA-INS-005",
+      "normative_statement": "Differential agreement SHALL NOT by itself prove that either implementation is correct where both may share the same defect."
+    },
+    {
+      "rule_id": "QUA-INS-006",
+      "normative_statement": "Differential disagreement SHALL be investigated rather than resolved by automatically preferring the faster, newer or reference-labelled implementation."
+    },
+    {
+      "rule_id": "QUA-INS-007",
+      "normative_statement": "Qualification of the Assembly foundation SHALL include applicable ABI, syscall, arithmetic, memory, pool/resource, external-ABI and stack-boundary verification required by the Assembly Engineering Standard."
+    },
+    {
+      "rule_id": "QUA-INS-008",
+      "normative_statement": "Final-machine-code qualification SHALL inspect the production-linked artifact where the governing Assembly rule requires instruction-baseline or disassembly evidence."
+    },
+    {
+      "rule_id": "QUA-INS-009",
+      "normative_statement": "CPU instruction-baseline qualification SHALL verify that instructions unavailable to the baseline CPU profile do not appear on unguarded execution paths."
+    },
+    {
+      "rule_id": "QUA-INS-010",
+      "normative_statement": "Critical linked routines identified by the Assembly Engineering Standard SHALL receive applicable final disassembly/binary inspection."
+    },
+    {
+      "rule_id": "QUA-TST-001",
+      "normative_statement": "Boundary tests SHALL test both accepted and rejected sides of important limits where meaningful."
+    },
+    {
+      "rule_id": "QUA-TST-002",
+      "normative_statement": "Tests SHALL NOT assume that one successful nominal case establishes boundary correctness."
+    },
+    {
+      "rule_id": "QUA-TST-003",
+      "normative_statement": "Fragmentation boundaries SHOULD be selected independently of parser-preferred boundaries."
+    },
+    {
+      "rule_id": "QUA-TST-004",
+      "normative_statement": "Expected failure SHALL verify failure reason/scope where that distinction is part of the requirement."
+    },
+    {
+      "rule_id": "QUA-TST-008",
+      "normative_statement": "Externally reachable discrete configured maxima SHALL receive below-limit, at-limit and above-limit qualification where meaningful; N−1/N/N+1 is the canonical procedure for discrete maxima."
+    },
+    {
+      "rule_id": "QUA-TST-009",
+      "normative_statement": "Applicable finite deadlines SHALL receive just-before/at/just-after qualification unless an equivalent stronger deterministic procedure is documented."
+    },
+    {
+      "rule_id": "QUA-TST-005",
+      "normative_statement": "Negative testing SHALL verify containment, not merely rejection."
+    },
+    {
+      "rule_id": "QUA-TST-006",
+      "normative_statement": "Invalid remote input SHALL not qualify as correctly rejected merely because the process crashed."
+    },
+    {
+      "rule_id": "QUA-TST-007",
+      "normative_statement": "Rejection at an unnecessarily destructive scope SHALL fail where a smaller scope is required."
+    },
+    {
+      "rule_id": "QUA-CNF-001",
+      "normative_statement": "Conformance SHALL be evaluated against the declared Standards Register baseline."
+    },
+    {
+      "rule_id": "QUA-CNF-002",
+      "normative_statement": "Test-suite behaviour SHALL NOT override the governing standard merely because the suite expects it."
+    },
+    {
+      "rule_id": "QUA-CNF-003",
+      "normative_statement": "A standards ambiguity or suspected suite defect SHALL be recorded rather than silently resolved through implementation mimicry."
+    },
+    {
+      "rule_id": "QUA-CNF-004",
+      "normative_statement": "Unsupported optional capabilities SHALL remain distinguishable from failed required conformance."
+    },
+    {
+      "rule_id": "QUA-INT-001",
+      "normative_statement": "Interoperability success with one implementation SHALL NOT establish universal conformance."
+    },
+    {
+      "rule_id": "QUA-INT-002",
+      "normative_statement": "Peer disagreement SHALL be investigated against the applicable standard."
+    },
+    {
+      "rule_id": "QUA-INT-003",
+      "normative_statement": "Independent peers SHOULD come from genuinely independent implementation lineages where practicable."
+    },
+    {
+      "rule_id": "QUA-INT-004",
+      "normative_statement": "Known peer-specific exceptions SHALL remain visible in evidence."
+    },
+    {
+      "rule_id": "QUA-BRW-001",
+      "normative_statement": "Browser success SHALL supplement rather than replace protocol conformance."
+    },
+    {
+      "rule_id": "QUA-BRW-002",
+      "normative_statement": "Browser qualification SHALL verify the actual protocol negotiated rather than assume it."
+    },
+    {
+      "rule_id": "QUA-BRW-003",
+      "normative_statement": "A browser fallback to another supported protocol SHALL not be reported as successful qualification of the originally intended protocol."
+    },
+    {
+      "rule_id": "QUA-FUZ-001",
+      "normative_statement": "Fuzz harnesses SHALL preserve semantic preconditions of the target sufficiently to exercise meaningful code."
+    },
+    {
+      "rule_id": "QUA-FUZ-002",
+      "normative_statement": "Fuzz findings SHALL be reduced to deterministic regression cases where practicable."
+    },
+    {
+      "rule_id": "QUA-FUZ-003",
+      "normative_statement": "Absence of a fuzz-discovered crash SHALL NOT be represented as proof of total correctness."
+    },
+    {
+      "rule_id": "QUA-FUZ-004",
+      "normative_statement": "Known unresolved fuzz failures SHALL remain visible in formal qualification evidence."
+    },
+    {
+      "rule_id": "QUA-FUZ-005",
+      "normative_statement": "A non-crashing fuzz input SHALL be considered a valid finding when it violates applicable progress, resource, work, output, reclamation, failure-scope or invariant requirements."
+    },
+    {
+      "rule_id": "QUA-FUZ-006",
+      "normative_statement": "Resource-aware fuzz oracles SHALL reference applicable INV-*, LIM-*, resource-accounting or qualification rules where available."
+    },
+    {
+      "rule_id": "QUA-FLT-001",
+      "normative_statement": "Fault injection SHALL identify the injected fault and injection point."
+    },
+    {
+      "rule_id": "QUA-FLT-002",
+      "normative_statement": "Qualification SHALL verify expected containment and reclamation after the injected fault."
+    },
+    {
+      "rule_id": "QUA-FLT-003",
+      "normative_statement": "A fault-injection mechanism SHALL NOT silently alter unrelated acceptance criteria."
+    },
+    {
+      "rule_id": "QUA-FLT-004",
+      "normative_statement": "Qualification-only fault machinery SHALL not be present or active in production unless explicitly designed and approved."
+    },
+    {
+      "rule_id": "QUA-FLT-005",
+      "normative_statement": "Simulated network impairment SHALL identify its impairment model and SHALL not be conflated with arbitrary internal code-fault injection."
+    },
+    {
+      "rule_id": "QUA-RES-001",
+      "normative_statement": "Resource qualification SHALL identify the applicable ELM."
+    },
+    {
+      "rule_id": "QUA-RES-002",
+      "normative_statement": "Qualification SHALL distinguish configured capacity from observed occupancy."
+    },
+    {
+      "rule_id": "QUA-RES-003",
+      "normative_statement": "Failure to reach a configured maximum during a test SHALL NOT by itself prove the maximum safe."
+    },
+    {
+      "rule_id": "QUA-RES-004",
+      "normative_statement": "Capacity analysis and runtime boundary testing SHOULD be combined where practical."
+    },
+    {
+      "rule_id": "QUA-RES-005",
+      "normative_statement": "Externally retained kernel/provider state SHALL not be silently excluded from claims that purport to describe total retained resources."
+    },
+    {
+      "rule_id": "QUA-RES-006",
+      "normative_statement": "RSS SHALL NOT be treated as equivalent to direct configured userspace capacity."
+    },
+    {
+      "rule_id": "QUA-RES-007",
+      "normative_statement": "Provider hidden allocation SHALL be identified as a limitation where it prevents a stronger total-memory claim."
+    },
+    {
+      "rule_id": "QUA-RES-008",
+      "normative_statement": "Instrumentation-induced memory changes SHALL be identified."
+    },
+    {
+      "rule_id": "QUA-RES-009",
+      "normative_statement": "Production memory claims SHALL not silently rely on qualification-build object sizes where they differ."
+    },
+    {
+      "rule_id": "QUA-WRK-001",
+      "normative_statement": "Historical work SHALL remain represented where governing rules require it after transient objects are reclaimed."
+    },
+    {
+      "rule_id": "QUA-WRK-002",
+      "normative_statement": "A memory bound SHALL NOT be treated as proof of a work bound."
+    },
+    {
+      "rule_id": "QUA-WRK-003",
+      "normative_statement": "Qualification SHALL exercise inputs designed to maximise work relative to useful progress."
+    },
+    {
+      "rule_id": "QUA-WRK-004",
+      "normative_statement": "Output qualification SHALL distinguish application payload from protocol-generated amplification where required."
+    },
+    {
+      "rule_id": "QUA-WRK-005",
+      "normative_statement": "Adversarial resource scenarios required by governing Architecture, Requirements or Security rules SHALL have stable scenario identity and attributable evidence."
+    },
+    {
+      "rule_id": "QUA-RAF-001",
+      "normative_statement": "RAF evidence SHALL define numerator and denominator explicitly."
+    },
+    {
+      "rule_id": "QUA-RAF-002",
+      "normative_statement": "RAF dimensions SHALL NOT be silently combined into one unitless score where their units differ."
+    },
+    {
+      "rule_id": "QUA-RAF-003",
+      "normative_statement": "Qualification SHALL include hostile/adversarial workloads capable of approaching the relevant amplification boundary."
+    },
+    {
+      "rule_id": "QUA-RAF-004",
+      "normative_statement": "A RAF claim SHALL identify whether it is analytically bounded, empirically measured, or both."
+    },
+    {
+      "rule_id": "QUA-RAF-005",
+      "normative_statement": "RAF evidence SHALL identify the adversarial scenario or input model used where the result depends upon hostile workload shape."
+    },
+    {
+      "rule_id": "QUA-SEC-001",
+      "normative_statement": "Qualification SHALL distinguish network admission from expensive cryptographic admission."
+    },
+    {
+      "rule_id": "QUA-SEC-002",
+      "normative_statement": "Crypto-admission evidence SHALL identify work, state and rejection behaviour."
+    },
+    {
+      "rule_id": "QUA-SEC-003",
+      "normative_statement": "Per-connection protection alone SHALL not qualify distributed-load protection."
+    },
+    {
+      "rule_id": "QUA-SEC-004",
+      "normative_statement": "Failed handshakes SHALL be included in historical work/accounting evidence where governing rules require it."
+    },
+    {
+      "rule_id": "QUA-REC-001",
+      "normative_statement": "Expected persistent state SHALL be distinguished from leaked state."
+    },
+    {
+      "rule_id": "QUA-REC-002",
+      "normative_statement": "Grace-transient state SHALL be observed through the applicable grace period."
+    },
+    {
+      "rule_id": "QUA-REC-003",
+      "normative_statement": "External-completion-pending state SHALL not become an unlimited exemption."
+    },
+    {
+      "rule_id": "QUA-REC-004",
+      "normative_statement": "Unexplained retained state SHALL prevent qualification PASS."
+    },
+    {
+      "rule_id": "QUA-REC-005",
+      "normative_statement": "Confirmed leak SHALL fail applicable qualification."
+    },
+    {
+      "rule_id": "QUA-REC-006",
+      "normative_statement": "Reclamation qualification SHALL verify resource-accounting convergence as well as object disappearance where applicable."
+    },
+    {
+      "rule_id": "QUA-RES-010",
+      "normative_statement": "Configured exhaustion SHALL produce deterministic behaviour."
+    },
+    {
+      "rule_id": "QUA-RES-011",
+      "normative_statement": "Ordinary exhaustion SHALL not be accepted as correct if it manifests as corruption or undefined behaviour."
+    },
+    {
+      "rule_id": "QUA-RES-012",
+      "normative_statement": "Pressure transitions SHALL be tested at applicable boundaries."
+    },
+    {
+      "rule_id": "QUA-RES-013",
+      "normative_statement": "Recovery from pressure SHALL be qualified where recovery is part of the governing state model."
+    },
+    {
+      "rule_id": "QUA-RES-014",
+      "normative_statement": "Protected reserve capacity SHALL be tested where required for bounded failure handling."
+    },
+    {
+      "rule_id": "QUA-END-001",
+      "normative_statement": "Endurance PASS SHALL require completion of the declared duration/workload."
+    },
+    {
+      "rule_id": "QUA-END-002",
+      "normative_statement": "A process remaining alive SHALL NOT alone constitute endurance PASS."
+    },
+    {
+      "rule_id": "QUA-END-003",
+      "normative_statement": "Endurance SHALL include post-workload reclamation/quiescence where applicable."
+    },
+    {
+      "rule_id": "QUA-END-004",
+      "normative_statement": "Unexplained monotonic retained-state growth SHALL prevent PASS."
+    },
+    {
+      "rule_id": "QUA-END-005",
+      "normative_statement": "Mandatory endurance evidence SHALL not be omitted merely because the process completed the workload."
+    },
+    {
+      "rule_id": "QUA-RPL-001",
+      "normative_statement": "A replay artifact SHALL identify build/configuration assumptions required to interpret it."
+    },
+    {
+      "rule_id": "QUA-RPL-002",
+      "normative_statement": "Fixed regression cases derived from discovered failures SHALL preserve essential failure-triggering semantics."
+    },
+    {
+      "rule_id": "QUA-RPL-003",
+      "normative_statement": "Replay success after a fix SHOULD become regression evidence rather than replace the original historical failure evidence."
+    },
+    {
+      "rule_id": "QUA-RPL-004",
+      "normative_statement": "Evidence SHALL identify whether virtual time was active."
+    },
+    {
+      "rule_id": "QUA-RPL-005",
+      "normative_statement": "Evidence SHALL identify whether deterministic qualification entropy was active."
+    },
+    {
+      "rule_id": "QUA-RPL-006",
+      "normative_statement": "Production builds SHALL NOT silently activate qualification-only deterministic entropy."
+    },
+    {
+      "rule_id": "QUA-RPL-007",
+      "normative_statement": "Production builds SHALL NOT silently replace production monotonic time with qualification virtual time."
+    },
+    {
+      "rule_id": "QUA-RPL-008",
+      "normative_statement": "A deterministic mechanism SHALL NOT be used for qualification where its use invalidates the property being tested, such as production entropy quality."
+    },
+    {
+      "rule_id": "QUA-RPL-009",
+      "normative_statement": "A formal deterministic protocol replay case SHALL identify its network input sequence."
+    },
+    {
+      "rule_id": "QUA-RPL-010",
+      "normative_statement": "A replay case using injected faults SHALL identify the injected-fault sequence."
+    },
+    {
+      "rule_id": "QUA-RPL-011",
+      "normative_statement": "Equivalent controlled replay inputs SHALL reproduce deterministic protocol-state behaviour wherever the tested subsystem is defined to be deterministic."
+    },
+    {
+      "rule_id": "QUA-RPL-012",
+      "normative_statement": "Production traffic SHALL NOT be recorded by default solely to support deterministic replay."
+    },
+    {
+      "rule_id": "QUA-SEC-005",
+      "normative_statement": "A security control SHALL NOT be marked qualified solely because its implementation exists."
+    },
+    {
+      "rule_id": "QUA-SEC-006",
+      "normative_statement": "Threat mitigation status and qualification result SHALL remain distinct."
+    },
+    {
+      "rule_id": "QUA-SEC-007",
+      "normative_statement": "Qualification SHALL identify residual limitations preventing stronger security claims."
+    },
+    {
+      "rule_id": "QUA-SEC-008",
+      "normative_statement": "Qualification SHALL inspect the final linked implementation and verify that required clearing behaviour survives assembly and linking."
+    },
+    {
+      "rule_id": "QUA-SEC-009",
+      "normative_statement": "Source-level zeroisation intent alone SHALL NOT establish final-binary zeroisation qualification."
+    },
+    {
+      "rule_id": "QUA-SEC-010",
+      "normative_statement": "Qualification SHALL verify that relevant control paths reach required secret-destruction behaviour."
+    },
+    {
+      "rule_id": "QUA-SEC-011",
+      "normative_statement": "Final-binary inspection SHALL identify the exact binary/disassembly evidence used to support a secret-zeroisation claim."
+    },
+    {
+      "rule_id": "QUA-BLD-001",
+      "normative_statement": "Qualification builds SHALL be uniquely identifiable."
+    },
+    {
+      "rule_id": "QUA-BLD-002",
+      "normative_statement": "Instrumentation state SHALL appear in formal evidence."
+    },
+    {
+      "rule_id": "QUA-BLD-003",
+      "normative_statement": "Qualification instrumentation SHALL not silently change effective limits without corresponding ELM/evidence treatment."
+    },
+    {
+      "rule_id": "QUA-BLD-004",
+      "normative_statement": "Evidence obtained only under instrumentation SHALL identify any limitation on applicability to production builds."
+    },
+    {
+      "rule_id": "QUA-BLD-005",
+      "normative_statement": "Assertions SHALL supplement rather than replace hostile-input validation."
+    },
+    {
+      "rule_id": "QUA-BLD-010",
+      "normative_statement": "Qualification-only time, entropy, fault-injection or replay mechanisms SHALL be mechanically distinguishable from production behaviour."
+    },
+    {
+      "rule_id": "QUA-BLD-006",
+      "normative_statement": "Formal release qualification SHALL identify the production binary."
+    },
+    {
+      "rule_id": "QUA-BLD-007",
+      "normative_statement": "Qualification evidence obtained from a distinct instrumented binary SHALL identify the relationship to the production binary."
+    },
+    {
+      "rule_id": "QUA-BLD-008",
+      "normative_statement": "Production-critical behaviour SHALL receive direct production-binary verification where instrumentation could materially alter the behaviour being claimed."
+    },
+    {
+      "rule_id": "QUA-BLD-009",
+      "normative_statement": "Binary equivalence claims SHALL be supported rather than assumed."
+    },
+    {
+      "rule_id": "QUA-VAR-001",
+      "normative_statement": "Every selectable implementation path that materially affects a qualified property SHALL independently satisfy applicable correctness and safety requirements."
+    },
+    {
+      "rule_id": "QUA-VAR-002",
+      "normative_statement": "Runtime dispatch qualification SHALL verify that supported hardware/configuration selects only valid qualified paths."
+    },
+    {
+      "rule_id": "QUA-VAR-003",
+      "normative_statement": "Fallback paths SHALL be qualified rather than assumed correct because an accelerated path passes."
+    },
+    {
+      "rule_id": "QUA-VAR-004",
+      "normative_statement": "Differential testing SHOULD compare reference/straightforward and optimised implementations where practical."
+    },
+    {
+      "rule_id": "QUA-VAR-005",
+      "normative_statement": "A performance advantage SHALL NOT excuse a semantic discrepancy between supposedly equivalent variants."
+    },
+    {
+      "rule_id": "QUA-VAR-006",
+      "normative_statement": "Final-machine-code inspection SHALL verify that optional CPU instructions are confined to execution paths whose dispatch guards establish the required CPU capability."
+    },
+    {
+      "rule_id": "QUA-WVR-001",
+      "normative_statement": "Waived failures SHALL remain visible."
+    },
+    {
+      "rule_id": "QUA-WVR-002",
+      "normative_statement": "Expired waivers SHALL not satisfy qualification."
+    },
+    {
+      "rule_id": "QUA-WVR-003",
+      "normative_statement": "A waiver SHALL NOT silently weaken the governing requirement/rule."
+    },
+    {
+      "rule_id": "QUA-WVR-004",
+      "normative_statement": "Mandatory release blockers SHALL not be waived unless the governing release policy explicitly permits such a waiver."
+    },
+    {
+      "rule_id": "QUA-WVR-005",
+      "normative_statement": "Waiver presence SHALL appear in the Qualification Manifest and release evidence."
+    },
+    {
+      "rule_id": "QUA-REL-001",
+      "normative_statement": "A mandatory FAIL SHALL remain a failure unless an explicitly permitted valid waiver governs release treatment."
+    },
+    {
+      "rule_id": "QUA-REL-002",
+      "normative_statement": "Mandatory NOT_RUN SHALL not aggregate to PASS."
+    },
+    {
+      "rule_id": "QUA-REL-003",
+      "normative_statement": "Mandatory INCONCLUSIVE SHALL not aggregate to PASS."
+    },
+    {
+      "rule_id": "QUA-REL-004",
+      "normative_statement": "EXPECTED_REJECTION SHALL count only toward the negative/adversarial claim it was designed to demonstrate."
+    },
+    {
+      "rule_id": "QUA-REL-005",
+      "normative_statement": "Unsupported optional capability SHALL not fail a release when the governing capability authority explicitly declares it unsupported and no governing requirement requires it."
+    },
+    {
+      "rule_id": "QUA-REL-006",
+      "normative_statement": "Unsupported required capability SHALL prevent qualification of the corresponding release claim."
+    },
+    {
+      "rule_id": "QUA-MIL-001",
+      "normative_statement": "A milestone SHALL NOT close formally until every requirement whose first mandatory qualification point is that milestone has a valid qualification disposition."
+    },
+    {
+      "rule_id": "QUA-MIL-002",
+      "normative_statement": "Later milestone qualification SHALL inherit applicable regression obligations from previously qualified capability."
+    },
+    {
+      "rule_id": "QUA-MIL-003",
+      "normative_statement": "A milestone SHALL NOT formally close while an applicable mandatory requirement remains unexplained FAILED or BLOCKED."
+    },
+    {
+      "rule_id": "QUA-MIL-004",
+      "normative_statement": "A deferred or not-yet-applicable requirement SHALL identify why it does not block the current milestone and when qualification becomes mandatory."
+    },
+    {
+      "rule_id": "QUA-MIL-005",
+      "normative_statement": "Milestone qualification SHALL preserve visible waivers and known failures."
+    },
+    {
+      "rule_id": "QUA-MIL-006",
+      "normative_statement": "Milestone closure evidence SHALL be attributable to the implementation state that actually reached the milestone."
+    },
+    {
+      "rule_id": "QUA-MIL-008",
+      "normative_statement": "A milestone SHALL NOT qualify a capability while a governing prerequisite classification required before that milestone remains unresolved."
+    },
+    {
+      "rule_id": "QUA-REL-007",
+      "normative_statement": "Marketing or release language SHALL NOT state a stronger technical claim than the evidence supports."
+    },
+    {
+      "rule_id": "QUA-REL-008",
+      "normative_statement": "A claim such as “supports HTTP/3” SHALL require applicable conformance/interoperability evidence rather than merely successful parsing of an H3 request."
+    },
+    {
+      "rule_id": "QUA-REL-009",
+      "normative_statement": "Compatibility claims SHALL identify material limitations."
+    },
+    {
+      "rule_id": "QUA-REL-010",
+      "normative_statement": "Release claims SHALL remain attributable to the exact release artifact."
+    },
+    {
+      "rule_id": "QUA-REL-011",
+      "normative_statement": "Substantive technical release claims SHALL have stable RCR identity."
+    },
+    {
+      "rule_id": "QUA-REL-012",
+      "normative_statement": "A claim marked qualified SHALL reference applicable requirements and qualification evidence."
+    },
+    {
+      "rule_id": "QUA-REL-013",
+      "normative_statement": "Public compatibility claims SHALL NOT exceed the status demonstrated by the governing Compatibility Matrix and qualification evidence."
+    },
+    {
+      "rule_id": "QUA-REL-014",
+      "normative_statement": "Performance claims SHALL reference applicable benchmark evidence."
+    },
+    {
+      "rule_id": "QUA-REL-015",
+      "normative_statement": "Security claims SHALL reference applicable security requirements/rules and qualification evidence."
+    },
+    {
+      "rule_id": "QUA-REL-016",
+      "normative_statement": "Adding capability SHALL inherit applicable regression obligations from previously qualified capability."
+    },
+    {
+      "rule_id": "QUA-REL-017",
+      "normative_statement": "Previously qualified behaviour SHALL remain in regression scope unless controlled impact analysis establishes that it is superseded, removed or unaffected."
+    },
+    {
+      "rule_id": "QUA-REL-018",
+      "normative_statement": "Release qualification SHALL consume applicable build/provenance evidence required by the Build, Toolchain & Reproducibility Specification."
+    },
+    {
+      "rule_id": "QUA-REL-019",
+      "normative_statement": "Where a release provenance claim is made, qualification evidence SHALL identify or reference source revision, build-environment identity, dependency origin/version and binary identity to the extent required by the governing build specification."
+    },
+    {
+      "rule_id": "QUA-EVD-014",
+      "normative_statement": "Bundle omission SHALL not erase an underlying failure or unsupported capability."
+    },
+    {
+      "rule_id": "QUA-EVD-015",
+      "normative_statement": "Evidence-bundle generation SHOULD be automated and deterministic where practical."
+    },
+    {
+      "rule_id": "QUA-EVD-016",
+      "normative_statement": "Bundle contents SHALL remain attributable to the same qualification identity or explicitly identify cross-run evidence dependencies."
+    },
+    {
+      "rule_id": "QUA-EVD-018",
+      "normative_statement": "Secret-bearing diagnostic artifacts SHALL not be included in broadly distributed evidence bundles without explicit controlled handling."
+    },
+    {
+      "rule_id": "QUA-GOV-008",
+      "normative_statement": "Qualification SHALL NOT invent benchmark methodology independently of the Performance & Benchmark Specification."
+    },
+    {
+      "rule_id": "QUA-GOV-009",
+      "normative_statement": "Performance evidence SHALL not substitute for correctness, conformance or robustness evidence."
+    },
+    {
+      "rule_id": "QUA-GOV-010",
+      "normative_statement": "A performance claim SHALL identify benchmark evidence supporting it."
+    },
+    {
+      "rule_id": "QUA-GOV-011",
+      "normative_statement": "M0 SHALL NOT be required to implement later HTTP qualification procedures before corresponding functionality exists."
+    },
+    {
+      "rule_id": "QUA-GOV-012",
+      "normative_statement": "M0 exit SHALL identify every M0-owned requirement and its qualification status."
+    },
+    {
+      "rule_id": "QUA-GOV-013",
+      "normative_statement": "M0 SHALL establish automated detection of duplicate or unknown requirement identifiers."
+    },
+    {
+      "rule_id": "QUA-GOV-014",
+      "normative_statement": "M0 SHALL establish a reproducible mechanism for identifying the binary under qualification."
+    },
+    {
+      "rule_id": "QUA-GOV-015",
+      "normative_statement": "M0 qualification machinery SHALL avoid structures that prevent later rule/evidence registries from joining the common traceability model."
+    },
+    {
+      "rule_id": "QUA-MIL-007",
+      "normative_statement": "M0 SHALL establish the representation needed to carry inherited regression obligations into later milestones."
+    },
+    {
+      "rule_id": "QUA-MIL-009",
+      "normative_statement": "M0 closure SHALL distinguish evidence that qualifies qualification infrastructure from evidence that qualifies the M0 implementation foundation itself."
+    },
+    {
+      "rule_id": "QUA-MIL-010",
+      "normative_statement": "M0 SHALL NOT close solely because qualification machinery exists; applicable M0 foundation requirements SHALL also have valid qualification dispositions."
+    },
+    {
+      "rule_id": "QUA-TRC-008",
+      "normative_statement": "Prior PASS evidence SHALL not automatically survive a material implementation change."
+    },
+    {
+      "rule_id": "QUA-TRC-009",
+      "normative_statement": "Strengthening a test does not retroactively strengthen historical evidence."
+    },
+    {
+      "rule_id": "QUA-TRC-010",
+      "normative_statement": "Changing a governing limit SHALL trigger impact analysis for evidence depending upon that limit."
+    },
+    {
+      "rule_id": "QUA-TRC-011",
+      "normative_statement": "Changing a supported capability SHALL trigger impact analysis for relevant conformance, interoperability, browser and release claims."
+    },
+    {
+      "rule_id": "QUA-TRC-012",
+      "normative_statement": "Changing a shared implementation component SHALL trigger regression-impact analysis for all qualified capabilities depending upon it."
+    },
+    {
+      "rule_id": "QUA-TRC-013",
+      "normative_statement": "Removing a test from the active regression set SHALL require an explicit traceable reason."
+    },
+    {
+      "rule_id": "QUA-TRC-014",
+      "normative_statement": "A previously qualified capability SHALL NOT silently lose regression coverage because a later capability becomes the current development focus."
+    },
+    {
+      "rule_id": "QUA-TRC-016",
+      "normative_statement": "A change to a qualification prerequisite or capability classification SHALL trigger impact analysis for qualification evidence dependent upon that prerequisite."
+    }
+  ]
+}

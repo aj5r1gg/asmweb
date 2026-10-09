@@ -346,4 +346,88 @@ with tempfile.TemporaryDirectory() as td:
     )
 
 
+
+# ---------------------------------------------------------------------------
+# CASE 11 — extracted source authority validates and exactly covers membership.
+# ---------------------------------------------------------------------------
+
+source_rules = module.validate_qrr_source_authority()
+
+if len(source_rules) != 234:
+    raise SystemExit(
+        f"CASE 11 failed: source_rule_count={len(source_rules)}"
+    )
+
+membership_rules = module.validate_qrr_membership_authority()
+
+if set(source_rules) != membership_rules:
+    raise SystemExit(
+        "CASE 11 failed: source/membership identity mismatch"
+    )
+
+
+
+
+# ---------------------------------------------------------------------------
+# CASE 12 — source authority preserves exact known paragraph boundaries.
+# ---------------------------------------------------------------------------
+
+known_source_rules = {
+    "QUA-REG-004":
+        "Every normative QUA-* identity present in this "
+        "specification SHALL occur exactly once in the "
+        "authoritative QRR.",
+
+    "QUA-BLD-010":
+        "Qualification-only time, entropy, fault-injection or "
+        "replay mechanisms SHALL be mechanically distinguishable "
+        "from production behaviour.",
+
+    "QUA-MIL-010":
+        "M0 SHALL NOT close solely because qualification "
+        "machinery exists; applicable M0 foundation requirements "
+        "SHALL also have valid qualification dispositions.",
+
+    "QUA-TRC-016":
+        "A change to a qualification prerequisite or capability "
+        "classification SHALL trigger impact analysis for "
+        "qualification evidence dependent upon that prerequisite.",
+}
+
+for rule_id, expected_statement in known_source_rules.items():
+    actual_statement = source_rules[rule_id]
+
+    if actual_statement != expected_statement:
+        raise SystemExit(
+            f"CASE 12 failed: {rule_id} source mismatch"
+        )
+
+
+
+# ---------------------------------------------------------------------------
+# CASE 13 — canonical Qualification v0.3 QRR source-text digest is frozen.
+# ---------------------------------------------------------------------------
+
+source_data = json.loads(
+    (
+        ROOT
+        / "qualification/qrr/qrr-source-v0.3.json"
+    ).read_text()
+)
+
+expected_source_digest = (
+    "464b32f9f01f60ef5f145bd393b715cc"
+    "bcab46171e53df864796c92fd75429f6"
+)
+
+actual_source_digest = source_data[
+    "canonical_rule_text_sha256"
+]
+
+if actual_source_digest != expected_source_digest:
+    raise SystemExit(
+        "CASE 13 failed: canonical QRR source-text digest mismatch"
+    )
+
+
 print("qualification_foundation_selftest_status=0")
