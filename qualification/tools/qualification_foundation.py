@@ -19,6 +19,9 @@ ROOT = Path(__file__).resolve().parents[2]
 
 VOCAB_PATH = ROOT / "qualification/schema/qualification-vocabulary.json"
 QRR_SCHEMA_PATH = ROOT / "qualification/qrr/qrr-schema.json"
+QRR_MEMBERSHIP_PATH = (
+    ROOT / "qualification/qrr/qrr-membership-v0.3.json"
+)
 M0_PATH = ROOT / "qualification/milestones/M0.json"
 
 PRODUCTION_BINARY = ROOT / "build/asmweb"
@@ -229,7 +232,138 @@ def validate_vocabulary() -> None:
         raise ValidationError("verification-class vocabulary mismatch")
 
 
+def canonical_membership_digest(rule_ids: list[str]) -> str:
+    payload = "".join(
+        f"{rule_id}\n"
+        for rule_id in sorted(rule_ids)
+    )
+
+    return hashlib.sha256(
+        payload.encode("utf-8")
+    ).hexdigest()
+
+
+def validate_qrr_membership_authority() -> set[str]:
+    data = load_json(QRR_MEMBERSHIP_PATH)
+
+    if not isinstance(data, dict):
+        raise ValidationError(
+            "QRR membership authority root must be an object"
+        )
+
+    rule_ids = data.get("rule_ids")
+
+    if not isinstance(rule_ids, list):
+        raise ValidationError(
+            "QRR membership authority rule_ids must be an array"
+        )
+
+    if not all(isinstance(item, str) for item in rule_ids):
+        raise ValidationError(
+            "QRR membership authority identities must be strings"
+        )
+
+    invalid = [
+        item for item in rule_ids
+        if not QRR_ID_RE.fullmatch(item)
+    ]
+
+    if invalid:
+        raise ValidationError(
+            "QRR membership authority contains invalid identities: "
+            + ", ".join(invalid)
+        )
+
+    if len(rule_ids) != len(set(rule_ids)):
+        raise ValidationError(
+            "QRR membership authority contains duplicate identities"
+        )
+
+    declared_count = data.get("rule_count")
+
+    if declared_count != len(rule_ids):
+        raise ValidationError(
+            "QRR membership declared rule_count does not match identities"
+        )
+
+    expected_digest = data.get(
+        "canonical_membership_sha256"
+    )
+
+    actual_digest = canonical_membership_digest(rule_ids)
+
+    if expected_digest != actual_digest:
+        raise ValidationError(
+            "QRR membership canonical digest mismatch: "
+            f"expected={expected_digest!r} "
+            f"actual={actual_digest!r}"
+        )
+
+    return set(rule_ids)
+
+
+def validate_qrr_exact_membership(path: Path) -> None:
+    authority = validate_qrr_membership_authority()
+
+    data = load_json(path)
+
+    if not isinstance(data, dict):
+        raise ValidationError("QRR root must be an object")
+
+    entries = data.get("entries")
+
+    if not isinstance(entries, list):
+        raise ValidationError("QRR entries must be an array")
+
+    identities: list[str] = []
+
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise ValidationError(
+                f"QRR entry {index} must be an object"
+            )
+
+        rule_id = entry.get("rule_id")
+
+        if not isinstance(rule_id, str):
+            raise ValidationError(
+                f"QRR entry {index} has no string rule_id"
+            )
+
+        identities.append(rule_id)
+
+    if len(identities) != len(set(identities)):
+        raise ValidationError(
+            "QRR exact membership contains duplicate identities"
+        )
+
+    actual = set(identities)
+
+    missing = sorted(authority - actual)
+    extra = sorted(actual - authority)
+
+    if missing or extra:
+        parts: list[str] = []
+
+        if missing:
+            parts.append(
+                "missing=" + ",".join(missing)
+            )
+
+        if extra:
+            parts.append(
+                "extra=" + ",".join(extra)
+            )
+
+        raise ValidationError(
+            "QRR exact membership mismatch: "
+            + " ".join(parts)
+        )
+
+
 def validate_qrr_structure(path: Path) -> None:
+    validate_qrr_membership_authority()
+
     data = load_json(path)
 
     if not isinstance(data, dict):
@@ -677,6 +811,8 @@ def cmd_validate_foundation(_: argparse.Namespace) -> int:
     validate_vocabulary()
     validate_m0()
 
+    membership = validate_qrr_membership_authority()
+
     schema = load_json(QRR_SCHEMA_PATH)
 
     if schema.get("entry_required_fields") != QRR_REQUIRED_FIELDS:
@@ -695,6 +831,11 @@ def cmd_validate_foundation(_: argparse.Namespace) -> int:
         "verification_class_count="
         f"{len(EXPECTED_VERIFICATION_CLASSES)}"
     )
+    print(f"qrr_authoritative_rule_count={len(membership)}")
+    print(
+        "qrr_membership_digest="
+        f"{canonical_membership_digest(sorted(membership))}"
+    )
     print("m0_closure_status=BLOCKED")
     return 0
 
@@ -703,6 +844,16 @@ def cmd_validate_qrr(args: argparse.Namespace) -> int:
     validate_vocabulary()
     validate_qrr_structure(Path(args.path))
     print("qrr_structural_validation_status=0")
+    return 0
+
+
+def cmd_validate_qrr_membership(
+    args: argparse.Namespace
+) -> int:
+    validate_qrr_structure(Path(args.path))
+    validate_qrr_exact_membership(Path(args.path))
+
+    print("qrr_exact_membership_status=0")
     return 0
 
 
@@ -730,6 +881,10 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("validate-qrr")
     p.add_argument("path")
     p.set_defaults(func=cmd_validate_qrr)
+
+    p = sub.add_parser("validate-qrr-membership")
+    p.add_argument("path")
+    p.set_defaults(func=cmd_validate_qrr_membership)
 
     p = sub.add_parser("validate-manifest")
     p.add_argument("path")

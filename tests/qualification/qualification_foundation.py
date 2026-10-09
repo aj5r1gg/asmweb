@@ -219,4 +219,131 @@ with tempfile.TemporaryDirectory() as td:
     run("validate-qrr", str(path), expect=1)
 
 
+
+# ---------------------------------------------------------------------------
+# CASE 7 — exact authoritative QRR identity set passes.
+# ---------------------------------------------------------------------------
+
+membership = json.loads(
+    (
+        ROOT
+        / "qualification/qrr/qrr-membership-v0.3.json"
+    ).read_text()
+)
+
+authoritative_ids = membership["rule_ids"]
+
+
+with tempfile.TemporaryDirectory() as td:
+    path = Path(td) / "qrr.json"
+
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "entries": [
+                    qrr_entry(rule_id)
+                    for rule_id in authoritative_ids
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    run("validate-qrr-membership", str(path))
+
+
+# ---------------------------------------------------------------------------
+# CASE 8 — one missing normative identity fails exact membership.
+# ---------------------------------------------------------------------------
+
+with tempfile.TemporaryDirectory() as td:
+    path = Path(td) / "qrr.json"
+
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "entries": [
+                    qrr_entry(rule_id)
+                    for rule_id in authoritative_ids[:-1]
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    run(
+        "validate-qrr-membership",
+        str(path),
+        expect=1,
+    )
+
+
+# ---------------------------------------------------------------------------
+# CASE 9 — one extra normative-looking identity fails exact membership.
+# ---------------------------------------------------------------------------
+
+with tempfile.TemporaryDirectory() as td:
+    path = Path(td) / "qrr.json"
+
+    entries = [
+        qrr_entry(rule_id)
+        for rule_id in authoritative_ids
+    ]
+
+    entries.append(
+        qrr_entry("QUA-GOV-999")
+    )
+
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "entries": entries
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    run(
+        "validate-qrr-membership",
+        str(path),
+        expect=1,
+    )
+
+
+# ---------------------------------------------------------------------------
+# CASE 10 — duplicate normative identity fails exact membership.
+# ---------------------------------------------------------------------------
+
+with tempfile.TemporaryDirectory() as td:
+    path = Path(td) / "qrr.json"
+
+    entries = [
+        qrr_entry(rule_id)
+        for rule_id in authoritative_ids
+    ]
+
+    entries.append(
+        qrr_entry(authoritative_ids[0])
+    )
+
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "entries": entries
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    run(
+        "validate-qrr-membership",
+        str(path),
+        expect=1,
+    )
+
+
 print("qualification_foundation_selftest_status=0")
