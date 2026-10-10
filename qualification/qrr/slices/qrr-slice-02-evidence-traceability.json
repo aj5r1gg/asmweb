@@ -1,0 +1,1431 @@
+{
+  "schema_version": 1,
+  "authoring_status": "DRAFT_PARTIAL",
+  "authority": "AsmWeb — Qualification & Verification Specification v0.3",
+  "slice_id": "QRR-SLICE-02-EVIDENCE-TRACEABILITY",
+  "source_membership_authority": "qualification/qrr/qrr-membership-v0.3.json",
+  "source_text_authority": "qualification/qrr/qrr-source-v0.3.json",
+  "entry_count": 39,
+  "included_namespaces": [
+    "IDN",
+    "EVD",
+    "TRC"
+  ],
+  "verification_method_class_map": {
+    "ARTIFACT_IDENTITY_VALIDATION": [
+      "TEST",
+      "INSPECTION"
+    ],
+    "QUALIFICATION_MANIFEST_VALIDATION": [
+      "TEST",
+      "INSPECTION"
+    ],
+    "EVIDENCE_INTEGRITY_VALIDATION": [
+      "TEST",
+      "INSPECTION"
+    ],
+    "EVIDENCE_RETENTION_INSPECTION": [
+      "INSPECTION"
+    ],
+    "TRACEABILITY_VALIDATION": [
+      "TEST",
+      "INSPECTION"
+    ],
+    "EVIDENCE_SUFFICIENCY_INSPECTION": [
+      "INSPECTION"
+    ],
+    "CHANGE_IMPACT_INSPECTION": [
+      "INSPECTION"
+    ],
+    "RELEASE_EVIDENCE_INSPECTION": [
+      "INSPECTION"
+    ],
+    "SECRET_HANDLING_INSPECTION": [
+      "INSPECTION"
+    ]
+  },
+  "entries": [
+    {
+      "rule_id": "QUA-IDN-001",
+      "title": "Unknown binaries cannot support release claims",
+      "status": "ACTIVE",
+      "normative_statement": "Unknown binaries SHALL NOT support formal release claims.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "ARTIFACT_IDENTITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-IDN-002",
+      "title": "Evidence remains attributable to tested artifact",
+      "status": "ACTIVE",
+      "normative_statement": "Evidence SHALL remain attributable to the binary and configuration actually tested.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "ARTIFACT_IDENTITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-IDN-003",
+      "title": "Binary replacement requires new qualification identity",
+      "status": "ACTIVE",
+      "normative_statement": "Replacing the tested binary SHALL require a new qualification identity unless equivalence is itself formally established.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "ARTIFACT_IDENTITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-IDN-004",
+      "title": "Instrumented and production binaries remain distinct",
+      "status": "ACTIVE",
+      "normative_statement": "Instrumented and production binaries SHALL not be silently treated as identical evidence subjects when instrumentation changes relevant behaviour or limits.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "ARTIFACT_IDENTITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-IDN-005",
+      "title": "Evidence identifies selected implementation path",
+      "status": "ACTIVE",
+      "normative_statement": "Evidence dependent upon a selectable implementation path SHALL identify the path exercised.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "ARTIFACT_IDENTITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-001",
+      "title": "Manifest traces requirement-level results",
+      "status": "ACTIVE",
+      "normative_statement": "Requirement-level results SHALL be traceable from the Qualification Manifest.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "QUALIFICATION_MANIFEST_VALIDATION",
+        "TRACEABILITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-002",
+      "title": "Known failures remain visible",
+      "status": "ACTIVE",
+      "normative_statement": "Known failures SHALL NOT be silently omitted.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "QUALIFICATION_MANIFEST_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-003",
+      "title": "Unsupported capabilities remain explicit",
+      "status": "ACTIVE",
+      "normative_statement": "Unsupported capabilities SHALL be represented explicitly.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "QUALIFICATION_MANIFEST_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-004",
+      "title": "Evidence artifacts carry integrity identity",
+      "status": "ACTIVE",
+      "normative_statement": "Formal evidence artifacts SHALL have integrity identities or cryptographic digests where practical.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "EVIDENCE_INTEGRITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-005",
+      "title": "Evidence manifest identifies run artifacts",
+      "status": "ACTIVE",
+      "normative_statement": "An evidence manifest SHALL identify artifacts belonging to the qualification run.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "EVIDENCE_INTEGRITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-006",
+      "title": "Artifact substitution is detectable",
+      "status": "ACTIVE",
+      "normative_statement": "Artifact substitution SHALL be detectable where release claims depend upon artifact identity.",
+      "verification_classes": [
+        "TEST"
+      ],
+      "verification_methods": [
+        "EVIDENCE_INTEGRITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-007",
+      "title": "Historical evidence retention is tamper-evident",
+      "status": "ACTIVE",
+      "normative_statement": "Historical qualification results SHOULD be retained immutably, append-only or otherwise tamper-evidently where practical.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "EVIDENCE_RETENTION_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-008",
+      "title": "Reruns create new result identities",
+      "status": "ACTIVE",
+      "normative_statement": "Re-running qualification SHALL create a new result identity rather than silently rewriting historical evidence.",
+      "verification_classes": [
+        "TEST"
+      ],
+      "verification_methods": [
+        "EVIDENCE_INTEGRITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-009",
+      "title": "Evidence retention obeys secret handling",
+      "status": "ACTIVE",
+      "normative_statement": "Evidence retention SHALL obey secret-handling requirements.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "SECRET_HANDLING_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-010",
+      "title": "Missing evidence remains visibly missing",
+      "status": "ACTIVE",
+      "normative_statement": "Missing evidence SHALL remain visibly missing rather than be silently reconstructed from unrelated later runs.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "QUALIFICATION_MANIFEST_VALIDATION",
+        "EVIDENCE_SUFFICIENCY_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-017",
+      "title": "Production qualification addresses core-dump policy",
+      "status": "ACTIVE",
+      "normative_statement": "Production qualification SHALL contain evidence that core-dump handling for secret-bearing processes has been explicitly considered under the governing security/operations policy.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "SECRET_HANDLING_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-001",
+      "title": "Orphan mandatory requirements are detectable",
+      "status": "ACTIVE",
+      "normative_statement": "Orphan mandatory requirements SHALL be detectable.",
+      "verification_classes": [
+        "TEST"
+      ],
+      "verification_methods": [
+        "TRACEABILITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-002",
+      "title": "Duplicate or unknown identities are detectable",
+      "status": "ACTIVE",
+      "normative_statement": "Duplicate or unknown requirement/rule identities SHALL be detectable.",
+      "verification_classes": [
+        "TEST"
+      ],
+      "verification_methods": [
+        "TRACEABILITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-003",
+      "title": "Dangling references are detectable",
+      "status": "ACTIVE",
+      "normative_statement": "Dangling implementation, test, evidence or claim references SHALL be detectable.",
+      "verification_classes": [
+        "TEST"
+      ],
+      "verification_methods": [
+        "TRACEABILITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-004",
+      "title": "QUALIFIED mandatory items require evidence",
+      "status": "ACTIVE",
+      "normative_statement": "A mandatory item marked QUALIFIED SHALL have applicable evidence.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "TRACEABILITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-005",
+      "title": "Release claims reference governing requirements",
+      "status": "ACTIVE",
+      "normative_statement": "A release claim SHALL reference at least one governing requirement.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "TRACEABILITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-006",
+      "title": "Formal tests identify governing rules",
+      "status": "ACTIVE",
+      "normative_statement": "Formal tests SHALL identify applicable requirements/rules they verify.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "TRACEABILITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-007",
+      "title": "Registry failure blocks release qualification",
+      "status": "ACTIVE",
+      "normative_statement": "Registry-validation failure SHALL prevent formal release qualification.",
+      "verification_classes": [
+        "TEST"
+      ],
+      "verification_methods": [
+        "TRACEABILITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-015",
+      "title": "Unresolved mandatory prerequisites are detectable",
+      "status": "ACTIVE",
+      "normative_statement": "Unresolved mandatory qualification prerequisites SHALL be detectable.",
+      "verification_classes": [
+        "TEST"
+      ],
+      "verification_methods": [
+        "TRACEABILITY_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-011",
+      "title": "Superseded implementation evidence does not transfer automatically",
+      "status": "ACTIVE",
+      "normative_statement": "Evidence from a superseded implementation SHALL NOT automatically qualify its replacement.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-012",
+      "title": "Evidence reuse requires applicability analysis",
+      "status": "ACTIVE",
+      "normative_statement": "Evidence MAY be reused only when qualification-impact analysis establishes continuing applicability.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-013",
+      "title": "Irrelevant stronger tests cannot substitute",
+      "status": "ACTIVE",
+      "normative_statement": "A stronger-looking but irrelevant test SHALL NOT substitute for the verification class required by the claim.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "EVIDENCE_SUFFICIENCY_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-014",
+      "title": "Bundle omission cannot erase adverse results",
+      "status": "ACTIVE",
+      "normative_statement": "Bundle omission SHALL not erase an underlying failure or unsupported capability.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-015",
+      "title": "Evidence bundles are automated and deterministic where practical",
+      "status": "ACTIVE",
+      "normative_statement": "Evidence-bundle generation SHOULD be automated and deterministic where practical.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "EVIDENCE_INTEGRITY_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-016",
+      "title": "Bundle contents retain qualification identity",
+      "status": "ACTIVE",
+      "normative_statement": "Bundle contents SHALL remain attributable to the same qualification identity or explicitly identify cross-run evidence dependencies.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "EVIDENCE_INTEGRITY_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-EVD-018",
+      "title": "Secret-bearing diagnostics require controlled distribution",
+      "status": "ACTIVE",
+      "normative_statement": "Secret-bearing diagnostic artifacts SHALL not be included in broadly distributed evidence bundles without explicit controlled handling.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "SECRET_HANDLING_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-008",
+      "title": "Prior PASS does not automatically survive material change",
+      "status": "ACTIVE",
+      "normative_statement": "Prior PASS evidence SHALL not automatically survive a material implementation change.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-009",
+      "title": "Stronger tests do not rewrite historical evidence",
+      "status": "ACTIVE",
+      "normative_statement": "Strengthening a test does not retroactively strengthen historical evidence.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-010",
+      "title": "Limit changes trigger evidence impact analysis",
+      "status": "ACTIVE",
+      "normative_statement": "Changing a governing limit SHALL trigger impact analysis for evidence depending upon that limit.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-011",
+      "title": "Capability changes trigger qualification impact analysis",
+      "status": "ACTIVE",
+      "normative_statement": "Changing a supported capability SHALL trigger impact analysis for relevant conformance, interoperability, browser and release claims.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-012",
+      "title": "Shared-component changes trigger regression impact analysis",
+      "status": "ACTIVE",
+      "normative_statement": "Changing a shared implementation component SHALL trigger regression-impact analysis for all qualified capabilities depending upon it.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-013",
+      "title": "Test removal requires traceable reason",
+      "status": "ACTIVE",
+      "normative_statement": "Removing a test from the active regression set SHALL require an explicit traceable reason.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-014",
+      "title": "Later work cannot silently drop regression coverage",
+      "status": "ACTIVE",
+      "normative_statement": "A previously qualified capability SHALL NOT silently lose regression coverage because a later capability becomes the current development focus.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-TRC-016",
+      "title": "Prerequisite changes trigger qualification impact analysis",
+      "status": "ACTIVE",
+      "normative_statement": "A change to a qualification prerequisite or capability classification SHALL trigger impact analysis for qualification evidence dependent upon that prerequisite.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "CHANGE_IMPACT_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M1",
+      "qualification_milestone": "M1",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-02 authored metadata. Empty authority/reference arrays remain unresolved unless populated by a later validated cross-registry linkage pass. This partial slice is not the authoritative complete QRR."
+    }
+  ]
+}

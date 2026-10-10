@@ -259,11 +259,29 @@ def validate(path: Path) -> None:
                     f"{rule_id}: {field} must be a string"
                 )
 
+    namespaces = data.get("included_namespaces")
+
+    if (
+        not isinstance(namespaces, list)
+        or not namespaces
+        or not all(
+            isinstance(namespace, str) and namespace
+            for namespace in namespaces
+        )
+    ):
+        raise SliceValidationError(
+            "included_namespaces must be a non-empty string array"
+        )
+
+    if len(namespaces) != len(set(namespaces)):
+        raise SliceValidationError(
+            "included_namespaces contains duplicates"
+        )
+
     expected = {
         rule_id
         for rule_id in source_rules
-        if rule_id.split("-")[1]
-        in {"GOV", "REG", "CLS", "PLN", "STS"}
+        if rule_id.split("-")[1] in set(namespaces)
     }
 
     if seen != expected:
@@ -283,12 +301,14 @@ def validate(path: Path) -> None:
             )
 
         raise SliceValidationError(
-            "Slice-01 membership mismatch"
+            "slice membership does not match declared namespaces"
         )
 
-    if len(seen) != 46:
+    expected_count = data.get("entry_count")
+
+    if len(seen) != expected_count:
         raise SliceValidationError(
-            f"Slice-01 expected 46 rules, got {len(seen)}"
+            f"slice expected {expected_count} rules, got {len(seen)}"
         )
 
 
@@ -317,8 +337,11 @@ def main() -> int:
         )
         return 1
 
+    data = load(Path(args.path))
+
     print("qrr_slice_validation_status=0")
-    print("qrr_slice_rule_count=46")
+    print(f"qrr_slice_id={data['slice_id']}")
+    print(f"qrr_slice_rule_count={data['entry_count']}")
 
     return 0
 

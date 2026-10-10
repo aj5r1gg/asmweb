@@ -11,9 +11,15 @@ ROOT = Path(__file__).resolve().parents[2]
 
 TOOL = ROOT / "qualification/tools/qrr_slice.py"
 
-CANONICAL = (
+SLICE_01 = (
     ROOT
     / "qualification/qrr/slices/qrr-slice-01-governance.json"
+)
+
+SLICE_02 = (
+    ROOT
+    / "qualification/qrr/slices/"
+    "qrr-slice-02-evidence-traceability.json"
 )
 
 
@@ -46,15 +52,19 @@ def run(
 
 
 # CASE 1 — canonical Slice-01 passes.
-run(CANONICAL, 0)
+run(SLICE_01, 0)
+
+
+# CASE 2 — canonical Slice-02 passes.
+run(SLICE_02, 0)
 
 
 canonical = json.loads(
-    CANONICAL.read_text()
+    SLICE_01.read_text()
 )
 
 
-# CASE 2 — missing entry fails exact slice membership.
+# CASE 3 — missing entry fails exact slice membership.
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -72,7 +82,7 @@ with tempfile.TemporaryDirectory() as td:
     run(path, 1)
 
 
-# CASE 3 — altered normative statement fails source authority.
+# CASE 4 — altered normative statement fails source authority.
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -89,7 +99,7 @@ with tempfile.TemporaryDirectory() as td:
     run(path, 1)
 
 
-# CASE 4 — unknown verification method fails.
+# CASE 5 — unknown verification method fails.
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -108,7 +118,7 @@ with tempfile.TemporaryDirectory() as td:
     run(path, 1)
 
 
-# CASE 5 — class not supported by method mapping fails.
+# CASE 6 — class not supported by method mapping fails.
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -127,7 +137,7 @@ with tempfile.TemporaryDirectory() as td:
     run(path, 1)
 
 
-# CASE 6 — empty verification mechanism fails.
+# CASE 7 — empty verification mechanism fails.
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -145,7 +155,7 @@ with tempfile.TemporaryDirectory() as td:
 
 
 
-# CASE 7 — malformed JSON is a controlled validation failure.
+# CASE 8 — malformed JSON is a controlled validation failure.
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -155,6 +165,40 @@ with tempfile.TemporaryDirectory() as td:
     )
 
     run(path, 1)
+
+
+
+# CASE 9 — canonical slices do not overlap and aggregate to 85 authored rules.
+slice_01_data = json.loads(
+    SLICE_01.read_text()
+)
+
+slice_02_data = json.loads(
+    SLICE_02.read_text()
+)
+
+slice_01_ids = {
+    entry["rule_id"]
+    for entry in slice_01_data["entries"]
+}
+
+slice_02_ids = {
+    entry["rule_id"]
+    for entry in slice_02_data["entries"]
+}
+
+overlap = slice_01_ids & slice_02_ids
+
+if overlap:
+    raise SystemExit(
+        "CASE 9 failed: slice overlap: "
+        + ",".join(sorted(overlap))
+    )
+
+if len(slice_01_ids | slice_02_ids) != 85:
+    raise SystemExit(
+        "CASE 9 failed: expected 85 total authored rules"
+    )
 
 
 print("qrr_slice_selftest_status=0")
