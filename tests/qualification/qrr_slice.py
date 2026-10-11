@@ -9,17 +9,24 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
 
-TOOL = ROOT / "qualification/tools/qrr_slice.py"
-
-SLICE_01 = (
+TOOL = (
     ROOT
-    / "qualification/qrr/slices/qrr-slice-01-governance.json"
+    / "qualification/tools/qrr_slice.py"
 )
 
-SLICE_02 = (
+SLICE_DIR = (
     ROOT
-    / "qualification/qrr/slices/"
-    "qrr-slice-02-evidence-traceability.json"
+    / "qualification/qrr/slices"
+)
+
+SOURCE = (
+    ROOT
+    / "qualification/qrr/qrr-source-v0.3.json"
+)
+
+SLICE_01 = (
+    SLICE_DIR
+    / "qrr-slice-01-governance.json"
 )
 
 
@@ -42,6 +49,7 @@ def run(
 
     if result.returncode != expected:
         print("unexpected qrr slice result")
+        print(f"path={path}")
         print(f"expected={expected}")
         print(f"actual={result.returncode}")
         print("stdout:")
@@ -51,20 +59,84 @@ def run(
         raise SystemExit(1)
 
 
-# CASE 1 — canonical Slice-01 passes.
-run(SLICE_01, 0)
+###############################################################################
+# CASE 1 — discover all canonical authored slices.
+###############################################################################
+
+canonical_slices = sorted(
+    SLICE_DIR.glob("qrr-slice-*.json")
+)
+
+if not canonical_slices:
+    raise SystemExit(
+        "CASE 1 failed: no canonical QRR slices found"
+    )
+
+if SLICE_01 not in canonical_slices:
+    raise SystemExit(
+        "CASE 1 failed: Slice 01 missing"
+    )
 
 
-# CASE 2 — canonical Slice-02 passes.
-run(SLICE_02, 0)
+###############################################################################
+# CASE 2 — every canonical slice validates independently.
+###############################################################################
 
+for path in canonical_slices:
+    run(path, 0)
+
+
+###############################################################################
+# CASE 3 — canonical slices do not overlap and contain only frozen QRR IDs.
+###############################################################################
+
+source = json.loads(
+    SOURCE.read_text(encoding="utf-8")
+)
+
+source_ids = {
+    entry["rule_id"]
+    for entry in source["entries"]
+}
+
+authored_ids: set[str] = set()
+
+for path in canonical_slices:
+    data = json.loads(
+        path.read_text(encoding="utf-8")
+    )
+
+    for entry in data["entries"]:
+        rule_id = entry["rule_id"]
+
+        if rule_id in authored_ids:
+            raise SystemExit(
+                "CASE 3 failed: duplicate rule across slices: "
+                f"{rule_id}"
+            )
+
+        if rule_id not in source_ids:
+            raise SystemExit(
+                "CASE 3 failed: unknown authored rule: "
+                f"{rule_id}"
+            )
+
+        authored_ids.add(rule_id)
+
+
+###############################################################################
+# Mutation fixture.
+###############################################################################
 
 canonical = json.loads(
-    SLICE_01.read_text()
+    SLICE_01.read_text(encoding="utf-8")
 )
 
 
-# CASE 3 — missing entry fails exact slice membership.
+###############################################################################
+# CASE 4 — missing entry fails exact declared-namespace membership.
+###############################################################################
+
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -76,13 +148,17 @@ with tempfile.TemporaryDirectory() as td:
     data["entry_count"] -= 1
 
     path.write_text(
-        json.dumps(data)
+        json.dumps(data),
+        encoding="utf-8",
     )
 
     run(path, 1)
 
 
-# CASE 4 — altered normative statement fails source authority.
+###############################################################################
+# CASE 5 — altered normative statement fails frozen source authority.
+###############################################################################
+
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -90,16 +166,22 @@ with tempfile.TemporaryDirectory() as td:
         json.dumps(canonical)
     )
 
-    data["entries"][0]["normative_statement"] += " altered"
+    data["entries"][0][
+        "normative_statement"
+    ] += " altered"
 
     path.write_text(
-        json.dumps(data)
+        json.dumps(data),
+        encoding="utf-8",
     )
 
     run(path, 1)
 
 
-# CASE 5 — unknown verification method fails.
+###############################################################################
+# CASE 6 — unknown verification method fails.
+###############################################################################
+
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -107,18 +189,24 @@ with tempfile.TemporaryDirectory() as td:
         json.dumps(canonical)
     )
 
-    data["entries"][0]["verification_methods"] = [
+    data["entries"][0][
+        "verification_methods"
+    ] = [
         "INVENTED_METHOD"
     ]
 
     path.write_text(
-        json.dumps(data)
+        json.dumps(data),
+        encoding="utf-8",
     )
 
     run(path, 1)
 
 
-# CASE 6 — class not supported by method mapping fails.
+###############################################################################
+# CASE 7 — class not supported by method mapping fails.
+###############################################################################
+
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -126,18 +214,24 @@ with tempfile.TemporaryDirectory() as td:
         json.dumps(canonical)
     )
 
-    data["entries"][0]["verification_classes"] = [
+    data["entries"][0][
+        "verification_classes"
+    ] = [
         "FUZZ"
     ]
 
     path.write_text(
-        json.dumps(data)
+        json.dumps(data),
+        encoding="utf-8",
     )
 
     run(path, 1)
 
 
-# CASE 7 — empty verification mechanism fails.
+###############################################################################
+# CASE 8 — active rule without verification mechanism fails.
+###############################################################################
+
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -145,17 +239,22 @@ with tempfile.TemporaryDirectory() as td:
         json.dumps(canonical)
     )
 
-    data["entries"][0]["verification_methods"] = []
+    data["entries"][0][
+        "verification_methods"
+    ] = []
 
     path.write_text(
-        json.dumps(data)
+        json.dumps(data),
+        encoding="utf-8",
     )
 
     run(path, 1)
 
 
+###############################################################################
+# CASE 9 — malformed JSON is a controlled validation failure.
+###############################################################################
 
-# CASE 8 — malformed JSON is a controlled validation failure.
 with tempfile.TemporaryDirectory() as td:
     path = Path(td) / "slice.json"
 
@@ -167,38 +266,12 @@ with tempfile.TemporaryDirectory() as td:
     run(path, 1)
 
 
-
-# CASE 9 — canonical slices do not overlap and aggregate to 85 authored rules.
-slice_01_data = json.loads(
-    SLICE_01.read_text()
-)
-
-slice_02_data = json.loads(
-    SLICE_02.read_text()
-)
-
-slice_01_ids = {
-    entry["rule_id"]
-    for entry in slice_01_data["entries"]
-}
-
-slice_02_ids = {
-    entry["rule_id"]
-    for entry in slice_02_data["entries"]
-}
-
-overlap = slice_01_ids & slice_02_ids
-
-if overlap:
-    raise SystemExit(
-        "CASE 9 failed: slice overlap: "
-        + ",".join(sorted(overlap))
-    )
-
-if len(slice_01_ids | slice_02_ids) != 85:
-    raise SystemExit(
-        "CASE 9 failed: expected 85 total authored rules"
-    )
-
-
 print("qrr_slice_selftest_status=0")
+print(
+    f"qrr_slice_canonical_file_count="
+    f"{len(canonical_slices)}"
+)
+print(
+    f"qrr_slice_authored_rule_count="
+    f"{len(authored_ids)}"
+)
