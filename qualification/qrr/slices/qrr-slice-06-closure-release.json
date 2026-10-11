@@ -1,0 +1,1295 @@
+{
+  "schema_version": 1,
+  "authoring_status": "DRAFT_PARTIAL",
+  "authority": "AsmWeb — Qualification & Verification Specification v0.3",
+  "slice_id": "QRR-SLICE-06-CLOSURE-RELEASE",
+  "source_membership_authority": "qualification/qrr/qrr-membership-v0.3.json",
+  "source_text_authority": "qualification/qrr/qrr-source-v0.3.json",
+  "entry_count": 34,
+  "included_namespaces": [
+    "WVR",
+    "MIL",
+    "REL"
+  ],
+  "verification_method_class_map": {
+    "WAIVER_REGISTRY_VALIDATION": [
+      "TEST"
+    ],
+    "WAIVER_EVIDENCE_INSPECTION": [
+      "INSPECTION"
+    ],
+    "MILESTONE_AGGREGATION_VALIDATION": [
+      "TEST"
+    ],
+    "MILESTONE_EVIDENCE_INSPECTION": [
+      "INSPECTION"
+    ],
+    "RELEASE_AGGREGATION_VALIDATION": [
+      "TEST"
+    ],
+    "RELEASE_CLAIM_VALIDATION": [
+      "TEST"
+    ],
+    "RELEASE_EVIDENCE_INSPECTION": [
+      "INSPECTION"
+    ],
+    "COMPATIBILITY_EVIDENCE_INSPECTION": [
+      "INSPECTION"
+    ],
+    "PROVENANCE_EVIDENCE_INSPECTION": [
+      "INSPECTION"
+    ]
+  },
+  "entries": [
+    {
+      "rule_id": "QUA-WVR-001",
+      "title": "Waived failures SHALL remain visible",
+      "status": "ACTIVE",
+      "normative_statement": "Waived failures SHALL remain visible.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "WAIVER_REGISTRY_VALIDATION",
+        "WAIVER_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-WVR-002",
+      "title": "Expired waivers SHALL not satisfy qualification",
+      "status": "ACTIVE",
+      "normative_statement": "Expired waivers SHALL not satisfy qualification.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "WAIVER_REGISTRY_VALIDATION",
+        "WAIVER_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-WVR-003",
+      "title": "A waiver SHALL NOT silently weaken the governing requirement/rule",
+      "status": "ACTIVE",
+      "normative_statement": "A waiver SHALL NOT silently weaken the governing requirement/rule.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "WAIVER_REGISTRY_VALIDATION",
+        "WAIVER_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-WVR-004",
+      "title": "Mandatory release blockers SHALL not be waived unless the governing release policy explicitly permits such a waiver",
+      "status": "ACTIVE",
+      "normative_statement": "Mandatory release blockers SHALL not be waived unless the governing release policy explicitly permits such a waiver.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "WAIVER_REGISTRY_VALIDATION",
+        "WAIVER_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-WVR-005",
+      "title": "Waiver presence SHALL appear in the Qualification Manifest and release evidence",
+      "status": "ACTIVE",
+      "normative_statement": "Waiver presence SHALL appear in the Qualification Manifest and release evidence.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "WAIVER_REGISTRY_VALIDATION",
+        "WAIVER_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-001",
+      "title": "A mandatory FAIL SHALL remain a failure unless an explicitly permitted valid waiver governs release treatment",
+      "status": "ACTIVE",
+      "normative_statement": "A mandatory FAIL SHALL remain a failure unless an explicitly permitted valid waiver governs release treatment.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_AGGREGATION_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-002",
+      "title": "Mandatory NOT_RUN SHALL not aggregate to PASS",
+      "status": "ACTIVE",
+      "normative_statement": "Mandatory NOT_RUN SHALL not aggregate to PASS.",
+      "verification_classes": [
+        "TEST"
+      ],
+      "verification_methods": [
+        "RELEASE_AGGREGATION_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-003",
+      "title": "Mandatory INCONCLUSIVE SHALL not aggregate to PASS",
+      "status": "ACTIVE",
+      "normative_statement": "Mandatory INCONCLUSIVE SHALL not aggregate to PASS.",
+      "verification_classes": [
+        "TEST"
+      ],
+      "verification_methods": [
+        "RELEASE_AGGREGATION_VALIDATION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-004",
+      "title": "EXPECTED_REJECTION SHALL count only toward the negative/adversarial claim it was designed to demonstrate",
+      "status": "ACTIVE",
+      "normative_statement": "EXPECTED_REJECTION SHALL count only toward the negative/adversarial claim it was designed to demonstrate.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_AGGREGATION_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-005",
+      "title": "Unsupported optional capability SHALL not fail a release when the governing capability authority explicitly declares it unsupported and no governing requirement requires it",
+      "status": "ACTIVE",
+      "normative_statement": "Unsupported optional capability SHALL not fail a release when the governing capability authority explicitly declares it unsupported and no governing requirement requires it.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_AGGREGATION_VALIDATION",
+        "COMPATIBILITY_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-006",
+      "title": "Unsupported required capability SHALL prevent qualification of the corresponding release claim",
+      "status": "ACTIVE",
+      "normative_statement": "Unsupported required capability SHALL prevent qualification of the corresponding release claim.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_AGGREGATION_VALIDATION",
+        "COMPATIBILITY_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-001",
+      "title": "A milestone SHALL NOT close formally until every requirement whose first mandatory qualification point is that milestone has a valid qualification disposition",
+      "status": "ACTIVE",
+      "normative_statement": "A milestone SHALL NOT close formally until every requirement whose first mandatory qualification point is that milestone has a valid qualification disposition.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-002",
+      "title": "Later milestone qualification SHALL inherit applicable regression obligations from previously qualified capability",
+      "status": "ACTIVE",
+      "normative_statement": "Later milestone qualification SHALL inherit applicable regression obligations from previously qualified capability.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-003",
+      "title": "A milestone SHALL NOT formally close while an applicable mandatory requirement remains unexplained FAILED or BLOCKED",
+      "status": "ACTIVE",
+      "normative_statement": "A milestone SHALL NOT formally close while an applicable mandatory requirement remains unexplained FAILED or BLOCKED.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-004",
+      "title": "A deferred or not-yet-applicable requirement SHALL identify why it does not block the current milestone and when qualification becomes mandatory",
+      "status": "ACTIVE",
+      "normative_statement": "A deferred or not-yet-applicable requirement SHALL identify why it does not block the current milestone and when qualification becomes mandatory.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-005",
+      "title": "Milestone qualification SHALL preserve visible waivers and known failures",
+      "status": "ACTIVE",
+      "normative_statement": "Milestone qualification SHALL preserve visible waivers and known failures.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-006",
+      "title": "Milestone closure evidence SHALL be attributable to the implementation state that actually reached the milestone",
+      "status": "ACTIVE",
+      "normative_statement": "Milestone closure evidence SHALL be attributable to the implementation state that actually reached the milestone.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-008",
+      "title": "A milestone SHALL NOT qualify a capability while a governing prerequisite classification required before that milestone remains unresolved",
+      "status": "ACTIVE",
+      "normative_statement": "A milestone SHALL NOT qualify a capability while a governing prerequisite classification required before that milestone remains unresolved.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-007",
+      "title": "Marketing or release language SHALL NOT state a stronger technical claim than the evidence supports",
+      "status": "ACTIVE",
+      "normative_statement": "Marketing or release language SHALL NOT state a stronger technical claim than the evidence supports.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_CLAIM_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-008",
+      "title": "A claim such as “supports HTTP/3” SHALL require applicable conformance/interoperability evidence rather than merely successful parsing of an H3 request",
+      "status": "ACTIVE",
+      "normative_statement": "A claim such as “supports HTTP/3” SHALL require applicable conformance/interoperability evidence rather than merely successful parsing of an H3 request.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_CLAIM_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-009",
+      "title": "Compatibility claims SHALL identify material limitations",
+      "status": "ACTIVE",
+      "normative_statement": "Compatibility claims SHALL identify material limitations.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_CLAIM_VALIDATION",
+        "COMPATIBILITY_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-010",
+      "title": "Release claims SHALL remain attributable to the exact release artifact",
+      "status": "ACTIVE",
+      "normative_statement": "Release claims SHALL remain attributable to the exact release artifact.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_CLAIM_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-011",
+      "title": "Substantive technical release claims SHALL have stable RCR identity",
+      "status": "ACTIVE",
+      "normative_statement": "Substantive technical release claims SHALL have stable RCR identity.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_CLAIM_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-012",
+      "title": "A claim marked qualified SHALL reference applicable requirements and qualification evidence",
+      "status": "ACTIVE",
+      "normative_statement": "A claim marked qualified SHALL reference applicable requirements and qualification evidence.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_CLAIM_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-013",
+      "title": "Public compatibility claims SHALL NOT exceed the status demonstrated by the governing Compatibility Matrix and qualification evidence",
+      "status": "ACTIVE",
+      "normative_statement": "Public compatibility claims SHALL NOT exceed the status demonstrated by the governing Compatibility Matrix and qualification evidence.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_CLAIM_VALIDATION",
+        "COMPATIBILITY_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-014",
+      "title": "Performance claims SHALL reference applicable benchmark evidence",
+      "status": "ACTIVE",
+      "normative_statement": "Performance claims SHALL reference applicable benchmark evidence.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_CLAIM_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-015",
+      "title": "Security claims SHALL reference applicable security requirements/rules and qualification evidence",
+      "status": "ACTIVE",
+      "normative_statement": "Security claims SHALL reference applicable security requirements/rules and qualification evidence.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_CLAIM_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-016",
+      "title": "Adding capability SHALL inherit applicable regression obligations from previously qualified capability",
+      "status": "ACTIVE",
+      "normative_statement": "Adding capability SHALL inherit applicable regression obligations from previously qualified capability.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_AGGREGATION_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-017",
+      "title": "Previously qualified behaviour SHALL remain in regression scope unless controlled impact analysis establishes that it is superseded, removed or unaffected",
+      "status": "ACTIVE",
+      "normative_statement": "Previously qualified behaviour SHALL remain in regression scope unless controlled impact analysis establishes that it is superseded, removed or unaffected.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "RELEASE_AGGREGATION_VALIDATION",
+        "RELEASE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-018",
+      "title": "Release qualification SHALL consume applicable build/provenance evidence required by the Build, Toolchain & Reproducibility Specification",
+      "status": "ACTIVE",
+      "normative_statement": "Release qualification SHALL consume applicable build/provenance evidence required by the Build, Toolchain & Reproducibility Specification.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "PROVENANCE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-REL-019",
+      "title": "Where a release provenance claim is made, qualification evidence SHALL identify or reference source revision, build-environment identity, dependency origin/version and binary identity to the extent required by the governing build specification",
+      "status": "ACTIVE",
+      "normative_statement": "Where a release provenance claim is made, qualification evidence SHALL identify or reference source revision, build-environment identity, dependency origin/version and binary identity to the extent required by the governing build specification.",
+      "verification_classes": [
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "PROVENANCE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M16",
+      "qualification_milestone": "M16",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-007",
+      "title": "M0 SHALL establish the representation needed to carry inherited regression obligations into later milestones",
+      "status": "ACTIVE",
+      "normative_statement": "M0 SHALL establish the representation needed to carry inherited regression obligations into later milestones.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-009",
+      "title": "M0 closure SHALL distinguish evidence that qualifies qualification infrastructure from evidence that qualifies the M0 implementation foundation itself",
+      "status": "ACTIVE",
+      "normative_statement": "M0 closure SHALL distinguish evidence that qualifies qualification infrastructure from evidence that qualifies the M0 implementation foundation itself.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    },
+    {
+      "rule_id": "QUA-MIL-010",
+      "title": "M0 SHALL NOT close solely because qualification machinery exists; applicable M0 foundation requirements SHALL also have valid qualification dispositions",
+      "status": "ACTIVE",
+      "normative_statement": "M0 SHALL NOT close solely because qualification machinery exists; applicable M0 foundation requirements SHALL also have valid qualification dispositions.",
+      "verification_classes": [
+        "TEST",
+        "INSPECTION"
+      ],
+      "verification_methods": [
+        "MILESTONE_AGGREGATION_VALIDATION",
+        "MILESTONE_EVIDENCE_INSPECTION"
+      ],
+      "applies_to_profiles": [],
+      "architecture_refs": [],
+      "requirement_refs": [],
+      "assembly_rule_refs": [],
+      "runtime_rule_refs": [],
+      "security_rule_refs": [],
+      "invariant_refs": [],
+      "limit_refs": [],
+      "protocol_rule_refs": [],
+      "procedure_refs": [],
+      "test_refs": [],
+      "tool_refs": [
+        "qualification/tools/qualification_foundation.py",
+        "qualification/tools/qrr_slice.py"
+      ],
+      "evidence_refs": [],
+      "first_required_milestone": "M0",
+      "qualification_milestone": "M0",
+      "prerequisite_refs": [],
+      "waiver_refs": [],
+      "supersedes": [],
+      "superseded_by": [],
+      "notes": "Slice-06 authored metadata. Title is deterministically derived from the frozen normative statement. Empty cross-registry reference arrays remain unresolved pending validated linkage. This partial slice is not yet the authoritative complete QRR."
+    }
+  ]
+}
