@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "register_id": "ASMWEB-M0-RUNTIME-READY-IR",
+  "register_version": "0.1",
+  "register_scope": "M0_READY_STATE",
+  "authoring_status": "IMPLEMENTATION_TRACE_DRAFT",
+  "normative_invariant_register_complete": false,
+  "m0_blocker_resolved": false,
+  "implementation_header": "include/asmweb/runtime_invariant.inc",
+  "implementation_source": "src/runtime/runtime_invariant.asm",
+  "qualification_source": "tests/qualification/runtime_invariant.asm",
+  "source_digests": {
+    "header_sha256": "f694b3a1b5c810a1e12bee1d5b81ea88cb9f04f10f631935d211b51497e7d916",
+    "implementation_sha256": "fd218c2607f03261cbc72e5a5fdf9fa8f77376168c6841564ac8c5f8baa5919f",
+    "qualification_sha256": "47035772cf96d746cc6bd0343d24cfccc6dcc67bbb08628605d6479b6948fa0f"
+  },
+  "entry_count": 11,
+  "entries": [
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-01",
+      "failure_class": "INPUT",
+      "failure_code": 1,
+      "description": "Mandatory input view and authority pointers",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_INPUT",
+      "qualification_case_numbers": [
+        2
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-02",
+      "failure_class": "PROCESS",
+      "failure_code": 2,
+      "description": "Process runtime structure validity",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_PROCESS",
+      "qualification_case_numbers": [
+        3
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-03",
+      "failure_class": "REGISTRY",
+      "failure_code": 3,
+      "description": "OLR/MOT/RCT registry consistency",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_REGISTRY",
+      "qualification_case_numbers": [
+        5
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-04",
+      "failure_class": "STARTUP_MEMORY",
+      "failure_code": 4,
+      "description": "Startup memory account validity",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_STARTUP_MEMORY",
+      "qualification_case_numbers": [
+        6
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-05",
+      "failure_class": "DEPENDENCY",
+      "failure_code": 5,
+      "description": "Capacity dependency graph validity",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_DEPENDENCY",
+      "qualification_case_numbers": [
+        7
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-06",
+      "failure_class": "STARTUP_STATE",
+      "failure_code": 6,
+      "description": "Page size and borrowed entropy pointer",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_STARTUP_STATE",
+      "qualification_case_numbers": [
+        8
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-07",
+      "failure_class": "ENTROPY",
+      "failure_code": 7,
+      "description": "Entropy bootstrap publication",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_ENTROPY",
+      "qualification_case_numbers": [
+        9
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-08",
+      "failure_class": "CPU",
+      "failure_code": 8,
+      "description": "CPU readiness and SSE2 baseline",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_CPU",
+      "qualification_case_numbers": [
+        10
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-09",
+      "failure_class": "TIME",
+      "failure_code": 9,
+      "description": "Normalized and checked monotonic time",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_TIME",
+      "qualification_case_numbers": [
+        11,
+        12
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-10",
+      "failure_class": "MEMORY_RECONCILIATION",
+      "failure_code": 10,
+      "description": "MOT capacity and startup memory agreement",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_MEMORY_RECONCILIATION",
+      "qualification_case_numbers": [
+        13,
+        14
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    },
+    {
+      "id": "ASMWEB-M0-RUNTIME-INV-11",
+      "failure_class": "READY_STATE",
+      "failure_code": 11,
+      "description": "M0 READY lifecycle and transition invariants",
+      "implementation_symbol": "asm_runtime_invariant_validate_ready",
+      "definition": "ASMWEB_RUNTIME_INVARIANT_FAIL_READY_STATE",
+      "qualification_case_numbers": [
+        4
+      ],
+      "qualification_source": "tests/qualification/runtime_invariant.asm",
+      "qualification_result": "NOT_RECORDED_IN_REGISTER"
+    }
+  ]
+}

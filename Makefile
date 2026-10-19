@@ -876,3 +876,9 @@ qualify-m0-ownership-dry-run:
 qualify-ownership-decision-contract:
 	python3 qualification/tools/ownership_decision_contract.py
 	python3 tests/qualification/ownership_decision_contract.py
+
+# M0 READY-state invariant implementation register
+.PHONY: qualify-runtime-invariant-register
+qualify-runtime-invariant-register:
+	python3 qualification/tools/runtime_invariant_register.py
+	python3 tests/qualification/runtime_invariant_register.py
