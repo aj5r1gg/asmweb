@@ -1,0 +1,45 @@
+name: AsmWeb CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  m0-engineering-regression:
+    name: M0 engineering regression (not formal qualification)
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    timeout-minutes: 20
+    steps:
+      - name: Install build and test dependencies
+        run: dnf install -y git make nasm binutils python3 findutils coreutils
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Record toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          uname -m
+          nasm -v
+          ld --version | head -n 1
+          make --version | head -n 1
+          python3 --version
+          git rev-parse HEAD
+      - name: Build production executable
+        run: make all
+      - name: Verify M0 engineering baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          make qualify-production-registry
+          make qualify-production-limit-manifest
+          make qualify-mot-ceiling-integration
+          make qualify-memory-ceiling
+          make qualify-runtime-invariant
+      - name: Verify clean incremental build
+        run: make all
