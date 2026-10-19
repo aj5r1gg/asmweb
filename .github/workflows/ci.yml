@@ -42,5 +42,7 @@ jobs:
           make qualify-mot-ceiling-integration
           make qualify-memory-ceiling
           make qualify-runtime-invariant
+      - name: Verify first HTTP response
+        run: python3 tests/integration/first_http.py
       - name: Verify clean incremental build
         run: make all
