@@ -11,7 +11,7 @@ permissions:
 jobs:
   m0-engineering-regression:
     name: M0 engineering regression (not formal qualification)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container:
       image: fedora:latest
     timeout-minutes: 20
