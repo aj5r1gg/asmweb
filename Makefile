@@ -805,6 +805,7 @@ qualify-elf-hardening: $(TARGET)
 .PHONY: qualify-qualification-foundation
 qualify-qualification-foundation:
 	python3 tests/qualification/qualification_foundation.py
+	python3 tests/qualification/verification_class_contract.py
 
 
 .PHONY: qualification-m0-foundation-evidence
