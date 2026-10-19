@@ -831,3 +831,12 @@ qualify-qrr-authority:
 qualify-requirements-authority:
 	python3 qualification/tools/requirements_authority.py
 	python3 tests/qualification/requirements_authority.py
+
+# ---------------------------------------------------------------------------
+# M0 qualification — draft operational Requirements Registry
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-requirements-registry
+qualify-requirements-registry:
+	python3 qualification/tools/requirements_registry.py
+	python3 tests/qualification/requirements_registry.py
