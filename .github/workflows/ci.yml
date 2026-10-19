@@ -43,6 +43,8 @@ jobs:
           make qualify-memory-ceiling
           make qualify-runtime-invariant
       - name: Verify first HTTP response
-        run: python3 tests/integration/first_http.py
+        run: |
+          python3 tests/integration/first_http.py
+          python3 tests/integration/socket_failures.py
       - name: Verify clean incremental build
         run: make all
