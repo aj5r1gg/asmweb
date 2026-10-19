@@ -882,3 +882,8 @@ qualify-ownership-decision-contract:
 qualify-runtime-invariant-register:
 	python3 qualification/tools/runtime_invariant_register.py
 	python3 tests/qualification/runtime_invariant_register.py
+
+# M0 bounded MOT-shaped limit calculation engine
+.PHONY: qualify-effective-limit-engine
+qualify-effective-limit-engine:
+	python3 tests/qualification/effective_limit_engine.py
