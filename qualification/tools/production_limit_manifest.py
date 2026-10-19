@@ -213,6 +213,85 @@ def nasm_resolve(mappings):
         for index in range(len(mappings))
     ]
 
+ASSEMBLY_SOURCES = (
+    "src/runtime/production_registry.asm",
+    "src/runtime/memory_ceiling.asm",
+    "src/runtime/registry.asm",
+)
+
+DERIVATION_TOOLS = (
+    "qualification/tools/effective_limit_engine.py",
+    "qualification/tools/production_limit_manifest.py",
+)
+
+
+def dependency_closure():
+    """Obtain actual NASM transitive include dependencies."""
+    found = {}
+
+    for name in ASSEMBLY_SOURCES:
+        command = [
+            "nasm", "-M", "-f", "elf64",
+            "-I", str(ROOT / "include") + "/",
+            str(ROOT / name),
+        ]
+
+        process = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        require(
+            process.returncode == 0,
+            "NASM dependency resolution: " + process.stderr[:500],
+        )
+
+        output = process.stdout.replace("\\\n", " ")
+        require(":" in output, "dependency output format")
+
+        dependencies = output.split(":", 1)[1].split()
+        require(dependencies, "empty dependency output")
+
+        current = set()
+
+        for item in dependencies:
+            require("\\" not in item, "escaped dependency unsupported")
+
+            path = Path(item)
+            path = (path if path.is_absolute() else ROOT / path).resolve()
+
+            require(path.is_relative_to(ROOT),
+                    "external assembly dependency")
+            require(path.is_file(), "missing assembly dependency")
+
+            relative = path.relative_to(ROOT).as_posix()
+            current.add(relative)
+            found[relative] = sha(path)
+
+        require(name in current, "source omitted from dependencies")
+
+    tracked = set(subprocess.check_output(
+        ["git", "ls-files"], cwd=ROOT, text=True
+    ).splitlines())
+
+    require(set(found).issubset(tracked),
+            "untracked assembly dependency")
+
+    return dict(sorted(found.items()))
+
+
+def closure_fingerprint(dependencies):
+    payload = {
+        "schema_version": 1,
+        "source_sha256": dependencies,
+    }
+    return hashlib.sha256(
+        engine.canonical(payload)[:-1]
+    ).hexdigest()
+
+
 def build():
     source = ASM.read_text(encoding="utf-8")
     mappings = inspect_production_source(source)
@@ -274,18 +353,12 @@ def build():
         "production capacity reconciliation",
     )
 
-    provenance = {
-        str(path.relative_to(ROOT)): sha(path)
-        for path in (
-            INC, ASM, RULES, REGISTRY, ENGINE_PATH,
-            ROOT / "include/asmweb/startup.inc",
-            ROOT / "include/asmweb/entropy.inc",
-            ROOT / "include/asmweb/cpu.inc",
-            ROOT / "include/asmweb/time.inc",
-            ROOT / "include/asmweb/process_runtime.inc",
-            ROOT / "include/asmweb/startup_memory.inc",
-        )
+    provenance = dependency_closure()
+    tool_provenance = {
+        name: sha(ROOT / name)
+        for name in DERIVATION_TOOLS
     }
+    fingerprint = closure_fingerprint(provenance)
 
     return {
         "schema_version": 1,
@@ -296,6 +369,8 @@ def build():
         "configuration_identity_published": False,
         "assembly_structure_resolution": "NASM",
         "source_sha256": provenance,
+        "assembly_dependency_closure_sha256": fingerprint,
+        "derivation_tool_sha256": tool_provenance,
         "production_mot_count": len(mot_entries),
         "production_rct_count": 0,
         "definitions": descriptive,
@@ -367,6 +442,10 @@ def main():
           str(document["M_direct_capacity_max"]))
     print("NASM_AUTHORITY_RESOLUTION=PASS")
     print("SOURCE_PROVENANCE=VERIFIED")
+    print("ASSEMBLY_DEPENDENCY_COUNT=" +
+          str(len(document["source_sha256"])))
+    print("ASSEMBLY_DEPENDENCY_CLOSURE_SHA256=" +
+          document["assembly_dependency_closure_sha256"])
     print("AUTHORITATIVE_ELM=False")
     print("PRODUCTION_LIMIT_MANIFEST=PASS")
     return 0

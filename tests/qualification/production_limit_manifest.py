@@ -51,6 +51,21 @@ mutations = [
          "src/runtime/production_registry.asm": "0" * 64
      })),
     ("invented_field", lambda d: d.update(invented=True)),
+    ("missing_dependency", lambda d:
+     d["source_sha256"].pop("include/asmweb/abi.inc")),
+    ("changed_dependency", lambda d:
+     d["source_sha256"].update({
+         "include/asmweb/arithmetic.inc": "0" * 64
+     })),
+    ("changed_closure_identity", lambda d:
+     d.update(assembly_dependency_closure_sha256="0" * 64)),
+    ("missing_derivation_tool", lambda d:
+     d["derivation_tool_sha256"].pop(
+         "qualification/tools/production_limit_manifest.py")),
+    ("changed_derivation_tool", lambda d:
+     d["derivation_tool_sha256"].update({
+         "qualification/tools/effective_limit_engine.py": "0" * 64
+     })),
 ]
 
 for name, change in mutations:
