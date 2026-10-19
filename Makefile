@@ -840,3 +840,12 @@ qualify-requirements-authority:
 qualify-requirements-registry:
 	python3 qualification/tools/requirements_registry.py
 	python3 tests/qualification/requirements_registry.py
+
+# ---------------------------------------------------------------------------
+# M0 qualification — draft Requirements milestone ownership register
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-requirements-ownership
+qualify-requirements-ownership:
+	python3 qualification/tools/requirements_ownership.py
+	python3 tests/qualification/requirements_ownership.py
