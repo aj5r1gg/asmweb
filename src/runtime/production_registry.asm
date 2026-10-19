@@ -34,6 +34,9 @@ asm_production_olr:
 asm_production_mot:
     resb ASMWEB_MOT_VALIDATION_ENTRY_size * ASMWEB_PRODUCTION_MOT_COUNT
 
+asm_production_rct:
+    resb ASMWEB_RCT_VALIDATION_ENTRY_size * ASMWEB_PRODUCTION_RCT_COUNT
+
 asm_production_registry_set:
     resb ASMWEB_REGISTRY_VALIDATION_SET_size
 
@@ -129,10 +132,9 @@ section .text
 ; Materialises and validates the canonical production M0 OLR/MOT/RCT
 ; projection.
 ;
-; The current production RCT is canonically empty because no production
-; externally retained resource-capacity object is yet instantiated by the
-; ordinary runtime path. Controlled mapping/RCT machinery exists, but it is
-; not falsely presented here as live production state before runtime wiring.
+; Production HTTP listener and accepted-descriptor capacity entries
+; are materialised as external resources. These records specify limits,
+; not live occupancy, and make no direct-memory claim.
 ;
 ; Result:
 ;
@@ -146,6 +148,22 @@ section .text
 ;
 ; Reinitialisation after successful publication is rejected.
 ; ===========================================================================
+
+; External socket-descriptor capacity, not kernel-buffer memory.
+%macro ASMWEB_PRODUCTION_SOCKET_RCT_ENTRY 3
+    lea r10, [rel asm_production_rct + ASMWEB_RCT_VALIDATION_ENTRY_size * %1]
+
+    mov qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.resource_id], %2
+    mov qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.status], \
+        ASMWEB_REGISTRY_STATUS_ACTIVE
+    mov qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.physical_capacity], %3
+    mov qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.configured_capacity], %3
+    mov qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.reserved_capacity], 0
+    mov qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.direct_bytes], 0
+    mov qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.mot_ref], 0
+    mov qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.direct_memory_justified], 0
+%endmacro
+
 
 asm_production_registry_init:
     cld
@@ -206,6 +224,12 @@ asm_production_registry_init:
         ASMWEB_PRODUCTION_REGISTRY_STORAGE_BYTES, \
         ASMWEB_PROD_LIMIT_REGISTRY_STORAGE
 
+    ASMWEB_PRODUCTION_OLR_ENTRY \
+        8, \
+        ASMWEB_PROD_OBJECT_HTTP_REQUEST_BUFFER, \
+        ASMWEB_M1_REQUEST_CAPACITY, \
+        ASMWEB_PROD_LIMIT_HTTP_REQUEST_BUFFER
+
 
     ; -----------------------------------------------------------------------
     ; MOT
@@ -259,6 +283,12 @@ asm_production_registry_init:
         ASMWEB_PROD_OBJECT_REGISTRY_STORAGE, \
         ASMWEB_PRODUCTION_REGISTRY_STORAGE_BYTES
 
+    ASMWEB_PRODUCTION_MOT_ENTRY \
+        8, \
+        ASMWEB_PROD_LIMIT_HTTP_REQUEST_BUFFER, \
+        ASMWEB_PROD_OBJECT_HTTP_REQUEST_BUFFER, \
+        ASMWEB_M1_REQUEST_CAPACITY
+
 
     ; -----------------------------------------------------------------------
     ; Registry-set descriptor.
@@ -276,10 +306,18 @@ asm_production_registry_init:
     mov qword [rel asm_production_registry_set + ASMWEB_REGISTRY_VALIDATION_SET.mot_count], ASMWEB_PRODUCTION_MOT_COUNT
 
 
-    ; Canonically empty production RCT for the current runtime slice.
-    mov qword [rel asm_production_registry_set + ASMWEB_REGISTRY_VALIDATION_SET.rct_ptr], 0
+    ; HTTP descriptor resource capacities.
+    ; Occupancy tracking and admission verification remain separate work.
+    ASMWEB_PRODUCTION_SOCKET_RCT_ENTRY \
+        0, ASMWEB_PROD_RESOURCE_HTTP_LISTENER, ASMWEB_M1_LISTENER_FD_CAPACITY
 
-    mov qword [rel asm_production_registry_set + ASMWEB_REGISTRY_VALIDATION_SET.rct_count], 0
+    ASMWEB_PRODUCTION_SOCKET_RCT_ENTRY \
+        1, ASMWEB_PROD_RESOURCE_HTTP_ACCEPTED, ASMWEB_M1_ACCEPTED_FD_CAPACITY
+
+    lea rax, [rel asm_production_rct]
+    mov [rel asm_production_registry_set + ASMWEB_REGISTRY_VALIDATION_SET.rct_ptr], rax
+
+    mov qword [rel asm_production_registry_set + ASMWEB_REGISTRY_VALIDATION_SET.rct_count], ASMWEB_PRODUCTION_RCT_COUNT
 
 
     ; -----------------------------------------------------------------------

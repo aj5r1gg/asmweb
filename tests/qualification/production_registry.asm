@@ -33,7 +33,8 @@ ASMWEB_EXPECTED_PRODUCTION_DIRECT_BYTES equ \
     ASMWEB_PROCESS_RUNTIME_size + \
     ASMWEB_STARTUP_MEMORY_ACCOUNT_size + \
     ASMWEB_PRODUCTION_RUNTIME_RULE_STORAGE_BYTES + \
-    ASMWEB_PRODUCTION_REGISTRY_STORAGE_BYTES
+    ASMWEB_PRODUCTION_REGISTRY_STORAGE_BYTES + \
+    ASMWEB_M1_REQUEST_CAPACITY
 
 
 section .text
@@ -97,13 +98,29 @@ _start:
 
 
     ; =======================================================================
-    ; CASE 6 — current production RCT is canonical empty
+    ; CASE 6 — production HTTP descriptor capacities are registered
     ; =======================================================================
 
-    cmp qword [rbx + ASMWEB_REGISTRY_VALIDATION_SET.rct_count], 0
+    cmp qword [rbx + ASMWEB_REGISTRY_VALIDATION_SET.rct_count], ASMWEB_PRODUCTION_RCT_COUNT
     jne .fail_6
 
-    cmp qword [rbx + ASMWEB_REGISTRY_VALIDATION_SET.rct_ptr], 0
+    mov r10, [rbx + ASMWEB_REGISTRY_VALIDATION_SET.rct_ptr]
+    test r10, r10
+    jz .fail_6
+
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.resource_id], ASMWEB_PROD_RESOURCE_HTTP_LISTENER
+    jne .fail_6
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.configured_capacity], 1
+    jne .fail_6
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.direct_bytes], 0
+    jne .fail_6
+
+    add r10, ASMWEB_RCT_VALIDATION_ENTRY_size
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.resource_id], ASMWEB_PROD_RESOURCE_HTTP_ACCEPTED
+    jne .fail_6
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.configured_capacity], 1
+    jne .fail_6
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.direct_bytes], 0
     jne .fail_6
 
 

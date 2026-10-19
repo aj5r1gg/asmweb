@@ -42,7 +42,7 @@ def parse_invocations(source, kind):
         + r"((?:[ \t]*[^\n]*\n){4})"
     )
     matches = pattern.findall(source)
-    require(len(matches) == 8, kind + " population count")
+    require(len(matches) > 0, kind + " population count")
 
     result = []
     for body in matches:
@@ -60,7 +60,7 @@ def parse_invocations(source, kind):
         require(fields[0].isdigit(), kind + " numeric index")
         result.append((int(fields[0]), *fields[1:]))
 
-    require([row[0] for row in result] == list(range(8)),
+    require([row[0] for row in result] == list(range(len(result))),
             kind + " index order")
     return result
 
@@ -151,7 +151,34 @@ def inspect_production_source(source):
 
     return mot
 
-def nasm_resolve(mappings):
+def inspect_socket_rct_source(source):
+    pattern = re.compile(
+        r"(?m)^[ \t]*ASMWEB_PRODUCTION_SOCKET_RCT_ENTRY"
+        r"[ \t]*\\[ \t]*\n"
+        r"[ \t]*(\d+),[ \t]*"
+        r"(ASMWEB_PROD_RESOURCE_[A-Z0-9_]+),[ \t]*"
+        r"(ASMWEB_M1_[A-Z0-9_]+)[ \t]*$"
+    )
+
+    matches = pattern.findall(source)
+
+    require(matches, "missing production socket RCT entries")
+
+    require(
+        [int(row[0]) for row in matches]
+        == list(range(len(matches))),
+        "RCT index order",
+    )
+
+    require(
+        len({row[1] for row in matches}) == len(matches),
+        "duplicate RCT resource identity",
+    )
+
+    return matches
+
+
+def nasm_resolve(mappings, rct_count):
     includes = (
         "startup.inc", "entropy.inc", "cpu.inc", "time.inc",
         "process_runtime.inc", "startup_memory.inc",
@@ -205,7 +232,12 @@ def nasm_resolve(mappings):
             "unexpected NASM probe output size")
 
     words = struct.unpack("<" + "Q" * expected_words, data)
-    require(words[:3] == (8, 8, 0),
+    require(
+        words[:3] == (
+            len(mappings),
+            len(mappings),
+            rct_count,
+        ),
             "production registry population counts")
 
     return [
@@ -295,7 +327,8 @@ def closure_fingerprint(dependencies):
 def build():
     source = ASM.read_text(encoding="utf-8")
     mappings = inspect_production_source(source)
-    resolved = nasm_resolve(mappings)
+    socket_rct = inspect_socket_rct_source(source)
+    resolved = nasm_resolve(mappings, len(socket_rct))
 
     mot_entries = []
     descriptive = []
@@ -345,7 +378,7 @@ def build():
         "entries": mot_entries,
     })
 
-    require(projection["active_entry_count"] == 8,
+    require(projection["active_entry_count"] == len(mot_entries),
             "unexpected active limit count")
     require(
         projection["M_direct_capacity_max"]
@@ -372,7 +405,7 @@ def build():
         "assembly_dependency_closure_sha256": fingerprint,
         "derivation_tool_sha256": tool_provenance,
         "production_mot_count": len(mot_entries),
-        "production_rct_count": 0,
+        "production_rct_count": len(socket_rct),
         "definitions": descriptive,
         "mot_entries": mot_entries,
         "M_direct_capacity_max": projection["M_direct_capacity_max"],

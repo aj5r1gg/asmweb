@@ -17,10 +17,21 @@ spec.loader.exec_module(module)
 baseline = module.validate()
 source = module.ASM.read_text(encoding="utf-8")
 
-assert baseline["production_mot_count"] == 8
-assert baseline["production_rct_count"] == 0
-assert len(baseline["mot_entries"]) == 8
+assert baseline["production_mot_count"] == 9
+assert baseline["production_rct_count"] == 2
+assert len(baseline["mot_entries"]) == 9
 assert baseline["M_direct_capacity_max"] > 0
+assert baseline["definitions"][-1]["index"] == 8
+assert (
+    baseline["definitions"][-1]["object_symbol"]
+    == "ASMWEB_PROD_OBJECT_HTTP_REQUEST_BUFFER"
+)
+assert (
+    baseline["definitions"][-1]["limit_symbol"]
+    == "ASMWEB_PROD_LIMIT_HTTP_REQUEST_BUFFER"
+)
+assert baseline["definitions"][-1]["size_bytes"] == 1024
+assert baseline["M_direct_capacity_max"] == 3488
 
 def rejected(value):
     try:
