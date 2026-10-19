@@ -912,3 +912,31 @@ qualify-production-limit-manifest:
 # ---------------------------------------------------------------------------
 
 -include $(wildcard $(BUILD_DIR)/*.d $(BUILD_DIR)/*/*.d $(BUILD_DIR)/*/*/*.d)
+
+# ---------------------------------------------------------------------------
+# M1.5.2-D4 — HTTP descriptor lifecycle (qualification-only network stubs)
+# ---------------------------------------------------------------------------
+
+HTTP_FD_QUAL_SOURCE := tests/qualification/http_descriptor_lifecycle.asm
+HTTP_FD_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/http_descriptor_lifecycle.o
+HTTP_FD_QUAL_TARGET := $(BUILD_DIR)/qualification/http-descriptor-lifecycle
+
+$(HTTP_FD_QUAL_OBJECT): $(HTTP_FD_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(HTTP_FD_QUAL_TARGET): $(BUILD_DIR)/http/first_response.o $(HTTP_FD_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-http-descriptor-lifecycle
+qualify-http-descriptor-lifecycle: $(HTTP_FD_QUAL_TARGET)
+	$(HTTP_FD_QUAL_TARGET)
+
+# Qualification-only mutation sensitivity.
+.PHONY: qualify-http-descriptor-mutations
+qualify-http-descriptor-mutations: $(HTTP_FD_QUAL_TARGET)
+	python3 tests/qualification/http_descriptor_mutations.py
+
+# Track NASM include-file dependencies for the HTTP lifecycle harness.
+-include $(HTTP_FD_QUAL_OBJECT:.o=.d)

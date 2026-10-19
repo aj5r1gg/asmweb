@@ -46,5 +46,7 @@ jobs:
         run: |
           python3 tests/integration/first_http.py
           python3 tests/integration/socket_failures.py
+          make qualify-http-descriptor-lifecycle
+          make qualify-http-descriptor-mutations
       - name: Verify clean incremental build
         run: make all
