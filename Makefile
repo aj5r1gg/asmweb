@@ -849,3 +849,12 @@ qualify-requirements-registry:
 qualify-requirements-ownership:
 	python3 qualification/tools/requirements_ownership.py
 	python3 tests/qualification/requirements_ownership.py
+
+# ---------------------------------------------------------------------------
+# M0 qualification — pending ownership proposals
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-m0-ownership-proposals
+qualify-m0-ownership-proposals:
+	python3 qualification/tools/m0_ownership_proposals.py
+	python3 tests/qualification/m0_ownership_proposals.py
