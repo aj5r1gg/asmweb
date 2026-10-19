@@ -1,0 +1,4015 @@
+{
+  "schema_version": 1,
+  "authority": "AsmWeb — Requirements & Scope Specification v0.3",
+  "source_document": "AsmWeb-Requirements-n-ScopeSpecification-v0.3.odt",
+  "source_document_sha256": "a6f3fa4f310f09dcce7fc747597b4f99a6b9c2b356dbccb83e5bde969155a62b",
+  "requirement_count": 1001,
+  "canonical_requirement_text_sha256": "d0ce098435114d9262e4522de6c77dbe1c2ddc547646f9b293e144312567b16e",
+  "canonicalisation": "UTF-8; frozen membership-authority order; exactly one complete normative REQ identity per ODT text element; ODF-aware whitespace-normalised same-element statement; requirement_id + TAB + normative_statement + LF",
+  "entries": [
+    {
+      "requirement_id": "REQ-GOV-001",
+      "normative_statement": "AsmWeb — Architecture & Engineering Specification v0.4 SHALL remain the governing architecture baseline."
+    },
+    {
+      "requirement_id": "REQ-GOV-002",
+      "normative_statement": "This specification SHALL derive from and remain compatible with that architecture."
+    },
+    {
+      "requirement_id": "REQ-GOV-003",
+      "normative_statement": "This specification SHALL NOT introduce a major capability outside the frozen architecture without an approved architecture decision."
+    },
+    {
+      "requirement_id": "REQ-GOV-004",
+      "normative_statement": "An ACCEPTED ADR SHALL NOT be silently overridden by a requirement."
+    },
+    {
+      "requirement_id": "REQ-GOV-005",
+      "normative_statement": "Applicable normative protocol standards SHALL take precedence over behaviour observed in another implementation."
+    },
+    {
+      "requirement_id": "REQ-GOV-006",
+      "normative_statement": "A conflict between architecture, requirement, implementation or qualification evidence SHALL be explicitly resolved."
+    },
+    {
+      "requirement_id": "REQ-GOV-007",
+      "normative_statement": "A deliberately deferred architectural decision SHALL remain deferred until its required evidence exists."
+    },
+    {
+      "requirement_id": "REQ-RQM-001",
+      "normative_statement": "A normative requirement SHOULD express one independently verifiable proposition."
+    },
+    {
+      "requirement_id": "REQ-RQM-002",
+      "normative_statement": "Compound requirements SHALL be decomposed where constituent propositions can independently pass or fail."
+    },
+    {
+      "requirement_id": "REQ-RQM-003",
+      "normative_statement": "A requirement SHALL NOT use vague terms such as “fast”, “secure”, “efficient”, “robust” or “scalable” as its sole acceptance condition."
+    },
+    {
+      "requirement_id": "REQ-RQM-004",
+      "normative_statement": "Every mandatory requirement SHALL be testable, inspectable, analytically demonstrable or explicitly classified as a design constraint."
+    },
+    {
+      "requirement_id": "REQ-RQM-005",
+      "normative_statement": "A mandatory requirement for which no credible verification method exists SHALL be revised before requirements freeze."
+    },
+    {
+      "requirement_id": "REQ-RQM-006",
+      "normative_statement": "Every normative requirement SHALL have a stable identifier."
+    },
+    {
+      "requirement_id": "REQ-RQM-007",
+      "normative_statement": "A retired requirement identifier SHALL NOT later be reused for a different semantic requirement."
+    },
+    {
+      "requirement_id": "REQ-RQM-008",
+      "normative_statement": "The human-readable specification and machine-readable requirement metadata SHALL remain semantically consistent."
+    },
+    {
+      "requirement_id": "REQ-PRD-001",
+      "normative_statement": "AsmWeb SHALL be an experimental, security-conscious, high-performance web server for Linux x86-64."
+    },
+    {
+      "requirement_id": "REQ-PRD-002",
+      "normative_statement": "AsmWeb SHALL be implemented primarily in x86-64 assembly."
+    },
+    {
+      "requirement_id": "REQ-PRD-003",
+      "normative_statement": "AsmWeb SHALL expose computational machinery sufficiently explicitly to support meaningful measurement."
+    },
+    {
+      "requirement_id": "REQ-PRD-004",
+      "normative_statement": "Correctness SHALL take precedence over performance."
+    },
+    {
+      "requirement_id": "REQ-PRD-005",
+      "normative_statement": "Memory boundedness SHALL take precedence over performance."
+    },
+    {
+      "requirement_id": "REQ-PRD-006",
+      "normative_statement": "Computational boundedness SHALL take precedence over performance."
+    },
+    {
+      "requirement_id": "REQ-PRD-007",
+      "normative_statement": "Required interoperability SHALL take precedence over incompatible optimisation."
+    },
+    {
+      "requirement_id": "REQ-PRD-008",
+      "normative_statement": "Measured evidence SHALL take precedence over performance folklore."
+    },
+    {
+      "requirement_id": "REQ-PRD-009",
+      "normative_statement": "AsmWeb SHALL NOT require performance superiority over another web server to satisfy its v1 purpose."
+    },
+    {
+      "requirement_id": "REQ-RSC-001",
+      "normative_statement": "AsmWeb SHALL permit investigation of the minimum software, memory and computational machinery required to transform HTTP requests into responses correctly and defensively."
+    },
+    {
+      "requirement_id": "REQ-RSC-002",
+      "normative_statement": "AsmWeb SHALL permit comparative measurement of HTTP/1.1, HTTP/2 and HTTP/3 implementation cost."
+    },
+    {
+      "requirement_id": "REQ-RSC-003",
+      "normative_statement": "AsmWeb SHALL permit measurement of externally induced computational work."
+    },
+    {
+      "requirement_id": "REQ-RSC-004",
+      "normative_statement": "AsmWeb SHALL permit measurement of externally induced retained memory or state."
+    },
+    {
+      "requirement_id": "REQ-RSC-005",
+      "normative_statement": "AsmWeb SHALL permit measurement of externally induced network output."
+    },
+    {
+      "requirement_id": "REQ-RSC-006",
+      "normative_statement": "AsmWeb SHOULD permit decomposition of costs attributable to protocol processing, cryptography, kernel interaction, copying and memory movement where practical."
+    },
+    {
+      "requirement_id": "REQ-RSC-007",
+      "normative_statement": "Negative experimental results SHALL remain valid project results."
+    },
+    {
+      "requirement_id": "REQ-RSC-008",
+      "normative_statement": "Failed hypotheses SHALL remain historically visible."
+    },
+    {
+      "requirement_id": "REQ-CAP-001",
+      "normative_statement": "HTTP/1.1 SHALL be REQUIRED."
+    },
+    {
+      "requirement_id": "REQ-CAP-002",
+      "normative_statement": "HTTP/2 over TLS SHALL be REQUIRED."
+    },
+    {
+      "requirement_id": "REQ-CAP-003",
+      "normative_statement": "HTTP/3 over QUIC SHALL be REQUIRED."
+    },
+    {
+      "requirement_id": "REQ-CAP-004",
+      "normative_statement": "HPACK functionality necessary for qualified HTTP/2 SHALL be REQUIRED."
+    },
+    {
+      "requirement_id": "REQ-CAP-005",
+      "normative_statement": "QPACK functionality necessary for qualified HTTP/3 SHALL be REQUIRED."
+    },
+    {
+      "requirement_id": "REQ-CAP-006",
+      "normative_statement": "QUIC v1 functionality necessary for qualified HTTP/3 SHALL be REQUIRED."
+    },
+    {
+      "requirement_id": "REQ-CAP-007",
+      "normative_statement": "TLS 1.3 SHALL be REQUIRED for encrypted TCP HTTP and QUIC."
+    },
+    {
+      "requirement_id": "REQ-CAP-008",
+      "normative_statement": "ALPN SHALL be REQUIRED."
+    },
+    {
+      "requirement_id": "REQ-CAP-009",
+      "normative_statement": "IPv4 SHALL be REQUIRED."
+    },
+    {
+      "requirement_id": "REQ-CAP-010",
+      "normative_statement": "HTTP/1.0 compatibility SHALL initially be UNSUPPORTED."
+    },
+    {
+      "requirement_id": "REQ-CAP-011",
+      "normative_statement": "h2c SHALL initially be UNSUPPORTED unless subsequently introduced through change control."
+    },
+    {
+      "requirement_id": "REQ-CAP-012",
+      "normative_statement": "HTTP/2 server push SHALL be UNSUPPORTED for initial qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-013",
+      "normative_statement": "CONNECT tunnelling SHALL initially be UNSUPPORTED."
+    },
+    {
+      "requirement_id": "REQ-CAP-014",
+      "normative_statement": "Extended CONNECT SHALL initially be UNSUPPORTED unless separately designed."
+    },
+    {
+      "requirement_id": "REQ-CAP-015",
+      "normative_statement": "TLS/QUIC 0-RTT SHALL initially be UNSUPPORTED."
+    },
+    {
+      "requirement_id": "REQ-CAP-016",
+      "normative_statement": "IPv6 SHALL initially be DEFERRED."
+    },
+    {
+      "requirement_id": "REQ-CAP-017",
+      "normative_statement": "QUIC connection migration support SHALL be explicitly classified before M7 qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-018",
+      "normative_statement": "TLS session resumption support SHALL be explicitly classified before M3 qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-019",
+      "normative_statement": "TLS client authentication SHALL be explicitly classified before M3 qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-020",
+      "normative_statement": "WebSocket upgrade support SHALL be explicitly classified before M4 qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-021",
+      "normative_statement": "Range request support SHALL be explicitly classified before M11 qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-022",
+      "normative_statement": "Conditional request support SHALL be explicitly classified before M11 qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-023",
+      "normative_statement": "Response content compression SHALL be explicitly classified before M11 qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-024",
+      "normative_statement": "Alt-Svc advertisement behaviour SHALL be explicitly classified before browser/H3 deployment qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-025",
+      "normative_statement": "Expect/100-continue behaviour SHALL be explicitly classified before M4 qualification."
+    },
+    {
+      "requirement_id": "REQ-CAP-026",
+      "normative_statement": "Trailer support SHALL be classified independently for H1, H2 and H3."
+    },
+    {
+      "requirement_id": "REQ-CAP-027",
+      "normative_statement": "Optional capabilities SHALL NOT silently become supported merely because implementation code exists."
+    },
+    {
+      "requirement_id": "REQ-CAP-028",
+      "normative_statement": "Restart, reload and binary-handoff capabilities SHALL be explicitly classified before release."
+    },
+    {
+      "requirement_id": "REQ-CMX-001",
+      "normative_statement": "The Compatibility Matrix SHALL distinguish REQUIRED, OPTIONAL, UNSUPPORTED and DEFERRED capabilities."
+    },
+    {
+      "requirement_id": "REQ-CMX-002",
+      "normative_statement": "Protocol support claims SHALL be consistent with the Compatibility Matrix."
+    },
+    {
+      "requirement_id": "REQ-CMX-003",
+      "normative_statement": "The Compatibility Matrix SHALL form part of release evidence."
+    },
+    {
+      "requirement_id": "REQ-CMX-004",
+      "normative_statement": "A capability SHALL NOT be represented as supported merely because a parser accepts its syntax."
+    },
+    {
+      "requirement_id": "REQ-CMX-005",
+      "normative_statement": "Changes to supported capability status SHALL be subject to requirement and qualification change control."
+    },
+    {
+      "requirement_id": "REQ-PLT-001",
+      "normative_statement": "The initial production platform SHALL be Linux x86-64."
+    },
+    {
+      "requirement_id": "REQ-PLT-002",
+      "normative_statement": "Linux SHALL form part of the AsmWeb platform boundary."
+    },
+    {
+      "requirement_id": "REQ-PLT-003",
+      "normative_statement": "AsmWeb SHALL use Linux TCP."
+    },
+    {
+      "requirement_id": "REQ-PLT-004",
+      "normative_statement": "AsmWeb SHALL use Linux UDP."
+    },
+    {
+      "requirement_id": "REQ-PLT-005",
+      "normative_statement": "AsmWeb SHALL NOT implement a custom TCP/IP stack."
+    },
+    {
+      "requirement_id": "REQ-PLT-006",
+      "normative_statement": "AsmWeb SHALL NOT implement a NIC driver."
+    },
+    {
+      "requirement_id": "REQ-PLT-007",
+      "normative_statement": "AsmWeb SHALL NOT implement a general operating system."
+    },
+    {
+      "requirement_id": "REQ-PLT-008",
+      "normative_statement": "AsmWeb SHALL define a minimum x86-64 CPU baseline before release qualification."
+    },
+    {
+      "requirement_id": "REQ-PLT-009",
+      "normative_statement": "Optional CPU capabilities SHALL be detected before dependent instructions execute."
+    },
+    {
+      "requirement_id": "REQ-PLT-010",
+      "normative_statement": "Unsupported optional CPU instructions SHALL NOT execute merely because they exist on the development machine."
+    },
+    {
+      "requirement_id": "REQ-IMP-001",
+      "normative_statement": "The normal server core SHALL be implemented primarily in x86-64 assembly."
+    },
+    {
+      "requirement_id": "REQ-IMP-002",
+      "normative_statement": "The normal core SHALL NOT require libc."
+    },
+    {
+      "requirement_id": "REQ-IMP-003",
+      "normative_statement": "The normal core SHALL NOT require a C runtime."
+    },
+    {
+      "requirement_id": "REQ-IMP-004",
+      "normative_statement": "The normal core SHALL NOT require garbage collection."
+    },
+    {
+      "requirement_id": "REQ-IMP-005",
+      "normative_statement": "The normal core SHALL NOT require a language runtime."
+    },
+    {
+      "requirement_id": "REQ-IMP-006",
+      "normative_statement": "The normal core SHALL NOT require a web framework."
+    },
+    {
+      "requirement_id": "REQ-IMP-007",
+      "normative_statement": "The normal core SHALL NOT require an ORM."
+    },
+    {
+      "requirement_id": "REQ-IMP-008",
+      "normative_statement": "The normal core SHALL NOT require a JavaScript runtime."
+    },
+    {
+      "requirement_id": "REQ-IMP-009",
+      "normative_statement": "Assembly purity SHALL NOT take precedence over cryptographic correctness."
+    },
+    {
+      "requirement_id": "REQ-IMP-010",
+      "normative_statement": "Implementation cleverness SHALL NOT take precedence over correctness or qualification clarity."
+    },
+    {
+      "requirement_id": "REQ-LNX-001",
+      "normative_statement": "AsmWeb SHALL define an explicit Linux syscall boundary."
+    },
+    {
+      "requirement_id": "REQ-LNX-002",
+      "normative_statement": "The syscall boundary SHALL define internal argument, return and error conventions."
+    },
+    {
+      "requirement_id": "REQ-LNX-003",
+      "normative_statement": "Protocol state machines SHALL remain independent of the selected Linux event mechanism."
+    },
+    {
+      "requirement_id": "REQ-LNX-004",
+      "normative_statement": "Partial reads SHALL be handled as ordinary conditions."
+    },
+    {
+      "requirement_id": "REQ-LNX-005",
+      "normative_statement": "Partial writes SHALL be handled as ordinary conditions."
+    },
+    {
+      "requirement_id": "REQ-LNX-006",
+      "normative_statement": "Temporary I/O unavailability SHALL be handled without busy unbounded retry."
+    },
+    {
+      "requirement_id": "REQ-LNX-007",
+      "normative_statement": "The final event architecture SHALL remain evidence-driven until its ADR is resolved."
+    },
+    {
+      "requirement_id": "REQ-KRN-001",
+      "normative_statement": "The number of listening sockets SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-KRN-002",
+      "normative_statement": "The number of accepted network sockets owned by AsmWeb SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-KRN-003",
+      "normative_statement": "The number of open static-content file descriptors SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-KRN-004",
+      "normative_statement": "The number of active event registrations SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-KRN-005",
+      "normative_statement": "The number and size of mapped static-file regions SHALL be bounded or otherwise deterministically constrained."
+    },
+    {
+      "requirement_id": "REQ-KRN-006",
+      "normative_statement": "Cryptographic provider handles owned by AsmWeb SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-KRN-007",
+      "normative_statement": "Any kernel-side resource whose quantity can be influenced by remote traffic SHALL have explicit ownership and exhaustion policy."
+    },
+    {
+      "requirement_id": "REQ-KRN-008",
+      "normative_statement": "Kernel-resource exhaustion SHALL produce deterministic bounded behaviour."
+    },
+    {
+      "requirement_id": "REQ-KRN-009",
+      "normative_statement": "Kernel-resource exhaustion SHALL NOT silently invalidate userspace capacity calculations."
+    },
+    {
+      "requirement_id": "REQ-KRN-010",
+      "normative_statement": "Endurance qualification SHALL inspect relevant kernel-resource state for leakage."
+    },
+    {
+      "requirement_id": "REQ-NID-001",
+      "normative_statement": "Network endpoint identity SHALL have a bounded internal representation."
+    },
+    {
+      "requirement_id": "REQ-NID-002",
+      "normative_statement": "The representation SHALL distinguish address family where required."
+    },
+    {
+      "requirement_id": "REQ-NID-003",
+      "normative_statement": "IPv4 address and port SHALL be representable."
+    },
+    {
+      "requirement_id": "REQ-NID-004",
+      "normative_statement": "Local and peer endpoint identity SHALL remain distinguishable."
+    },
+    {
+      "requirement_id": "REQ-NID-005",
+      "normative_statement": "Network-address ownership and lifetime SHALL be explicit where retained."
+    },
+    {
+      "requirement_id": "REQ-NID-006",
+      "normative_statement": "Protocol logic SHALL NOT depend on incidental host-library address structures."
+    },
+    {
+      "requirement_id": "REQ-HTTP-001",
+      "normative_statement": "HTTP/1.1, HTTP/2 and HTTP/3 SHALL be native protocol peers."
+    },
+    {
+      "requirement_id": "REQ-HTTP-002",
+      "normative_statement": "HTTP/2 SHALL NOT be translated internally into HTTP/1.1."
+    },
+    {
+      "requirement_id": "REQ-HTTP-003",
+      "normative_statement": "HTTP/3 SHALL NOT be translated internally into HTTP/1.1."
+    },
+    {
+      "requirement_id": "REQ-HTTP-004",
+      "normative_statement": "Each protocol SHALL feed the common semantic HTTP core."
+    },
+    {
+      "requirement_id": "REQ-HTTP-005",
+      "normative_statement": "Protocol framing state SHALL remain outside the semantic core."
+    },
+    {
+      "requirement_id": "REQ-HTTP-006",
+      "normative_statement": "Protocol compression state SHALL remain outside the semantic core."
+    },
+    {
+      "requirement_id": "REQ-HTTP-007",
+      "normative_statement": "Only valid semantic information appropriate to the boundary SHALL enter application processing."
+    },
+    {
+      "requirement_id": "REQ-REQ-001",
+      "normative_statement": "The request representation SHALL contain semantic information rather than protocol framing machinery."
+    },
+    {
+      "requirement_id": "REQ-REQ-002",
+      "normative_statement": "Variable-length semantic values SHOULD use bounded byte views where safe."
+    },
+    {
+      "requirement_id": "REQ-REQ-003",
+      "normative_statement": "Network-derived semantic values SHALL NOT require implicit NUL termination."
+    },
+    {
+      "requirement_id": "REQ-REQ-004",
+      "normative_statement": "Ownership of each semantic view SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-REQ-005",
+      "normative_statement": "Lifetime of each semantic view SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-REQ-006",
+      "normative_statement": "Validation, normalisation, decoding and copying SHALL remain distinct operations."
+    },
+    {
+      "requirement_id": "REQ-REQ-007",
+      "normative_statement": "AsmWeb SHALL NOT copy or canonicalise validated input merely for implementation convenience."
+    },
+    {
+      "requirement_id": "REQ-RSP-001",
+      "normative_statement": "Responses SHALL use a protocol-independent semantic representation."
+    },
+    {
+      "requirement_id": "REQ-RSP-002",
+      "normative_statement": "Protocol-specific response encoders SHALL consume the semantic response."
+    },
+    {
+      "requirement_id": "REQ-RSP-003",
+      "normative_statement": "Protocol-specific wire machinery SHALL NOT become application-visible merely because one protocol requires it."
+    },
+    {
+      "requirement_id": "REQ-SLC-001",
+      "normative_statement": "Semantic request lifecycle state SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-SLC-002",
+      "normative_statement": "Protocol request existence and semantic request existence SHALL remain distinct concepts."
+    },
+    {
+      "requirement_id": "REQ-SLC-003",
+      "normative_statement": "Every semantic lifecycle transition SHALL be explicitly permitted or prohibited."
+    },
+    {
+      "requirement_id": "REQ-SLC-004",
+      "normative_statement": "An invalid semantic lifecycle transition SHALL produce deterministic internal failure handling."
+    },
+    {
+      "requirement_id": "REQ-SLC-005",
+      "normative_statement": "Object ownership SHALL be defined for every semantic lifecycle state."
+    },
+    {
+      "requirement_id": "REQ-SLC-006",
+      "normative_statement": "Object reclamation points SHALL be defined for terminal and prematurely terminated semantic requests."
+    },
+    {
+      "requirement_id": "REQ-SLC-007",
+      "normative_statement": "Protocol failure before semantic request creation SHALL NOT require construction of a semantic request merely to report failure."
+    },
+    {
+      "requirement_id": "REQ-SLC-008",
+      "normative_statement": "Response activation SHALL establish a defined boundary for subsequent error handling."
+    },
+    {
+      "requirement_id": "REQ-SLC-009",
+      "normative_statement": "Qualification builds SHOULD assert impossible semantic lifecycle transitions."
+    },
+    {
+      "requirement_id": "REQ-STM-001",
+      "normative_statement": "Every stateful protocol subsystem SHALL define explicit states."
+    },
+    {
+      "requirement_id": "REQ-STM-002",
+      "normative_statement": "Every stateful protocol subsystem SHALL define legal transitions."
+    },
+    {
+      "requirement_id": "REQ-STM-003",
+      "normative_statement": "Invalid transitions SHALL have deterministic handling."
+    },
+    {
+      "requirement_id": "REQ-STM-004",
+      "normative_statement": "Each state SHALL define relevant object ownership."
+    },
+    {
+      "requirement_id": "REQ-STM-005",
+      "normative_statement": "Each state SHALL define relevant resource acquisition and release conditions."
+    },
+    {
+      "requirement_id": "REQ-STM-006",
+      "normative_statement": "Terminal states SHALL define reclamation behaviour."
+    },
+    {
+      "requirement_id": "REQ-STM-007",
+      "normative_statement": "A terminal object SHALL NOT silently return to a live state without an explicitly defined reuse lifecycle."
+    },
+    {
+      "requirement_id": "REQ-STM-008",
+      "normative_statement": "Qualification builds SHOULD detect impossible state transitions."
+    },
+    {
+      "requirement_id": "REQ-STM-009",
+      "normative_statement": "Remote input SHALL NOT directly select arbitrary internal state."
+    },
+    {
+      "requirement_id": "REQ-STM-010",
+      "normative_statement": "State-machine transition count or churn SHALL be subject to applicable work accounting."
+    },
+    {
+      "requirement_id": "REQ-PRS-001",
+      "normative_statement": "Every incremental parser SHALL define its input cursor and bounded parser state."
+    },
+    {
+      "requirement_id": "REQ-PRS-002",
+      "normative_statement": "A successful parser step SHALL consume input, emit bounded output, change bounded state, terminate parsing, or explicitly indicate that additional input is required."
+    },
+    {
+      "requirement_id": "REQ-PRS-003",
+      "normative_statement": "A parser SHALL NOT repeatedly process identical unchanged input without bounded state progress."
+    },
+    {
+      "requirement_id": "REQ-PRS-004",
+      "normative_statement": "A parser waiting for additional input SHALL NOT perform unbounded repeated computation while no new input is available."
+    },
+    {
+      "requirement_id": "REQ-PRS-005",
+      "normative_statement": "Parser loops SHALL have demonstrable progress or finite iteration bounds."
+    },
+    {
+      "requirement_id": "REQ-PRS-006",
+      "normative_statement": "Malformed input SHALL NOT cause parser cursor regression that permits unbounded reprocessing."
+    },
+    {
+      "requirement_id": "REQ-PRS-007",
+      "normative_statement": "Parser progress invariants SHALL be qualification targets."
+    },
+    {
+      "requirement_id": "REQ-RET-001",
+      "normative_statement": "A small semantic descriptor SHALL NOT unintentionally retain arbitrarily larger backing storage indefinitely."
+    },
+    {
+      "requirement_id": "REQ-RET-002",
+      "normative_statement": "Receive-buffer retention caused by semantic views SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-RET-003",
+      "normative_statement": "Protocol reassembly storage SHALL be released when no longer required."
+    },
+    {
+      "requirement_id": "REQ-RET-004",
+      "normative_statement": "Field descriptors SHALL have defined backing-storage lifetime."
+    },
+    {
+      "requirement_id": "REQ-RET-005",
+      "normative_statement": "Body descriptors SHALL have defined backing-storage lifetime."
+    },
+    {
+      "requirement_id": "REQ-RET-006",
+      "normative_statement": "Zero-copy design SHALL NOT be considered beneficial when it causes materially larger or longer-lived retained state without justification."
+    },
+    {
+      "requirement_id": "REQ-RET-007",
+      "normative_statement": "Qualification SHOULD measure retained backing storage where descriptor lifetimes can pin larger buffers."
+    },
+    {
+      "requirement_id": "REQ-TGT-001",
+      "normative_statement": "Method semantics SHALL be implemented according to common HTTP semantics where protocol-independent."
+    },
+    {
+      "requirement_id": "REQ-TGT-002",
+      "normative_statement": "GET and HEAD SHALL share applicable resource semantics."
+    },
+    {
+      "requirement_id": "REQ-TGT-003",
+      "normative_statement": "HEAD SHALL suppress response content transmission as required."
+    },
+    {
+      "requirement_id": "REQ-TGT-004",
+      "normative_statement": "Unsupported methods SHALL receive deterministic standards-appropriate handling."
+    },
+    {
+      "requirement_id": "REQ-TGT-005",
+      "normative_statement": "Raw validated path representation SHALL be preserved where required."
+    },
+    {
+      "requirement_id": "REQ-TGT-006",
+      "normative_statement": "Raw validated query representation SHALL be preserved separately from path."
+    },
+    {
+      "requirement_id": "REQ-TGT-007",
+      "normative_statement": "Percent decoding SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-TGT-008",
+      "normative_statement": "Percent decoding SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-TGT-009",
+      "normative_statement": "Malformed percent encoding SHALL receive deterministic handling."
+    },
+    {
+      "requirement_id": "REQ-TGT-010",
+      "normative_statement": "Path normalisation SHALL NOT occur globally without a defined semantic rule."
+    },
+    {
+      "requirement_id": "REQ-TGT-011",
+      "normative_statement": "Encoded separators SHALL NOT be silently treated as decoded filesystem separators without explicit policy."
+    },
+    {
+      "requirement_id": "REQ-TGT-012",
+      "normative_statement": "Dot-segment handling SHALL be explicitly defined before static-file qualification."
+    },
+    {
+      "requirement_id": "REQ-TGT-013",
+      "normative_statement": "Fragments received where invalid SHALL receive deterministic standards-compatible handling."
+    },
+    {
+      "requirement_id": "REQ-TGT-014",
+      "normative_statement": "Supported HTTP/1 request-target forms SHALL be explicitly identified."
+    },
+    {
+      "requirement_id": "REQ-TGT-015",
+      "normative_statement": "Unsupported request-target forms SHALL receive deterministic handling."
+    },
+    {
+      "requirement_id": "REQ-FLD-001",
+      "normative_statement": "HTTP fields SHALL use bounded descriptors."
+    },
+    {
+      "requirement_id": "REQ-FLD-002",
+      "normative_statement": "Field-name length SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-FLD-003",
+      "normative_statement": "Field-value length SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-FLD-004",
+      "normative_statement": "Field count SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-FLD-005",
+      "normative_statement": "Total decoded field-section size SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-FLD-006",
+      "normative_statement": "Unknown extension fields SHALL remain representable when standards permit them."
+    },
+    {
+      "requirement_id": "REQ-FLD-007",
+      "normative_statement": "Unknown extension fields SHALL NOT require global string interning."
+    },
+    {
+      "requirement_id": "REQ-FLD-008",
+      "normative_statement": "Field-name syntax SHALL be validated according to the originating protocol."
+    },
+    {
+      "requirement_id": "REQ-FLD-009",
+      "normative_statement": "Field-value syntax SHALL be validated according to applicable protocol rules."
+    },
+    {
+      "requirement_id": "REQ-FLD-010",
+      "normative_statement": "Duplicate fields SHALL be handled according to applicable HTTP semantics rather than by an unconditional generic merge rule."
+    },
+    {
+      "requirement_id": "REQ-FLD-011",
+      "normative_statement": "HTTP/2 and HTTP/3 pseudo-fields SHALL be validated for permitted names."
+    },
+    {
+      "requirement_id": "REQ-FLD-012",
+      "normative_statement": "Pseudo-field ordering SHALL be validated."
+    },
+    {
+      "requirement_id": "REQ-FLD-013",
+      "normative_statement": "Pseudo-field uniqueness requirements SHALL be enforced."
+    },
+    {
+      "requirement_id": "REQ-FLD-014",
+      "normative_statement": "Pseudo-fields SHALL NOT appear where prohibited."
+    },
+    {
+      "requirement_id": "REQ-FLD-015",
+      "normative_statement": "Connection-specific fields prohibited in HTTP/2 or HTTP/3 SHALL receive standards-compatible handling."
+    },
+    {
+      "requirement_id": "REQ-FLD-016",
+      "normative_statement": "HTTP/1 Host and HTTP/2/3 :authority SHALL converge on common semantic authority."
+    },
+    {
+      "requirement_id": "REQ-FLD-017",
+      "normative_statement": "Authority conflicts or illegal combinations SHALL receive explicitly defined standards-compatible handling."
+    },
+    {
+      "requirement_id": "REQ-FLD-018",
+      "normative_statement": "Field lookup strategy SHALL remain measurement-driven until its ADR is resolved."
+    },
+    {
+      "requirement_id": "REQ-BDY-001",
+      "normative_statement": "Request bodies SHALL NOT require complete buffering."
+    },
+    {
+      "requirement_id": "REQ-BDY-002",
+      "normative_statement": "The semantic body model SHALL support no body."
+    },
+    {
+      "requirement_id": "REQ-BDY-003",
+      "normative_statement": "The semantic body model SHALL support bounded small-body buffering."
+    },
+    {
+      "requirement_id": "REQ-BDY-004",
+      "normative_statement": "The semantic body model SHALL support streaming."
+    },
+    {
+      "requirement_id": "REQ-BDY-005",
+      "normative_statement": "H1 body input SHALL converge on the semantic body interface."
+    },
+    {
+      "requirement_id": "REQ-BDY-006",
+      "normative_statement": "H2 DATA SHALL converge on the semantic body interface."
+    },
+    {
+      "requirement_id": "REQ-BDY-007",
+      "normative_statement": "H3 DATA SHALL converge on the semantic body interface."
+    },
+    {
+      "requirement_id": "REQ-BDY-008",
+      "normative_statement": "Application inability to consume additional data SHALL propagate protocol-appropriate backpressure."
+    },
+    {
+      "requirement_id": "REQ-BDY-009",
+      "normative_statement": "Protocol flow-control machinery SHALL remain outside the semantic core."
+    },
+    {
+      "requirement_id": "REQ-BKP-001",
+      "normative_statement": "Backpressure SHALL NOT permit unbounded pending input accumulation."
+    },
+    {
+      "requirement_id": "REQ-BKP-002",
+      "normative_statement": "Backpressure SHALL NOT permit unbounded pending output accumulation."
+    },
+    {
+      "requirement_id": "REQ-BKP-003",
+      "normative_statement": "Persistent inability to make useful progress SHALL eventually reach a bounded deadline, resource limit or protocol action."
+    },
+    {
+      "requirement_id": "REQ-BKP-004",
+      "normative_statement": "The action taken after sustained backpressure SHALL occur at the smallest correct scope."
+    },
+    {
+      "requirement_id": "REQ-BKP-005",
+      "normative_statement": "Backpressure-related retained state SHALL remain represented in resource accounting."
+    },
+    {
+      "requirement_id": "REQ-BKP-006",
+      "normative_statement": "A peer that refuses to read SHALL NOT force arbitrary server-side response accumulation."
+    },
+    {
+      "requirement_id": "REQ-BKP-007",
+      "normative_statement": "A peer that refuses to send required request progress SHALL NOT retain arbitrary server state indefinitely."
+    },
+    {
+      "requirement_id": "REQ-RSM-001",
+      "normative_statement": "Response status SHALL be validated before protocol encoding."
+    },
+    {
+      "requirement_id": "REQ-RSM-002",
+      "normative_statement": "Response body transmission SHALL obey method semantics."
+    },
+    {
+      "requirement_id": "REQ-RSM-003",
+      "normative_statement": "Response body transmission SHALL obey status-code semantics."
+    },
+    {
+      "requirement_id": "REQ-RSM-004",
+      "normative_statement": "Responses for which content is prohibited SHALL NOT transmit prohibited content."
+    },
+    {
+      "requirement_id": "REQ-RSM-005",
+      "normative_statement": "Content-Length generation, when used, SHALL reflect applicable HTTP semantics."
+    },
+    {
+      "requirement_id": "REQ-RSM-006",
+      "normative_statement": "HTTP/1 transfer framing SHALL be generated unambiguously."
+    },
+    {
+      "requirement_id": "REQ-RSM-007",
+      "normative_statement": "HTTP/2 and HTTP/3 responses SHALL NOT emit prohibited connection-specific fields."
+    },
+    {
+      "requirement_id": "REQ-RSM-008",
+      "normative_statement": "Response field count SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-RSM-009",
+      "normative_statement": "Response field-section size SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-RSM-010",
+      "normative_statement": "Response body descriptors SHALL have explicit ownership and lifetime."
+    },
+    {
+      "requirement_id": "REQ-RSM-011",
+      "normative_statement": "Response trailers, when supported, SHALL obey applicable protocol semantics."
+    },
+    {
+      "requirement_id": "REQ-RSM-012",
+      "normative_statement": "Informational response support SHALL be explicitly classified."
+    },
+    {
+      "requirement_id": "REQ-RSM-013",
+      "normative_statement": "Errors occurring before response transmission begins SHALL permit protocol-appropriate error responses where possible."
+    },
+    {
+      "requirement_id": "REQ-RSM-014",
+      "normative_statement": "Errors occurring after response transmission begins SHALL use deterministic protocol-appropriate termination behaviour."
+    },
+    {
+      "requirement_id": "REQ-RSM-015",
+      "normative_statement": "A response encoder SHALL NOT invent semantic content merely to satisfy protocol framing machinery."
+    },
+    {
+      "requirement_id": "REQ-H1-001",
+      "normative_statement": "HTTP/1.1 parsing SHALL be incremental."
+    },
+    {
+      "requirement_id": "REQ-H1-002",
+      "normative_statement": "Complete request buffering SHALL NOT be required before parsing begins."
+    },
+    {
+      "requirement_id": "REQ-H1-003",
+      "normative_statement": "Request-line storage SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-H1-004",
+      "normative_statement": "Field storage SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-H1-005",
+      "normative_statement": "Persistent connections SHALL be supported as required by the selected profile."
+    },
+    {
+      "requirement_id": "REQ-H1-006",
+      "normative_statement": "Content-Length framing SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-H1-007",
+      "normative_statement": "Supported chunked transfer coding SHALL be implemented correctly."
+    },
+    {
+      "requirement_id": "REQ-H1-008",
+      "normative_statement": "Partial network input SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-H1-009",
+      "normative_statement": "Parsing SHOULD produce semantic descriptors directly where safe."
+    },
+    {
+      "requirement_id": "REQ-H1-010",
+      "normative_statement": "Ambiguous request framing SHALL be rejected."
+    },
+    {
+      "requirement_id": "REQ-H1-011",
+      "normative_statement": "Prohibited or ambiguous Transfer-Encoding and Content-Length combinations SHALL be rejected."
+    },
+    {
+      "requirement_id": "REQ-H1-012",
+      "normative_statement": "Conflicting Content-Length values SHALL be rejected."
+    },
+    {
+      "requirement_id": "REQ-H1-013",
+      "normative_statement": "Invalid Content-Length SHALL be rejected."
+    },
+    {
+      "requirement_id": "REQ-H1-014",
+      "normative_statement": "Unsupported transfer coding SHALL be rejected."
+    },
+    {
+      "requirement_id": "REQ-H1-015",
+      "normative_statement": "Malformed chunk framing SHALL be rejected."
+    },
+    {
+      "requirement_id": "REQ-H1-016",
+      "normative_statement": "Heuristic recovery from ambiguous framing SHALL NOT be used."
+    },
+    {
+      "requirement_id": "REQ-H1-017",
+      "normative_statement": "Incomplete requests SHALL be subject to bounded progress policy."
+    },
+    {
+      "requirement_id": "REQ-H1-018",
+      "normative_statement": "Trivial periodic input SHALL NOT retain a connection indefinitely without sufficient useful progress."
+    },
+    {
+      "requirement_id": "REQ-H1-019",
+      "normative_statement": "HTTP/1 response encoding SHALL consume the semantic response representation."
+    },
+    {
+      "requirement_id": "REQ-H2-001",
+      "normative_statement": "HTTP/2 SHALL be implemented natively."
+    },
+    {
+      "requirement_id": "REQ-H2-002",
+      "normative_statement": "HTTP/2 connection state SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-H2-003",
+      "normative_statement": "HTTP/2 stream state SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-H2-004",
+      "normative_statement": "Required connection preface processing SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-H2-005",
+      "normative_statement": "Required SETTINGS behaviour SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-H2-006",
+      "normative_statement": "HEADERS SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-H2-007",
+      "normative_statement": "DATA SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-H2-008",
+      "normative_statement": "CONTINUATION SHALL be supported where required."
+    },
+    {
+      "requirement_id": "REQ-H2-009",
+      "normative_statement": "PING SHALL be supported where required."
+    },
+    {
+      "requirement_id": "REQ-H2-010",
+      "normative_statement": "GOAWAY SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-H2-011",
+      "normative_statement": "RST_STREAM SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-H2-012",
+      "normative_statement": "WINDOW_UPDATE SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-H2-013",
+      "normative_statement": "Concurrent stream capacity SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-H2-014",
+      "normative_statement": "Pending inbound state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-H2-015",
+      "normative_statement": "Pending outbound state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-H2-016",
+      "normative_statement": "Flow-control bookkeeping SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-H2-017",
+      "normative_statement": "AsmWeb SHALL NOT advertise stream capacity it cannot provision."
+    },
+    {
+      "requirement_id": "REQ-H2-018",
+      "normative_statement": "Historical stream work SHALL remain visible after stream reclamation."
+    },
+    {
+      "requirement_id": "REQ-H2-019",
+      "normative_statement": "Rapid create/reset cycles SHALL NOT bypass work accounting."
+    },
+    {
+      "requirement_id": "REQ-HPK-001",
+      "normative_statement": "HPACK functionality required for qualified H2 SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-HPK-002",
+      "normative_statement": "Dynamic-table memory SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-HPK-003",
+      "normative_statement": "Encoded field-section size SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-HPK-004",
+      "normative_statement": "Decoded field-section size SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-HPK-005",
+      "normative_statement": "Decoded field count SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-HPK-006",
+      "normative_statement": "Individual field size SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-HPK-007",
+      "normative_statement": "Decoder work SHALL be bounded or explicitly accounted."
+    },
+    {
+      "requirement_id": "REQ-HPK-008",
+      "normative_statement": "Compression-state memory limits SHALL NOT be treated as sufficient computational protection."
+    },
+    {
+      "requirement_id": "REQ-QIC-001",
+      "normative_statement": "QUIC v1 functionality required for H3 SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-002",
+      "normative_statement": "Connection-ID state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QIC-003",
+      "normative_statement": "Packet-number-space state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QIC-004",
+      "normative_statement": "Required Initial packet processing SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-005",
+      "normative_statement": "Required Handshake packet processing SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-006",
+      "normative_statement": "Required 1-RTT packet processing SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-007",
+      "normative_statement": "Packet protection SHALL use the crypto provider boundary."
+    },
+    {
+      "requirement_id": "REQ-QIC-008",
+      "normative_statement": "Transport parameters SHALL be validated and bounded."
+    },
+    {
+      "requirement_id": "REQ-QIC-009",
+      "normative_statement": "QUIC anti-amplification requirements SHALL be enforced."
+    },
+    {
+      "requirement_id": "REQ-QIC-010",
+      "normative_statement": "Output before address validation SHALL remain within applicable protocol amplification limits."
+    },
+    {
+      "requirement_id": "REQ-QIC-011",
+      "normative_statement": "Required ACK generation SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-012",
+      "normative_statement": "Required ACK processing SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-013",
+      "normative_statement": "ACK-range state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QIC-014",
+      "normative_statement": "Outstanding packet metadata SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QIC-015",
+      "normative_statement": "Retransmission metadata SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QIC-016",
+      "normative_statement": "Loss-detection state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QIC-017",
+      "normative_statement": "PTO state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QIC-018",
+      "normative_statement": "Stream reassembly state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QIC-019",
+      "normative_statement": "Required stream flow control SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-020",
+      "normative_statement": "Required connection flow control SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-021",
+      "normative_statement": "A qualified congestion-control mechanism SHALL be used."
+    },
+    {
+      "requirement_id": "REQ-QIC-022",
+      "normative_statement": "Idle timeout SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-023",
+      "normative_statement": "Connection closure SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-024",
+      "normative_statement": "Required address validation SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QIC-025",
+      "normative_statement": "QUIC Retry SHALL be available as an admission-control mechanism."
+    },
+    {
+      "requirement_id": "REQ-QIC-026",
+      "normative_statement": "Exact adaptive Retry policy SHALL remain evidence-driven."
+    },
+    {
+      "requirement_id": "REQ-QIC-027",
+      "normative_statement": "Migration policy SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-QIC-028",
+      "normative_statement": "Hostile ACK fragmentation SHALL be a qualification target."
+    },
+    {
+      "requirement_id": "REQ-QIC-029",
+      "normative_statement": "Every externally influenceable retained QUIC resource SHALL have an explicit finite bound."
+    },
+    {
+      "requirement_id": "REQ-QID-001",
+      "normative_statement": "Connection-ID issuance SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QID-002",
+      "normative_statement": "Connection-ID retirement SHALL reclaim associated state deterministically."
+    },
+    {
+      "requirement_id": "REQ-QID-003",
+      "normative_statement": "The number of active connection IDs per connection SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QID-004",
+      "normative_statement": "Stateless-reset support SHALL be explicitly classified before M7 qualification."
+    },
+    {
+      "requirement_id": "REQ-QID-005",
+      "normative_statement": "Stateless-reset token state, if used, SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QID-006",
+      "normative_statement": "Retry tokens, if issued, SHALL have integrity protection appropriate to their purpose."
+    },
+    {
+      "requirement_id": "REQ-QID-007",
+      "normative_statement": "Retry-token lifetime SHALL be finite."
+    },
+    {
+      "requirement_id": "REQ-QID-008",
+      "normative_statement": "Retry-token validation SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QID-009",
+      "normative_statement": "Address-validation token state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QID-010",
+      "normative_statement": "Token key rotation, if supported, SHALL have explicit lifetime and overlap semantics."
+    },
+    {
+      "requirement_id": "REQ-QID-011",
+      "normative_statement": "A truncated UDP datagram SHALL NOT be parsed as though it were a complete QUIC datagram."
+    },
+    {
+      "requirement_id": "REQ-QID-012",
+      "normative_statement": "UDP truncation or receive-buffer insufficiency SHALL receive deterministic handling."
+    },
+    {
+      "requirement_id": "REQ-QID-013",
+      "normative_statement": "Oversized datagrams SHALL NOT cause out-of-bounds processing."
+    },
+    {
+      "requirement_id": "REQ-QID-014",
+      "normative_statement": "Multiple QUIC packets carried by a datagram SHALL remain subject to aggregate datagram work accounting."
+    },
+    {
+      "requirement_id": "REQ-QID-015",
+      "normative_statement": "Malformed datagrams SHALL remain subject to applicable byte and work accounting even when discarded."
+    },
+    {
+      "requirement_id": "REQ-H3-001",
+      "normative_statement": "HTTP/3 SHALL be implemented natively over QUIC."
+    },
+    {
+      "requirement_id": "REQ-H3-002",
+      "normative_statement": "Required control streams SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-H3-003",
+      "normative_statement": "Required SETTINGS behaviour SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-H3-004",
+      "normative_statement": "Request streams SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-H3-005",
+      "normative_statement": "HEADERS SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-H3-006",
+      "normative_statement": "DATA SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-H3-007",
+      "normative_statement": "Stream cancellation SHALL be handled correctly."
+    },
+    {
+      "requirement_id": "REQ-H3-008",
+      "normative_statement": "Connection shutdown SHALL be handled correctly."
+    },
+    {
+      "requirement_id": "REQ-H3-009",
+      "normative_statement": "Unknown frames SHALL receive standards-compatible handling while remaining resource-accounted."
+    },
+    {
+      "requirement_id": "REQ-H3-010",
+      "normative_statement": "Response encoding SHALL consume the semantic response representation."
+    },
+    {
+      "requirement_id": "REQ-QPK-001",
+      "normative_statement": "QPACK functionality required for qualified H3 SHALL be implemented."
+    },
+    {
+      "requirement_id": "REQ-QPK-002",
+      "normative_statement": "Dynamic-table capacity SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QPK-003",
+      "normative_statement": "Blocked-stream count SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QPK-004",
+      "normative_statement": "Encoded field-section size SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QPK-005",
+      "normative_statement": "Decoded field-section size SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QPK-006",
+      "normative_statement": "Decoded field count SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QPK-007",
+      "normative_statement": "Individual field size SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QPK-008",
+      "normative_statement": "Blocked-stream metadata SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QPK-009",
+      "normative_statement": "Decoder work SHALL be bounded or explicitly accounted."
+    },
+    {
+      "requirement_id": "REQ-QPK-010",
+      "normative_statement": "Initial QPACK settings SHOULD be conservative."
+    },
+    {
+      "requirement_id": "REQ-QPK-011",
+      "normative_statement": "Compression complexity SHOULD increase only with measured justification."
+    },
+    {
+      "requirement_id": "REQ-CRY-001",
+      "normative_statement": "AsmWeb SHALL NOT invent cryptographic primitives."
+    },
+    {
+      "requirement_id": "REQ-CRY-002",
+      "normative_statement": "TLS and QUIC cryptographic operations SHALL use established implementations."
+    },
+    {
+      "requirement_id": "REQ-CRY-003",
+      "normative_statement": "Cryptographic operations SHALL cross a narrow provider boundary."
+    },
+    {
+      "requirement_id": "REQ-CRY-004",
+      "normative_statement": "The provider SHALL NOT dictate unrelated HTTP, QUIC, routing, memory or event architecture."
+    },
+    {
+      "requirement_id": "REQ-CRY-005",
+      "normative_statement": "Key ownership SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-CRY-006",
+      "normative_statement": "Key lifetime SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-CRY-007",
+      "normative_statement": "Secret zeroisation policy SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-CRY-008",
+      "normative_statement": "Certificate handling SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-CRY-009",
+      "normative_statement": "ALPN SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-CRY-010",
+      "normative_statement": "Crypto failure propagation SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-CRY-011",
+      "normative_statement": "Handshake work SHALL be included in resource accounting."
+    },
+    {
+      "requirement_id": "REQ-TLS-001",
+      "normative_statement": "TLS connection state SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-TLS-002",
+      "normative_statement": "TLS handshake state retained by AsmWeb SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-TLS-003",
+      "normative_statement": "TLS input and output buffering attributable to AsmWeb SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-TLS-004",
+      "normative_statement": "Certificate-chain loading SHALL occur through a bounded startup/configuration path."
+    },
+    {
+      "requirement_id": "REQ-TLS-005",
+      "normative_statement": "Certificate selection policy SHALL be explicit if more than one certificate identity is supported."
+    },
+    {
+      "requirement_id": "REQ-TLS-006",
+      "normative_statement": "TLS alert handling SHALL be deterministic."
+    },
+    {
+      "requirement_id": "REQ-TLS-007",
+      "normative_statement": "Peer TLS closure SHALL have defined connection semantics."
+    },
+    {
+      "requirement_id": "REQ-TLS-008",
+      "normative_statement": "Post-handshake TLS functionality SHALL be explicitly classified before release."
+    },
+    {
+      "requirement_id": "REQ-TLS-009",
+      "normative_statement": "TLS renegotiation behaviour SHALL be explicitly classified where applicable to the selected TLS profile."
+    },
+    {
+      "requirement_id": "REQ-TLS-010",
+      "normative_statement": "Session-ticket handling SHALL be explicitly defined if resumption is enabled."
+    },
+    {
+      "requirement_id": "REQ-TLS-011",
+      "normative_statement": "ALPN protocol selection SHALL occur before dispatch to a protocol requiring negotiated selection."
+    },
+    {
+      "requirement_id": "REQ-TLS-012",
+      "normative_statement": "An unsupported negotiated protocol identifier SHALL receive deterministic handling."
+    },
+    {
+      "requirement_id": "REQ-TLS-013",
+      "normative_statement": "A TLS connection SHALL NOT simultaneously enter ambiguous H1 and H2 protocol ownership."
+    },
+    {
+      "requirement_id": "REQ-TLS-014",
+      "normative_statement": "ALPN selection SHALL be traceable to the Supported Capability Profile."
+    },
+    {
+      "requirement_id": "REQ-TLS-015",
+      "normative_statement": "TLS failure before HTTP protocol establishment SHALL NOT require construction of an HTTP semantic request."
+    },
+    {
+      "requirement_id": "REQ-CAD-001",
+      "normative_statement": "Unauthenticated peers SHALL NOT be able to create unbounded concurrent cryptographic work."
+    },
+    {
+      "requirement_id": "REQ-CAD-002",
+      "normative_statement": "Concurrent TLS handshake state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-CAD-003",
+      "normative_statement": "Concurrent QUIC handshake state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-CAD-004",
+      "normative_statement": "Pending handshake queues SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-CAD-005",
+      "normative_statement": "Handshake retained memory SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-CAD-006",
+      "normative_statement": "Handshake lifetime SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-CAD-007",
+      "normative_statement": "Handshake work SHALL be accounted independently from ordinary established-connection work where useful."
+    },
+    {
+      "requirement_id": "REQ-CAD-008",
+      "normative_statement": "Cheap structural validation SHOULD precede expensive cryptographic work where protocol semantics permit."
+    },
+    {
+      "requirement_id": "REQ-CAD-009",
+      "normative_statement": "Pressure state MAY reduce handshake admission."
+    },
+    {
+      "requirement_id": "REQ-CAD-010",
+      "normative_statement": "Pressure state MAY trigger more aggressive QUIC Retry policy."
+    },
+    {
+      "requirement_id": "REQ-CAD-011",
+      "normative_statement": "TLS cookies MAY be used where applicable and supported by the selected provider/profile."
+    },
+    {
+      "requirement_id": "REQ-CAD-012",
+      "normative_statement": "Handshake admission policy SHALL be deterministic for a given runtime state and applicable inputs."
+    },
+    {
+      "requirement_id": "REQ-CAD-013",
+      "normative_statement": "Distributed handshake load SHALL be considered independently from per-connection limits."
+    },
+    {
+      "requirement_id": "REQ-CAD-014",
+      "normative_statement": "Cryptographic admission exhaustion SHALL fail at the smallest correct scope."
+    },
+    {
+      "requirement_id": "REQ-SCR-001",
+      "normative_statement": "Cryptographic secret material SHALL NOT enter ordinary logs."
+    },
+    {
+      "requirement_id": "REQ-SCR-002",
+      "normative_statement": "Cryptographic secret material SHALL NOT enter ordinary metrics."
+    },
+    {
+      "requirement_id": "REQ-SCR-003",
+      "normative_statement": "Cryptographic secret material SHALL NOT enter qlog except under an explicitly controlled qualification policy where required."
+    },
+    {
+      "requirement_id": "REQ-SCR-004",
+      "normative_statement": "TLS key logging, if supported for qualification, SHALL require explicit opt-in."
+    },
+    {
+      "requirement_id": "REQ-SCR-005",
+      "normative_statement": "TLS key logs SHALL be treated as sensitive evidence."
+    },
+    {
+      "requirement_id": "REQ-SCR-006",
+      "normative_statement": "Sensitive diagnostic artifacts SHALL NOT be generated by default in production."
+    },
+    {
+      "requirement_id": "REQ-SCR-007",
+      "normative_statement": "Core-dump handling of secret-bearing processes SHALL be explicitly considered before production qualification."
+    },
+    {
+      "requirement_id": "REQ-SCR-008",
+      "normative_statement": "Qualification evidence SHALL NOT unintentionally publish private keys, session secrets or equivalent cryptographic material."
+    },
+    {
+      "requirement_id": "REQ-SCR-009",
+      "normative_statement": "Secret lifetime SHALL NOT exceed its defined cryptographic or operational need without justification."
+    },
+    {
+      "requirement_id": "REQ-ENT-001",
+      "normative_statement": "Production entropy SHALL originate from an approved OS cryptographic source."
+    },
+    {
+      "requirement_id": "REQ-ENT-002",
+      "normative_statement": "Entropy SHALL cross a narrow AsmWeb boundary."
+    },
+    {
+      "requirement_id": "REQ-ENT-003",
+      "normative_statement": "Qualification MAY substitute deterministic entropy where appropriate."
+    },
+    {
+      "requirement_id": "REQ-ENT-004",
+      "normative_statement": "Production SHALL NOT use deterministic qualification entropy."
+    },
+    {
+      "requirement_id": "REQ-ENT-005",
+      "normative_statement": "Production/qualification separation SHALL prevent silent accidental use of test entropy."
+    },
+    {
+      "requirement_id": "REQ-TIM-001",
+      "normative_statement": "Protocol state machines SHALL NOT independently obtain wall-clock time."
+    },
+    {
+      "requirement_id": "REQ-TIM-002",
+      "normative_statement": "Monotonic time SHALL be supplied explicitly."
+    },
+    {
+      "requirement_id": "REQ-TIM-003",
+      "normative_statement": "Production SHALL use an appropriate Linux monotonic clock."
+    },
+    {
+      "requirement_id": "REQ-TIM-004",
+      "normative_statement": "Qualification SHALL support virtual time where required."
+    },
+    {
+      "requirement_id": "REQ-TIM-005",
+      "normative_statement": "Protocol deadlines SHALL use the explicit time architecture."
+    },
+    {
+      "requirement_id": "REQ-TIM-006",
+      "normative_statement": "Connections SHALL expose required next deadlines."
+    },
+    {
+      "requirement_id": "REQ-TIM-007",
+      "normative_statement": "Timer scheduling SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-TIM-008",
+      "normative_statement": "Final timer structure SHALL remain evidence-driven."
+    },
+    {
+      "requirement_id": "REQ-TIM-009",
+      "normative_statement": "Civil or HTTP-date time SHALL remain conceptually separate from protocol monotonic time."
+    },
+    {
+      "requirement_id": "REQ-TIM-010",
+      "normative_statement": "If HTTP Date generation is supported, its wall-clock source and failure semantics SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-PRG-001",
+      "normative_statement": "Every externally retained long-lived operation SHALL have a defined notion of useful progress where applicable."
+    },
+    {
+      "requirement_id": "REQ-PRG-002",
+      "normative_statement": "Trivial attacker-controlled activity SHALL NOT necessarily reset progress deadlines."
+    },
+    {
+      "requirement_id": "REQ-PRG-003",
+      "normative_statement": "Progress state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-PRG-004",
+      "normative_statement": "Progress evaluation SHALL use monotonic time."
+    },
+    {
+      "requirement_id": "REQ-PRG-005",
+      "normative_statement": "Handshake deadlines SHALL be finite."
+    },
+    {
+      "requirement_id": "REQ-PRG-006",
+      "normative_statement": "Idle connection deadlines SHALL be finite where protocol semantics permit."
+    },
+    {
+      "requirement_id": "REQ-PRG-007",
+      "normative_statement": "Incomplete request deadlines SHALL be finite."
+    },
+    {
+      "requirement_id": "REQ-PRG-008",
+      "normative_statement": "Body-progress deadlines SHALL be finite where bodies are being received."
+    },
+    {
+      "requirement_id": "REQ-PRG-009",
+      "normative_statement": "Drain deadlines SHALL be finite."
+    },
+    {
+      "requirement_id": "REQ-PRG-010",
+      "normative_statement": "Retransmission and PTO timing SHALL remain governed by applicable QUIC semantics."
+    },
+    {
+      "requirement_id": "REQ-PRG-011",
+      "normative_statement": "Every deadline class SHALL define start conditions."
+    },
+    {
+      "requirement_id": "REQ-PRG-012",
+      "normative_statement": "Every deadline class SHALL define permitted reset or extension conditions."
+    },
+    {
+      "requirement_id": "REQ-PRG-013",
+      "normative_statement": "Every deadline class SHALL define expiry action."
+    },
+    {
+      "requirement_id": "REQ-PRG-014",
+      "normative_statement": "Every deadline class SHALL define failure scope."
+    },
+    {
+      "requirement_id": "REQ-PRG-015",
+      "normative_statement": "Boundary qualification SHALL test applicable just-before, at and just-after deadline behaviour."
+    },
+    {
+      "requirement_id": "REQ-PRG-016",
+      "normative_statement": "A stalled operation SHALL NOT retain resources indefinitely merely because the peer continues producing irrelevant input."
+    },
+    {
+      "requirement_id": "REQ-LMT-001",
+      "normative_statement": "These mechanisms SHALL NOT be treated as semantically interchangeable."
+    },
+    {
+      "requirement_id": "REQ-LMT-002",
+      "normative_statement": "A resource defence SHALL identify which mechanism or mechanisms it relies upon."
+    },
+    {
+      "requirement_id": "REQ-LMT-003",
+      "normative_statement": "A capacity limit SHALL NOT be claimed to bound historical work by itself."
+    },
+    {
+      "requirement_id": "REQ-LMT-004",
+      "normative_statement": "A deadline SHALL NOT be claimed to bound aggregate distributed concurrency by itself."
+    },
+    {
+      "requirement_id": "REQ-LMT-005",
+      "normative_statement": "A rate control SHALL NOT replace a hard memory bound where retained memory must remain finite."
+    },
+    {
+      "requirement_id": "REQ-DET-001",
+      "normative_statement": "Qualification builds SHOULD support deterministic protocol replay."
+    },
+    {
+      "requirement_id": "REQ-DET-002",
+      "normative_statement": "A replay case SHALL identify its configuration."
+    },
+    {
+      "requirement_id": "REQ-DET-003",
+      "normative_statement": "A replay case SHALL identify the tested binary or build identity."
+    },
+    {
+      "requirement_id": "REQ-DET-004",
+      "normative_statement": "A replay case using controlled entropy SHALL identify the entropy input."
+    },
+    {
+      "requirement_id": "REQ-DET-005",
+      "normative_statement": "A replay case using virtual time SHALL identify the time-event sequence."
+    },
+    {
+      "requirement_id": "REQ-DET-006",
+      "normative_statement": "A replay case SHALL identify its network input sequence."
+    },
+    {
+      "requirement_id": "REQ-DET-007",
+      "normative_statement": "A replay case using injected faults SHALL identify the fault sequence."
+    },
+    {
+      "requirement_id": "REQ-DET-008",
+      "normative_statement": "A replay case SHOULD identify the expected terminal result or invariant set."
+    },
+    {
+      "requirement_id": "REQ-DET-009",
+      "normative_statement": "Equivalent deterministic inputs SHALL reproduce deterministic protocol-state behaviour."
+    },
+    {
+      "requirement_id": "REQ-DET-010",
+      "normative_statement": "Production traffic SHALL NOT be recorded by default solely for replay."
+    },
+    {
+      "requirement_id": "REQ-NET-001",
+      "normative_statement": "TCP networking required for H1/H2 SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-NET-002",
+      "normative_statement": "UDP networking required for QUIC/H3 SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-NET-003",
+      "normative_statement": "Network operation SHALL support nonblocking I/O."
+    },
+    {
+      "requirement_id": "REQ-NET-004",
+      "normative_statement": "TCP byte buffers SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-NET-005",
+      "normative_statement": "UDP datagram descriptors SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-NET-006",
+      "normative_statement": "The UDP boundary SHALL support bounded batches."
+    },
+    {
+      "requirement_id": "REQ-NET-007",
+      "normative_statement": "Batch capacity SHALL be finite."
+    },
+    {
+      "requirement_id": "REQ-NET-008",
+      "normative_statement": "Protocol logic SHALL remain independent of individual versus batched syscall selection."
+    },
+    {
+      "requirement_id": "REQ-OUT-001",
+      "normative_statement": "Pending response bytes retained in userspace SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OUT-002",
+      "normative_statement": "Per-connection TCP output state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OUT-003",
+      "normative_statement": "Per-stream H2 pending output SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OUT-004",
+      "normative_statement": "Per-connection H2 pending output SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OUT-005",
+      "normative_statement": "Per-stream H3/QUIC pending output SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OUT-006",
+      "normative_statement": "Per-connection QUIC pending output SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OUT-007",
+      "normative_statement": "Retransmission output state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OUT-008",
+      "normative_statement": "TX packet queues SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OUT-009",
+      "normative_statement": "Static-file transmission state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OUT-010",
+      "normative_statement": "A slow or non-reading peer SHALL NOT cause unbounded response accumulation."
+    },
+    {
+      "requirement_id": "REQ-OUT-011",
+      "normative_statement": "Output queue exhaustion SHALL produce deterministic backpressure, stream action, connection action or admission control as appropriate."
+    },
+    {
+      "requirement_id": "REQ-OUT-012",
+      "normative_statement": "Generated output SHALL participate in RAF-O qualification where attacker influence exists."
+    },
+    {
+      "requirement_id": "REQ-MEM-001",
+      "normative_statement": "AsmWeb SHALL distinguish initialisation from steady state."
+    },
+    {
+      "requirement_id": "REQ-MEM-002",
+      "normative_statement": "Initialisation MAY acquire memory required to establish bounded runtime state."
+    },
+    {
+      "requirement_id": "REQ-MEM-003",
+      "normative_statement": "Normal steady-state processing SHOULD use pre-provisioned bounded storage."
+    },
+    {
+      "requirement_id": "REQ-MEM-004",
+      "normative_statement": "General-purpose memory acquisition SHOULD NOT occur on the normal request path."
+    },
+    {
+      "requirement_id": "REQ-MEM-005",
+      "normative_statement": "Externally influenceable steady-state storage SHOULD use typed bounded pools."
+    },
+    {
+      "requirement_id": "REQ-POL-001",
+      "normative_statement": "Every typed pool SHALL define object size or bounded size class."
+    },
+    {
+      "requirement_id": "REQ-POL-002",
+      "normative_statement": "Every typed pool SHALL define capacity."
+    },
+    {
+      "requirement_id": "REQ-POL-003",
+      "normative_statement": "Every typed pool SHALL define ownership."
+    },
+    {
+      "requirement_id": "REQ-POL-004",
+      "normative_statement": "Every typed pool SHALL define object lifetime."
+    },
+    {
+      "requirement_id": "REQ-POL-005",
+      "normative_statement": "Every typed pool SHALL define exhaustion behaviour."
+    },
+    {
+      "requirement_id": "REQ-POL-006",
+      "normative_statement": "Every typed pool SHALL define expected quiescent occupancy."
+    },
+    {
+      "requirement_id": "REQ-POL-007",
+      "normative_statement": "Pool release SHALL prevent duplicate object ownership."
+    },
+    {
+      "requirement_id": "REQ-POL-008",
+      "normative_statement": "Qualification builds SHOULD detect duplicate release."
+    },
+    {
+      "requirement_id": "REQ-RCL-001",
+      "normative_statement": "Every bounded runtime object SHALL have a deterministic reclamation path."
+    },
+    {
+      "requirement_id": "REQ-RCL-002",
+      "normative_statement": "Every terminal state SHALL define when associated resources become reclaimable."
+    },
+    {
+      "requirement_id": "REQ-RCL-003",
+      "normative_statement": "Deferred reclamation SHALL itself be bounded."
+    },
+    {
+      "requirement_id": "REQ-RCL-004",
+      "normative_statement": "Timer cancellation SHALL release or invalidate associated timer state deterministically."
+    },
+    {
+      "requirement_id": "REQ-RCL-005",
+      "normative_statement": "Event-registration removal SHALL occur when the owning object no longer requires the registration."
+    },
+    {
+      "requirement_id": "REQ-RCL-006",
+      "normative_statement": "Retransmission-dependent state SHALL be retained only while required by protocol semantics and bounded policy."
+    },
+    {
+      "requirement_id": "REQ-RCL-007",
+      "normative_statement": "Abandoned stream state SHALL eventually be reclaimed."
+    },
+    {
+      "requirement_id": "REQ-RCL-008",
+      "normative_statement": "Connection teardown SHALL reclaim connection-owned resources."
+    },
+    {
+      "requirement_id": "REQ-RCL-009",
+      "normative_statement": "Reclamation SHALL update applicable accounting scopes consistently."
+    },
+    {
+      "requirement_id": "REQ-RCL-010",
+      "normative_statement": "Object storage reuse SHALL NOT permit an undetected stale reference to become valid for an unrelated later object where stale references are structurally possible."
+    },
+    {
+      "requirement_id": "REQ-RCL-011",
+      "normative_statement": "The stale-reference protection mechanism SHALL remain an implementation decision subject to qualification."
+    },
+    {
+      "requirement_id": "REQ-RCL-012",
+      "normative_statement": "Qualification SHALL test object reuse at high churn for applicable object classes."
+    },
+    {
+      "requirement_id": "REQ-RCL-013",
+      "normative_statement": "Quiescence qualification SHALL verify deterministic return toward configured baseline."
+    },
+    {
+      "requirement_id": "REQ-MOT-001",
+      "normative_statement": "Every externally influenceable retained resource SHALL appear in the Maximum-Object Table or explicitly linked equivalent."
+    },
+    {
+      "requirement_id": "REQ-MOT-002",
+      "normative_statement": "Every entry SHALL define scope."
+    },
+    {
+      "requirement_id": "REQ-MOT-003",
+      "normative_statement": "Every entry SHALL define maximum count where countable."
+    },
+    {
+      "requirement_id": "REQ-MOT-004",
+      "normative_statement": "Every entry SHALL define maximum retained bytes where applicable."
+    },
+    {
+      "requirement_id": "REQ-MOT-005",
+      "normative_statement": "Every entry SHALL identify ownership."
+    },
+    {
+      "requirement_id": "REQ-MOT-006",
+      "normative_statement": "Every entry SHALL identify exhaustion behaviour."
+    },
+    {
+      "requirement_id": "REQ-MOT-007",
+      "normative_statement": "Every configurable entry SHALL identify its configuration source."
+    },
+    {
+      "requirement_id": "REQ-MOT-008",
+      "normative_statement": "Every meaningful externally reachable maximum SHOULD identify N−1/N/N+1 qualification tests."
+    },
+    {
+      "requirement_id": "REQ-CPC-001",
+      "normative_statement": "Configured protocol capacity SHALL NOT exceed physically provisioned bounded capacity."
+    },
+    {
+      "requirement_id": "REQ-CPC-002",
+      "normative_statement": "Advertised protocol capacity SHALL NOT exceed provisioned capacity."
+    },
+    {
+      "requirement_id": "REQ-CPC-003",
+      "normative_statement": "Startup validation SHALL reject configurations that violate required capacity relationships."
+    },
+    {
+      "requirement_id": "REQ-CPC-004",
+      "normative_statement": "Derived maximum memory SHALL be calculable from configuration and implementation structure."
+    },
+    {
+      "requirement_id": "REQ-CPC-005",
+      "normative_statement": "Capacity validation SHALL occur before READY state."
+    },
+    {
+      "requirement_id": "REQ-CPC-006",
+      "normative_statement": "A capacity calculation failure or overflow SHALL fail startup rather than wrap or silently reduce protection."
+    },
+    {
+      "requirement_id": "REQ-HRA-001",
+      "normative_statement": "Relevant retained memory SHALL be attributable to an appropriate resource scope."
+    },
+    {
+      "requirement_id": "REQ-HRA-002",
+      "normative_statement": "Relevant computational work SHALL be attributable to an appropriate resource scope."
+    },
+    {
+      "requirement_id": "REQ-HRA-003",
+      "normative_statement": "Relevant generated output SHALL be attributable to an appropriate resource scope."
+    },
+    {
+      "requirement_id": "REQ-HRA-004",
+      "normative_statement": "Child-scope admission SHALL NOT bypass an exhausted mandatory parent-scope limit."
+    },
+    {
+      "requirement_id": "REQ-HRA-005",
+      "normative_statement": "Connection-local limits SHALL NOT be treated as sufficient protection against distributed load."
+    },
+    {
+      "requirement_id": "REQ-HRA-006",
+      "normative_statement": "Stream-local limits SHALL NOT be treated as sufficient protection against aggregate connection load."
+    },
+    {
+      "requirement_id": "REQ-HRA-007",
+      "normative_statement": "Worker-local limits SHALL NOT be treated as sufficient protection against aggregate process load."
+    },
+    {
+      "requirement_id": "REQ-HRA-008",
+      "normative_statement": "Global accounting SHALL permit detection of aggregate pressure arising from many individually compliant peers."
+    },
+    {
+      "requirement_id": "REQ-HRA-009",
+      "normative_statement": "Releasing a child object SHALL NOT erase historical work already charged to a surviving parent scope where historical accounting is required."
+    },
+    {
+      "requirement_id": "REQ-HRA-010",
+      "normative_statement": "Resource-accounting updates SHALL themselves have bounded computational cost."
+    },
+    {
+      "requirement_id": "REQ-HRA-011",
+      "normative_statement": "Accounting overflow SHALL be handled deterministically and SHALL NOT silently wrap."
+    },
+    {
+      "requirement_id": "REQ-HRA-012",
+      "normative_statement": "Pressure decisions MAY use multiple accounting levels."
+    },
+    {
+      "requirement_id": "REQ-HRA-013",
+      "normative_statement": "Qualification SHALL include distributed-load scenarios in which no individual connection exceeds its local limit."
+    },
+    {
+      "requirement_id": "REQ-WRK-001",
+      "normative_statement": "Memory boundedness SHALL NOT be considered sufficient hostile-input defence."
+    },
+    {
+      "requirement_id": "REQ-WRK-002",
+      "normative_statement": "Significant externally reachable parsers SHALL have a work model."
+    },
+    {
+      "requirement_id": "REQ-WRK-003",
+      "normative_statement": "Externally controlled processing SHALL avoid accidental quadratic behaviour where bounded alternatives are required."
+    },
+    {
+      "requirement_id": "REQ-WRK-004",
+      "normative_statement": "Uncontrolled retry loops SHALL NOT exist on externally influenced paths."
+    },
+    {
+      "requirement_id": "REQ-WRK-005",
+      "normative_statement": "Externally controlled scanning SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-WRK-006",
+      "normative_statement": "Compression work SHALL be bounded or accounted."
+    },
+    {
+      "requirement_id": "REQ-WRK-007",
+      "normative_statement": "State-transition churn SHALL remain visible to work accounting."
+    },
+    {
+      "requirement_id": "REQ-WRK-008",
+      "normative_statement": "Attacker-controlled iteration counts SHALL have applicable limits."
+    },
+    {
+      "requirement_id": "REQ-WRK-009",
+      "normative_statement": "Historical work SHOULD be retained at scopes where object reclamation would otherwise erase attack cost."
+    },
+    {
+      "requirement_id": "REQ-WRK-010",
+      "normative_statement": "Exact work weights SHALL be derived from evidence."
+    },
+    {
+      "requirement_id": "REQ-WRK-011",
+      "normative_statement": "Protocol input that standards require AsmWeb to ignore SHALL remain subject to applicable byte, parser-work, connection-work and rate accounting."
+    },
+    {
+      "requirement_id": "REQ-WRK-012",
+      "normative_statement": "Ignored input SHALL NOT be treated as computationally free."
+    },
+    {
+      "requirement_id": "REQ-WRK-013",
+      "normative_statement": "Unknown but permitted protocol elements SHALL NOT create an unmetered processing path."
+    },
+    {
+      "requirement_id": "REQ-RAF-001",
+      "normative_statement": "AsmWeb SHALL independently reason about work W, retained state M and generated output O."
+    },
+    {
+      "requirement_id": "REQ-RAF-002",
+      "normative_statement": "RAF-W SHALL be calculated for designated scenarios where meaningful."
+    },
+    {
+      "requirement_id": "REQ-RAF-003",
+      "normative_statement": "RAF-M SHALL be calculated for designated scenarios where meaningful."
+    },
+    {
+      "requirement_id": "REQ-RAF-004",
+      "normative_statement": "RAF-O SHALL be calculated for designated scenarios where meaningful."
+    },
+    {
+      "requirement_id": "REQ-RAF-005",
+      "normative_statement": "RAF dimensions SHALL NOT be collapsed into one arbitrary score."
+    },
+    {
+      "requirement_id": "REQ-RAF-006",
+      "normative_statement": "RAF evidence SHALL identify units and denominator."
+    },
+    {
+      "requirement_id": "REQ-RAF-007",
+      "normative_statement": "Adversarial qualification SHOULD record attacker bytes/events, server work, peak retained state, generated output and reclamation behaviour."
+    },
+    {
+      "requirement_id": "REQ-PRC-001",
+      "normative_statement": "Resource commitment SHALL increase progressively where applicable."
+    },
+    {
+      "requirement_id": "REQ-PRC-002",
+      "normative_statement": "Cheap validation SHOULD precede more expensive applicable work."
+    },
+    {
+      "requirement_id": "REQ-PRC-003",
+      "normative_statement": "Cryptographic work SHOULD NOT occur earlier than required by protocol and security semantics."
+    },
+    {
+      "requirement_id": "REQ-PRC-004",
+      "normative_statement": "Semantic request allocation SHOULD NOT occur before the protocol has established sufficient validity."
+    },
+    {
+      "requirement_id": "REQ-PRC-005",
+      "normative_statement": "Application work SHOULD NOT begin before required semantic validation succeeds."
+    },
+    {
+      "requirement_id": "REQ-EXH-001",
+      "normative_statement": "Resource exhaustion SHALL be treated as an expected operating condition."
+    },
+    {
+      "requirement_id": "REQ-EXH-002",
+      "normative_statement": "Pool exhaustion SHALL NOT cause memory corruption."
+    },
+    {
+      "requirement_id": "REQ-EXH-003",
+      "normative_statement": "Remote pool exhaustion SHALL NOT ordinarily terminate the process."
+    },
+    {
+      "requirement_id": "REQ-EXH-004",
+      "normative_statement": "Failure SHALL occur at the smallest correct scope."
+    },
+    {
+      "requirement_id": "REQ-EXH-005",
+      "normative_statement": "Stream-local exhaustion SHOULD remain stream-local where standards permit."
+    },
+    {
+      "requirement_id": "REQ-EXH-006",
+      "normative_statement": "Connection-local exhaustion SHOULD remain connection-local where appropriate."
+    },
+    {
+      "requirement_id": "REQ-EXH-007",
+      "normative_statement": "Worker pressure SHALL support admission reduction where required."
+    },
+    {
+      "requirement_id": "REQ-EXH-008",
+      "normative_statement": "Global pressure SHALL support load shedding."
+    },
+    {
+      "requirement_id": "REQ-LDS-001",
+      "normative_statement": "AsmWeb SHALL define NORMAL."
+    },
+    {
+      "requirement_id": "REQ-LDS-002",
+      "normative_statement": "AsmWeb SHALL define PRESSURED."
+    },
+    {
+      "requirement_id": "REQ-LDS-003",
+      "normative_statement": "AsmWeb SHALL define DEFENSIVE."
+    },
+    {
+      "requirement_id": "REQ-LDS-004",
+      "normative_statement": "AsmWeb SHALL define SATURATED."
+    },
+    {
+      "requirement_id": "REQ-LDS-005",
+      "normative_statement": "Transitions SHALL be deterministic."
+    },
+    {
+      "requirement_id": "REQ-LDS-006",
+      "normative_statement": "Transitions SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-LDS-007",
+      "normative_statement": "Transitions SHALL be testable."
+    },
+    {
+      "requirement_id": "REQ-LDS-008",
+      "normative_statement": "Pressure MAY alter connection admission."
+    },
+    {
+      "requirement_id": "REQ-LDS-009",
+      "normative_statement": "Pressure MAY alter Retry policy."
+    },
+    {
+      "requirement_id": "REQ-LDS-010",
+      "normative_statement": "Pressure MAY alter handshake concurrency."
+    },
+    {
+      "requirement_id": "REQ-LDS-011",
+      "normative_statement": "Pressure MAY alter stream admission."
+    },
+    {
+      "requirement_id": "REQ-LDS-012",
+      "normative_statement": "Load shedding SHALL be explicit rather than accidental."
+    },
+    {
+      "requirement_id": "REQ-CONC-001",
+      "normative_statement": "Every mutable connection object SHALL have explicit ownership."
+    },
+    {
+      "requirement_id": "REQ-CONC-002",
+      "normative_statement": "Every mutable stream object SHALL have explicit ownership."
+    },
+    {
+      "requirement_id": "REQ-CONC-003",
+      "normative_statement": "Every mutable timer object SHALL have explicit ownership."
+    },
+    {
+      "requirement_id": "REQ-CONC-004",
+      "normative_statement": "Every mutable protocol object SHALL have an identified mutation authority."
+    },
+    {
+      "requirement_id": "REQ-CONC-005",
+      "normative_statement": "Simultaneous mutation by multiple workers SHALL NOT occur without explicitly designed synchronisation."
+    },
+    {
+      "requirement_id": "REQ-CONC-006",
+      "normative_statement": "Object release SHALL occur only by the owner or through explicit ownership transfer."
+    },
+    {
+      "requirement_id": "REQ-CONC-007",
+      "normative_statement": "Connection handoff between workers, if supported, SHALL transfer ownership explicitly."
+    },
+    {
+      "requirement_id": "REQ-CONC-008",
+      "normative_statement": "Ownership transfer SHALL NOT leave two workers independently believing they exclusively own the same mutable object."
+    },
+    {
+      "requirement_id": "REQ-CONC-009",
+      "normative_statement": "Pool accounting SHALL remain correct under the selected concurrency model."
+    },
+    {
+      "requirement_id": "REQ-CONC-010",
+      "normative_statement": "Race-dependent correctness SHALL NOT be accepted."
+    },
+    {
+      "requirement_id": "REQ-CONC-011",
+      "normative_statement": "Cross-core sharing on hot paths SHOULD be minimised where measurement supports doing so."
+    },
+    {
+      "requirement_id": "REQ-CONC-012",
+      "normative_statement": "Cache optimisation SHALL NOT weaken ownership correctness."
+    },
+    {
+      "requirement_id": "REQ-ERR-001",
+      "normative_statement": "Every operational error SHALL be classifiable at an appropriate level."
+    },
+    {
+      "requirement_id": "REQ-ERR-002",
+      "normative_statement": "Errors SHALL identify the smallest correct failure scope."
+    },
+    {
+      "requirement_id": "REQ-ERR-003",
+      "normative_statement": "Protocol errors SHALL map to standards-compatible wire behaviour where required."
+    },
+    {
+      "requirement_id": "REQ-ERR-004",
+      "normative_statement": "Resource-limit errors SHALL remain distinguishable from malformed-protocol errors internally."
+    },
+    {
+      "requirement_id": "REQ-ERR-005",
+      "normative_statement": "Configuration errors SHALL normally occur before READY."
+    },
+    {
+      "requirement_id": "REQ-ERR-006",
+      "normative_statement": "Remote protocol errors SHALL NOT normally terminate the process."
+    },
+    {
+      "requirement_id": "REQ-ERR-007",
+      "normative_statement": "Qualification assertion failures SHALL be distinguishable from expected remote rejection."
+    },
+    {
+      "requirement_id": "REQ-ERR-008",
+      "normative_statement": "Error reporting SHALL NOT require unbounded textual construction."
+    },
+    {
+      "requirement_id": "REQ-ERR-009",
+      "normative_statement": "An error occurring after response transmission begins SHALL use defined protocol-specific termination behaviour."
+    },
+    {
+      "requirement_id": "REQ-ERR-010",
+      "normative_statement": "Internal errors SHALL NOT silently masquerade as successful responses."
+    },
+    {
+      "requirement_id": "REQ-AST-001",
+      "normative_statement": "Remote malformed input SHALL NOT be handled by a programmer assertion intended for impossible internal state."
+    },
+    {
+      "requirement_id": "REQ-AST-002",
+      "normative_statement": "Expected resource exhaustion SHALL NOT be treated as an impossible internal assertion."
+    },
+    {
+      "requirement_id": "REQ-AST-003",
+      "normative_statement": "Qualification-only assertions SHALL be identifiable as such."
+    },
+    {
+      "requirement_id": "REQ-AST-004",
+      "normative_statement": "Fatal integrity assertions SHALL be reserved for conditions where continued execution cannot be trusted at the selected scope."
+    },
+    {
+      "requirement_id": "REQ-AST-005",
+      "normative_statement": "Detected internal corruption SHALL NOT automatically be treated as safe to continue."
+    },
+    {
+      "requirement_id": "REQ-AST-006",
+      "normative_statement": "The failure scope for each fatal invariant class SHALL be explicitly defined."
+    },
+    {
+      "requirement_id": "REQ-AST-007",
+      "normative_statement": "Assertions SHALL NOT depend on unbounded formatting or allocation."
+    },
+    {
+      "requirement_id": "REQ-AST-008",
+      "normative_statement": "Production builds SHALL have an explicit policy for qualification/debug assertions that are removed or retained."
+    },
+    {
+      "requirement_id": "REQ-AST-009",
+      "normative_statement": "Removing an assertion in a production build SHALL NOT remove required validation of remote input."
+    },
+    {
+      "requirement_id": "REQ-FAL-001",
+      "normative_statement": "A malformed parser element SHALL NOT unnecessarily destroy unrelated state."
+    },
+    {
+      "requirement_id": "REQ-FAL-002",
+      "normative_statement": "A stream error SHALL NOT unnecessarily terminate unrelated streams."
+    },
+    {
+      "requirement_id": "REQ-FAL-003",
+      "normative_statement": "A malformed request SHALL NOT crash the process."
+    },
+    {
+      "requirement_id": "REQ-FAL-004",
+      "normative_statement": "A connection error SHALL NOT corrupt another connection."
+    },
+    {
+      "requirement_id": "REQ-FAL-005",
+      "normative_statement": "A remote peer SHALL NOT cause cross-worker object corruption."
+    },
+    {
+      "requirement_id": "REQ-FAL-006",
+      "normative_statement": "Worker-local failure behaviour SHALL be explicitly defined before multi-worker release qualification."
+    },
+    {
+      "requirement_id": "REQ-SEC-001",
+      "normative_statement": "Externally influenced integers SHALL have defined accepted ranges."
+    },
+    {
+      "requirement_id": "REQ-SEC-002",
+      "normative_statement": "Overflow behaviour SHALL be defined."
+    },
+    {
+      "requirement_id": "REQ-SEC-003",
+      "normative_statement": "Truncation behaviour SHALL be defined."
+    },
+    {
+      "requirement_id": "REQ-SEC-004",
+      "normative_statement": "Signedness SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-SEC-005",
+      "normative_statement": "Endian conversion SHALL be explicit where required."
+    },
+    {
+      "requirement_id": "REQ-SEC-006",
+      "normative_statement": "Network parsing SHALL use bounded cursor/end logic or an equivalently safe mechanism."
+    },
+    {
+      "requirement_id": "REQ-SEC-007",
+      "normative_statement": "Pointer arithmetic SHALL remain within explicit object or buffer bounds."
+    },
+    {
+      "requirement_id": "REQ-SEC-008",
+      "normative_statement": "Malformed remote input SHALL NOT cause out-of-bounds access."
+    },
+    {
+      "requirement_id": "REQ-SEC-009",
+      "normative_statement": "Malformed remote input SHALL NOT cause use-after-free."
+    },
+    {
+      "requirement_id": "REQ-SEC-010",
+      "normative_statement": "Malformed remote input SHALL NOT cause double release."
+    },
+    {
+      "requirement_id": "REQ-TRU-001",
+      "normative_statement": "Every identified trust boundary SHALL have defined validation responsibilities."
+    },
+    {
+      "requirement_id": "REQ-TRU-002",
+      "normative_statement": "Crossing a trust boundary SHALL NOT implicitly grant validity to data not validated for the receiving layer."
+    },
+    {
+      "requirement_id": "REQ-TRU-003",
+      "normative_statement": "The Security & Threat Model SHALL trace threats to these boundaries."
+    },
+    {
+      "requirement_id": "REQ-RTE-001",
+      "normative_statement": "AsmWeb v1 SHALL provide /."
+    },
+    {
+      "requirement_id": "REQ-RTE-002",
+      "normative_statement": "AsmWeb v1 SHALL provide /about."
+    },
+    {
+      "requirement_id": "REQ-RTE-003",
+      "normative_statement": "AsmWeb v1 SHALL provide /health."
+    },
+    {
+      "requirement_id": "REQ-RTE-004",
+      "normative_statement": "AsmWeb v1 SHALL provide /metrics."
+    },
+    {
+      "requirement_id": "REQ-RTE-005",
+      "normative_statement": "Route input SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-RTE-006",
+      "normative_statement": "Routing SHALL NOT require unrestricted general-purpose string machinery."
+    },
+    {
+      "requirement_id": "REQ-RTE-007",
+      "normative_statement": "Final route lookup strategy SHALL remain measurement-driven."
+    },
+    {
+      "requirement_id": "REQ-STA-001",
+      "normative_statement": "AsmWeb SHALL support static content sufficient for the first real website."
+    },
+    {
+      "requirement_id": "REQ-STA-002",
+      "normative_statement": "Small resources MAY be memory resident."
+    },
+    {
+      "requirement_id": "REQ-STA-003",
+      "normative_statement": "Large resources MAY use mmap, bounded buffers or qualified kernel-assisted mechanisms."
+    },
+    {
+      "requirement_id": "REQ-STA-004",
+      "normative_statement": "MIME lookup SHALL be deterministic."
+    },
+    {
+      "requirement_id": "REQ-STA-005",
+      "normative_statement": "Path traversal SHALL be prevented."
+    },
+    {
+      "requirement_id": "REQ-STA-006",
+      "normative_statement": "Content-root escape SHALL be prevented."
+    },
+    {
+      "requirement_id": "REQ-STA-007",
+      "normative_statement": "Symlink policy SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-STA-008",
+      "normative_statement": "Invalid path encodings SHALL receive deterministic handling."
+    },
+    {
+      "requirement_id": "REQ-STA-009",
+      "normative_statement": "Path length SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-STA-010",
+      "normative_statement": "The MIME mapping source SHALL be versioned or otherwise reproducibly identifiable."
+    },
+    {
+      "requirement_id": "REQ-STA-011",
+      "normative_statement": "Static-content consistency semantics for files modified during transmission SHALL be explicitly defined before M11 qualification."
+    },
+    {
+      "requirement_id": "REQ-FS-001",
+      "normative_statement": "The configured content root SHALL be treated as a security boundary."
+    },
+    {
+      "requirement_id": "REQ-FS-002",
+      "normative_statement": "Filesystem mapping SHALL NOT occur before required path validation."
+    },
+    {
+      "requirement_id": "REQ-FS-003",
+      "normative_statement": "Directory-serving behaviour SHALL be explicitly defined."
+    },
+    {
+      "requirement_id": "REQ-FS-004",
+      "normative_statement": "Special files, devices, sockets and other non-regular filesystem objects SHALL NOT be served unless explicitly supported."
+    },
+    {
+      "requirement_id": "REQ-FS-005",
+      "normative_statement": "Maximum servable file size or representation limits SHALL be defined where implementation limits exist."
+    },
+    {
+      "requirement_id": "REQ-FS-006",
+      "normative_statement": "Relevant TOCTOU and file-replacement behaviour SHALL be explicitly addressed."
+    },
+    {
+      "requirement_id": "REQ-FS-007",
+      "normative_statement": "Filesystem permission failure SHALL have deterministic handling."
+    },
+    {
+      "requirement_id": "REQ-FS-008",
+      "normative_statement": "File disappearance or mutation during transmission SHALL have deterministic handling."
+    },
+    {
+      "requirement_id": "REQ-FS-009",
+      "normative_statement": "Filesystem errors after response commencement SHALL use defined partial-response termination behaviour."
+    },
+    {
+      "requirement_id": "REQ-DYN-001",
+      "normative_statement": "Dynamic responses MAY consist of deliberately limited bounded primitives."
+    },
+    {
+      "requirement_id": "REQ-DYN-002",
+      "normative_statement": "The core SHALL NOT provide an unrestricted template language."
+    },
+    {
+      "requirement_id": "REQ-DYN-003",
+      "normative_statement": "The core SHALL NOT provide a general application runtime."
+    },
+    {
+      "requirement_id": "REQ-DYN-004",
+      "normative_statement": "The core SHALL NOT provide an unrestricted plugin ecosystem."
+    },
+    {
+      "requirement_id": "REQ-DYN-005",
+      "normative_statement": "Dynamic response generation SHALL remain bounded."
+    },
+    {
+      "requirement_id": "REQ-CFG-001",
+      "normative_statement": "Configuration SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-CFG-002",
+      "normative_statement": "Configuration SHALL be versioned."
+    },
+    {
+      "requirement_id": "REQ-CFG-003",
+      "normative_statement": "Configuration SHALL be validated before READY."
+    },
+    {
+      "requirement_id": "REQ-CFG-004",
+      "normative_statement": "Ambiguous configuration SHALL be rejected."
+    },
+    {
+      "requirement_id": "REQ-CFG-005",
+      "normative_statement": "Invalid configuration SHALL prevent READY."
+    },
+    {
+      "requirement_id": "REQ-CFG-006",
+      "normative_statement": "Configuration parsing SHALL NOT remain on the request hot path."
+    },
+    {
+      "requirement_id": "REQ-CFG-007",
+      "normative_statement": "Configuration SHALL support reproducible qualification."
+    },
+    {
+      "requirement_id": "REQ-CFG-008",
+      "normative_statement": "Resource-limit configuration SHALL trace to the Maximum-Object Table."
+    },
+    {
+      "requirement_id": "REQ-CFP-001",
+      "normative_statement": "Formal qualification SHALL identify the effective configuration."
+    },
+    {
+      "requirement_id": "REQ-CFP-002",
+      "normative_statement": "The effective configuration SHALL have a reproducible identity or digest where practical."
+    },
+    {
+      "requirement_id": "REQ-CFP-003",
+      "normative_statement": "Configuration provenance SHALL identify its source class."
+    },
+    {
+      "requirement_id": "REQ-CFP-004",
+      "normative_statement": "Secret-bearing configuration values SHALL be distinguishable from non-secret configuration."
+    },
+    {
+      "requirement_id": "REQ-CFP-005",
+      "normative_statement": "A configuration digest used for qualification SHALL NOT require disclosure of secret plaintext."
+    },
+    {
+      "requirement_id": "REQ-CFP-006",
+      "normative_statement": "Evidence generation SHALL redact or exclude secrets."
+    },
+    {
+      "requirement_id": "REQ-CFP-007",
+      "normative_statement": "Configuration values materially affecting qualification SHALL be represented in qualification identity without exposing secrets."
+    },
+    {
+      "requirement_id": "REQ-CFP-008",
+      "normative_statement": "Unknown or unsupported configuration-schema versions SHALL fail deterministically."
+    },
+    {
+      "requirement_id": "REQ-STU-001",
+      "normative_statement": "AsmWeb SHALL NOT enter READY until mandatory startup stages succeed."
+    },
+    {
+      "requirement_id": "REQ-STU-002",
+      "normative_statement": "Failure before READY SHALL have deterministic cleanup behaviour."
+    },
+    {
+      "requirement_id": "REQ-STU-003",
+      "normative_statement": "Resources acquired by an incomplete startup sequence SHALL be released where required before continued process execution or clean termination."
+    },
+    {
+      "requirement_id": "REQ-STU-004",
+      "normative_statement": "Partially initialised runtime objects SHALL NOT become visible to request processing."
+    },
+    {
+      "requirement_id": "REQ-STU-005",
+      "normative_statement": "Capacity validation SHALL complete before request admission."
+    },
+    {
+      "requirement_id": "REQ-STU-006",
+      "normative_statement": "Crypto/certificate startup failure SHALL prevent READY where required for configured listeners."
+    },
+    {
+      "requirement_id": "REQ-STU-007",
+      "normative_statement": "Listener setup failure SHALL prevent READY where that listener is mandatory."
+    },
+    {
+      "requirement_id": "REQ-STU-008",
+      "normative_statement": "Startup failure SHALL NOT leave externally persistent AsmWeb-owned state in a knowingly inconsistent state."
+    },
+    {
+      "requirement_id": "REQ-LIF-001",
+      "normative_statement": "Process lifecycle state SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-LIF-002",
+      "normative_statement": "Invalid lifecycle transitions SHALL have deterministic handling."
+    },
+    {
+      "requirement_id": "REQ-LIF-003",
+      "normative_statement": "Remote protocol errors SHALL NOT directly select process lifecycle state."
+    },
+    {
+      "requirement_id": "REQ-LIF-004",
+      "normative_statement": "Operational startup failures SHOULD use stable documented exit codes."
+    },
+    {
+      "requirement_id": "REQ-SDN-001",
+      "normative_statement": "Entering DRAINING SHALL stop or restrict new admission according to explicit policy."
+    },
+    {
+      "requirement_id": "REQ-SDN-002",
+      "normative_statement": "Existing in-flight work SHALL receive protocol-appropriate drain treatment."
+    },
+    {
+      "requirement_id": "REQ-SDN-003",
+      "normative_statement": "HTTP/1.1 draining behaviour SHALL be explicitly defined."
+    },
+    {
+      "requirement_id": "REQ-SDN-004",
+      "normative_statement": "HTTP/2 draining SHALL use applicable GOAWAY semantics."
+    },
+    {
+      "requirement_id": "REQ-SDN-005",
+      "normative_statement": "HTTP/3/QUIC draining SHALL use applicable protocol shutdown semantics."
+    },
+    {
+      "requirement_id": "REQ-SDN-006",
+      "normative_statement": "Drain duration SHALL have a finite bound."
+    },
+    {
+      "requirement_id": "REQ-SDN-007",
+      "normative_statement": "When the drain deadline expires, remaining work SHALL receive deterministic termination."
+    },
+    {
+      "requirement_id": "REQ-SDN-008",
+      "normative_statement": "Required QUIC retransmission and close behaviour during draining SHALL remain protocol-correct within the drain policy."
+    },
+    {
+      "requirement_id": "REQ-SDN-009",
+      "normative_statement": "Shutdown SHALL release owned kernel and userspace resources."
+    },
+    {
+      "requirement_id": "REQ-SDN-010",
+      "normative_statement": "Post-shutdown qualification SHALL verify expected quiescent resource state where applicable."
+    },
+    {
+      "requirement_id": "REQ-RST-001",
+      "normative_statement": "Ordinary stop followed by fresh start SHALL be supported."
+    },
+    {
+      "requirement_id": "REQ-RST-002",
+      "normative_statement": "Configuration reload without process restart SHALL be explicitly classified before release."
+    },
+    {
+      "requirement_id": "REQ-RST-003",
+      "normative_statement": "Socket inheritance SHALL be explicitly classified before release."
+    },
+    {
+      "requirement_id": "REQ-RST-004",
+      "normative_statement": "Zero-downtime binary restart SHALL be explicitly classified before release."
+    },
+    {
+      "requirement_id": "REQ-RST-005",
+      "normative_statement": "Binary handoff SHALL be explicitly classified before release."
+    },
+    {
+      "requirement_id": "REQ-RST-006",
+      "normative_statement": "A DEFERRED or UNSUPPORTED restart capability SHALL NOT be implied by operational documentation."
+    },
+    {
+      "requirement_id": "REQ-SIG-001",
+      "normative_statement": "Supported process-control signals SHALL be documented."
+    },
+    {
+      "requirement_id": "REQ-SIG-002",
+      "normative_statement": "Termination signals SHALL trigger deterministic lifecycle behaviour."
+    },
+    {
+      "requirement_id": "REQ-SIG-003",
+      "normative_statement": "Signal handling SHALL NOT perform unsafe unbounded work in signal context."
+    },
+    {
+      "requirement_id": "REQ-SIG-004",
+      "normative_statement": "Signal behaviour during STARTING SHALL be defined."
+    },
+    {
+      "requirement_id": "REQ-SIG-005",
+      "normative_statement": "Signal behaviour during READY SHALL be defined."
+    },
+    {
+      "requirement_id": "REQ-SIG-006",
+      "normative_statement": "Signal behaviour during DRAINING SHALL be defined."
+    },
+    {
+      "requirement_id": "REQ-SIG-007",
+      "normative_statement": "Configuration reload SHALL be explicitly classified as SUPPORTED, UNSUPPORTED or DEFERRED before release."
+    },
+    {
+      "requirement_id": "REQ-PRV-001",
+      "normative_statement": "AsmWeb SHOULD operate without unnecessary privilege."
+    },
+    {
+      "requirement_id": "REQ-PRV-002",
+      "normative_statement": "Privileged startup operations SHALL be minimised."
+    },
+    {
+      "requirement_id": "REQ-PRV-003",
+      "normative_statement": "Non-root operation SHOULD be supported."
+    },
+    {
+      "requirement_id": "REQ-PRV-004",
+      "normative_statement": "Inherited or brokered sockets MAY be supported."
+    },
+    {
+      "requirement_id": "REQ-PRV-005",
+      "normative_statement": "Privilege dropping, if used, SHALL be explicit and testable."
+    },
+    {
+      "requirement_id": "REQ-PRV-006",
+      "normative_statement": "Filesystem access boundaries SHALL be explicit."
+    },
+    {
+      "requirement_id": "REQ-HRD-001",
+      "normative_statement": "Applicable Linux executable hardening SHALL be evaluated."
+    },
+    {
+      "requirement_id": "REQ-HRD-002",
+      "normative_statement": "Applicable hardening SHALL be enabled unless documented evidence justifies omission."
+    },
+    {
+      "requirement_id": "REQ-HRD-003",
+      "normative_statement": "Writable data SHOULD NOT be executable."
+    },
+    {
+      "requirement_id": "REQ-HRD-004",
+      "normative_statement": "Executable code SHOULD NOT be writable during ordinary operation."
+    },
+    {
+      "requirement_id": "REQ-HRD-005",
+      "normative_statement": "Exported symbols SHOULD be minimised."
+    },
+    {
+      "requirement_id": "REQ-HRD-006",
+      "normative_statement": "Assembly SHALL NOT be used as justification for weaker ordinary hardening."
+    },
+    {
+      "requirement_id": "REQ-HRD-007",
+      "normative_statement": "Release evidence SHALL identify relevant hardening state."
+    },
+    {
+      "requirement_id": "REQ-IDN-001",
+      "normative_statement": "Formal builds SHALL have a software version identity."
+    },
+    {
+      "requirement_id": "REQ-IDN-002",
+      "normative_statement": "Formal builds SHALL identify source revision."
+    },
+    {
+      "requirement_id": "REQ-IDN-003",
+      "normative_statement": "Formal builds SHALL identify the requirements baseline version."
+    },
+    {
+      "requirement_id": "REQ-IDN-004",
+      "normative_statement": "Formal builds SHALL identify the Supported Capability Profile version."
+    },
+    {
+      "requirement_id": "REQ-IDN-005",
+      "normative_statement": "Formal builds SHALL identify configuration-schema version."
+    },
+    {
+      "requirement_id": "REQ-IDN-006",
+      "normative_statement": "Qualification SHALL be able to determine the exact build under test."
+    },
+    {
+      "requirement_id": "REQ-IDN-007",
+      "normative_statement": "AsmWeb SHALL NOT be required to expose internal build identity to remote HTTP clients."
+    },
+    {
+      "requirement_id": "REQ-IDN-008",
+      "normative_statement": "Gratuitous implementation-identifying wire fields SHOULD be avoided unless operationally justified."
+    },
+    {
+      "requirement_id": "REQ-OBS-001",
+      "normative_statement": "Observability state SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-OBS-002",
+      "normative_statement": "Packets received and transmitted SHALL be countable."
+    },
+    {
+      "requirement_id": "REQ-OBS-003",
+      "normative_statement": "Bytes received and transmitted SHALL be countable."
+    },
+    {
+      "requirement_id": "REQ-OBS-004",
+      "normative_statement": "TCP and QUIC connection activity SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-OBS-005",
+      "normative_statement": "Connection rejection SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-OBS-006",
+      "normative_statement": "Stream lifecycle activity SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-OBS-007",
+      "normative_statement": "Requests and responses SHALL be countable."
+    },
+    {
+      "requirement_id": "REQ-OBS-008",
+      "normative_statement": "Relevant protocol, TLS, HPACK and QPACK errors SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-OBS-009",
+      "normative_statement": "Resource-limit rejections SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-OBS-010",
+      "normative_statement": "Pool exhaustion SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-OBS-011",
+      "normative_statement": "Retry activity SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-OBS-012",
+      "normative_statement": "Work-budget actions SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-OBS-013",
+      "normative_statement": "Load-shedding transitions SHALL be observable."
+    },
+    {
+      "requirement_id": "REQ-OBS-014",
+      "normative_statement": "Latency measurement SHALL use bounded structures."
+    },
+    {
+      "requirement_id": "REQ-OBC-001",
+      "normative_statement": "Remote-controlled values SHALL NOT create unbounded metric cardinality."
+    },
+    {
+      "requirement_id": "REQ-OBC-002",
+      "normative_statement": "Peer IP addresses SHALL NOT become permanent unbounded metric labels."
+    },
+    {
+      "requirement_id": "REQ-OBC-003",
+      "normative_statement": "Arbitrary request paths SHALL NOT become permanent unbounded metric labels."
+    },
+    {
+      "requirement_id": "REQ-OBC-004",
+      "normative_statement": "Remote stream or connection identifiers SHALL NOT create unbounded persistent metric series."
+    },
+    {
+      "requirement_id": "REQ-OBC-005",
+      "normative_statement": "Metric label domains SHALL be statically bounded or otherwise demonstrably finite."
+    },
+    {
+      "requirement_id": "REQ-OBC-006",
+      "normative_statement": "Observability metadata retained per live object SHALL participate in that object's resource accounting."
+    },
+    {
+      "requirement_id": "REQ-LOG-001",
+      "normative_statement": "Detailed request logging SHALL be optional."
+    },
+    {
+      "requirement_id": "REQ-LOG-002",
+      "normative_statement": "Normal high-performance operation SHALL NOT require expensive per-request textual formatting."
+    },
+    {
+      "requirement_id": "REQ-LOG-003",
+      "normative_statement": "Diagnostic builds MAY provide richer logging."
+    },
+    {
+      "requirement_id": "REQ-LOG-004",
+      "normative_statement": "Logging SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-LOG-005",
+      "normative_statement": "Attacker-controlled input SHALL NOT cause unbounded logging consumption."
+    },
+    {
+      "requirement_id": "REQ-LOG-006",
+      "normative_statement": "Sensitive information SHALL NOT be logged by default."
+    },
+    {
+      "requirement_id": "REQ-DIA-001",
+      "normative_statement": "Logging output queues SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-DIA-002",
+      "normative_statement": "qlog output queues SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-DIA-003",
+      "normative_statement": "Diagnostic consumers that cannot keep up SHALL NOT force unbounded server memory growth."
+    },
+    {
+      "requirement_id": "REQ-DIA-004",
+      "normative_statement": "Diagnostic consumers that cannot keep up SHALL NOT indefinitely stall mandatory protocol processing."
+    },
+    {
+      "requirement_id": "REQ-DIA-005",
+      "normative_statement": "Diagnostic dropping, sampling, coalescing or degradation policy SHALL be explicit where used."
+    },
+    {
+      "requirement_id": "REQ-DIA-006",
+      "normative_statement": "Loss of nonessential diagnostics under pressure SHALL be observable where practical."
+    },
+    {
+      "requirement_id": "REQ-DIA-007",
+      "normative_statement": "Diagnostic backpressure SHALL NOT bypass secret-handling requirements."
+    },
+    {
+      "requirement_id": "REQ-QLOG-001",
+      "normative_statement": "Qualification builds SHALL support optional bounded qlog-compatible instrumentation for QUIC/H3 where practical."
+    },
+    {
+      "requirement_id": "REQ-QLOG-002",
+      "normative_statement": "qlog instrumentation SHALL be disabled by default for production hot-path benchmarking unless specifically measured."
+    },
+    {
+      "requirement_id": "REQ-QLOG-003",
+      "normative_statement": "Benchmark evidence SHALL record whether qlog instrumentation was enabled."
+    },
+    {
+      "requirement_id": "REQ-QLOG-004",
+      "normative_statement": "qlog buffering SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-QLOG-005",
+      "normative_statement": "qlog generation SHALL NOT become an attacker-controlled unbounded resource sink."
+    },
+    {
+      "requirement_id": "REQ-QLOG-006",
+      "normative_statement": "qlog artifacts SHALL obey secret-handling requirements."
+    },
+    {
+      "requirement_id": "REQ-QLOG-007",
+      "normative_statement": "qlog version or schema identity SHALL be recorded with formal evidence where relevant."
+    },
+    {
+      "requirement_id": "REQ-HLT-001",
+      "normative_statement": "AsmWeb SHALL provide /health."
+    },
+    {
+      "requirement_id": "REQ-HLT-002",
+      "normative_statement": "The canonical minimal healthy workload SHALL produce 200 OK and the defined minimal body."
+    },
+    {
+      "requirement_id": "REQ-HLT-003",
+      "normative_statement": "/health SHALL work through H1."
+    },
+    {
+      "requirement_id": "REQ-HLT-004",
+      "normative_statement": "/health SHALL work through H2."
+    },
+    {
+      "requirement_id": "REQ-HLT-005",
+      "normative_statement": "/health SHALL work through H3."
+    },
+    {
+      "requirement_id": "REQ-HLT-006",
+      "normative_statement": "/health SHALL be the canonical cross-protocol microbenchmark."
+    },
+    {
+      "requirement_id": "REQ-HLT-007",
+      "normative_statement": "Health reporting SHALL NOT knowingly misrepresent severe saturation."
+    },
+    {
+      "requirement_id": "REQ-HLT-008",
+      "normative_statement": "Detailed pressure-health semantics SHALL remain deferred until ADR resolution."
+    },
+    {
+      "requirement_id": "REQ-HLT-009",
+      "normative_statement": "Health evaluation SHALL NOT require unbounded traversal of live runtime objects."
+    },
+    {
+      "requirement_id": "REQ-MET-001",
+      "normative_statement": "AsmWeb SHALL provide /metrics."
+    },
+    {
+      "requirement_id": "REQ-MET-002",
+      "normative_statement": "Metrics SHALL be bounded."
+    },
+    {
+      "requirement_id": "REQ-MET-003",
+      "normative_statement": "Metrics generation SHOULD avoid unnecessary hot-path formatting."
+    },
+    {
+      "requirement_id": "REQ-MET-004",
+      "normative_statement": "Sensitive internal information SHALL NOT be exposed by default."
+    },
+    {
+      "requirement_id": "REQ-MET-005",
+      "normative_statement": "Metrics requests SHALL themselves remain resource-bounded."
+    },
+    {
+      "requirement_id": "REQ-MET-006",
+      "normative_statement": "Metrics generation SHALL NOT require unbounded traversal of live connections or streams."
+    },
+    {
+      "requirement_id": "REQ-MET-007",
+      "normative_statement": "Frequently required aggregate metrics SHOULD be maintained incrementally or through another bounded-cost mechanism."
+    },
+    {
+      "requirement_id": "REQ-FLT-001",
+      "normative_statement": "Qualification builds SHALL support controlled fault injection where practical."
+    },
+    {
+      "requirement_id": "REQ-FLT-002",
+      "normative_statement": "Pool acquisition failure SHOULD be injectable."
+    },
+    {
+      "requirement_id": "REQ-FLT-003",
+      "normative_statement": "Packet loss SHOULD be controllable."
+    },
+    {
+      "requirement_id": "REQ-FLT-004",
+      "normative_statement": "Send failure SHOULD be testable."
+    },
+    {
+      "requirement_id": "REQ-FLT-005",
+      "normative_statement": "Partial send SHOULD be testable."
+    },
+    {
+      "requirement_id": "REQ-FLT-006",
+      "normative_statement": "Temporary I/O unavailability SHOULD be testable."
+    },
+    {
+      "requirement_id": "REQ-FLT-007",
+      "normative_statement": "Timer expiry SHALL be controllable where deterministic testing requires it."
+    },
+    {
+      "requirement_id": "REQ-FLT-008",
+      "normative_statement": "Crypto failure SHOULD be injectable through the provider boundary."
+    },
+    {
+      "requirement_id": "REQ-FLT-009",
+      "normative_statement": "Certificate failure SHALL be testable."
+    },
+    {
+      "requirement_id": "REQ-FLT-010",
+      "normative_statement": "File failure SHALL be testable."
+    },
+    {
+      "requirement_id": "REQ-FLT-011",
+      "normative_statement": "Permission failure SHALL be testable."
+    },
+    {
+      "requirement_id": "REQ-FLT-012",
+      "normative_statement": "Resource exhaustion SHALL be deliberately inducible."
+    },
+    {
+      "requirement_id": "REQ-FLT-013",
+      "normative_statement": "Fault injection SHOULD be deterministic where practical."
+    },
+    {
+      "requirement_id": "REQ-HST-001",
+      "normative_statement": "Hostile-input qualification SHALL evaluate functional outcome."
+    },
+    {
+      "requirement_id": "REQ-HST-002",
+      "normative_statement": "Hostile-input qualification SHALL evaluate applicable retained state."
+    },
+    {
+      "requirement_id": "REQ-HST-003",
+      "normative_statement": "Hostile-input qualification SHALL evaluate applicable computational work."
+    },
+    {
+      "requirement_id": "REQ-HST-004",
+      "normative_statement": "Hostile-input qualification SHALL evaluate applicable generated output."
+    },
+    {
+      "requirement_id": "REQ-HST-005",
+      "normative_statement": "Hostile-input qualification SHALL evaluate failure scope."
+    },
+    {
+      "requirement_id": "REQ-FUZ-001",
+      "normative_statement": "Fuzzing SHALL evaluate memory safety."
+    },
+    {
+      "requirement_id": "REQ-FUZ-002",
+      "normative_statement": "Resource-aware fuzzing SHOULD evaluate excessive work."
+    },
+    {
+      "requirement_id": "REQ-FUZ-003",
+      "normative_statement": "Resource-aware fuzzing SHOULD evaluate unexpected retained state."
+    },
+    {
+      "requirement_id": "REQ-FUZ-004",
+      "normative_statement": "Resource-aware fuzzing SHOULD evaluate pool leakage."
+    },
+    {
+      "requirement_id": "REQ-FUZ-005",
+      "normative_statement": "Resource-aware fuzzing SHOULD evaluate excessive output."
+    },
+    {
+      "requirement_id": "REQ-FUZ-006",
+      "normative_statement": "Resource-aware fuzzing SHOULD evaluate incorrect failure scope."
+    },
+    {
+      "requirement_id": "REQ-FUZ-007",
+      "normative_statement": "Resource-aware fuzzing SHOULD evaluate invalid state transitions."
+    },
+    {
+      "requirement_id": "REQ-FUZ-008",
+      "normative_statement": "A non-crashing testcase MAY constitute failure when it violates resource or state invariants."
+    },
+    {
+      "requirement_id": "REQ-FUZ-009",
+      "normative_statement": "Safer-language harnesses MAY drive assembly components."
+    },
+    {
+      "requirement_id": "REQ-BND-001",
+      "normative_statement": "Externally reachable finite maxima SHOULD be tested at N−1."
+    },
+    {
+      "requirement_id": "REQ-BND-002",
+      "normative_statement": "Externally reachable finite maxima SHOULD be tested at N."
+    },
+    {
+      "requirement_id": "REQ-BND-003",
+      "normative_statement": "Externally reachable finite maxima SHOULD be tested at N+1."
+    },
+    {
+      "requirement_id": "REQ-BND-004",
+      "normative_statement": "Below-limit behaviour SHALL be verified."
+    },
+    {
+      "requirement_id": "REQ-BND-005",
+      "normative_statement": "At-limit behaviour SHALL be verified."
+    },
+    {
+      "requirement_id": "REQ-BND-006",
+      "normative_statement": "Above-limit rejection or containment SHALL be verified."
+    },
+    {
+      "requirement_id": "REQ-BND-007",
+      "normative_statement": "Resource reclamation following boundary failure SHALL be verified where applicable."
+    },
+    {
+      "requirement_id": "REQ-COR-001",
+      "normative_statement": "Parsers SHALL undergo correctness testing."
+    },
+    {
+      "requirement_id": "REQ-COR-002",
+      "normative_statement": "State machines SHALL undergo correctness testing."
+    },
+    {
+      "requirement_id": "REQ-COR-003",
+      "normative_statement": "Framing SHALL undergo correctness testing."
+    },
+    {
+      "requirement_id": "REQ-COR-004",
+      "normative_statement": "Routing SHALL undergo correctness testing."
+    },
+    {
+      "requirement_id": "REQ-COR-005",
+      "normative_statement": "Response generation SHALL undergo correctness testing."
+    },
+    {
+      "requirement_id": "REQ-COR-006",
+      "normative_statement": "Resource ownership SHALL undergo correctness testing."
+    },
+    {
+      "requirement_id": "REQ-COR-007",
+      "normative_statement": "Shutdown SHALL undergo correctness testing."
+    },
+    {
+      "requirement_id": "REQ-COR-008",
+      "normative_statement": "Error propagation SHALL undergo correctness testing."
+    },
+    {
+      "requirement_id": "REQ-COR-009",
+      "normative_statement": "Correctness testing alone SHALL NOT establish conformance."
+    },
+    {
+      "requirement_id": "REQ-STD-001",
+      "normative_statement": "AsmWeb SHALL maintain a versioned standards register."
+    },
+    {
+      "requirement_id": "REQ-STD-002",
+      "normative_statement": "The register SHALL identify normative documents."
+    },
+    {
+      "requirement_id": "REQ-STD-003",
+      "normative_statement": "The register SHALL identify applicable errata."
+    },
+    {
+      "requirement_id": "REQ-STD-004",
+      "normative_statement": "The register SHALL identify intentionally unsupported optional features."
+    },
+    {
+      "requirement_id": "REQ-STD-005",
+      "normative_statement": "The register SHALL identify material implementation interpretations."
+    },
+    {
+      "requirement_id": "REQ-STD-006",
+      "normative_statement": "Conformance SHALL be assessed against the standards register."
+    },
+    {
+      "requirement_id": "REQ-STD-007",
+      "normative_statement": "Another implementation SHALL NOT be treated as normative authority."
+    },
+    {
+      "requirement_id": "REQ-INT-001",
+      "normative_statement": "Supported protocols SHALL undergo independent interoperability qualification where appropriate."
+    },
+    {
+      "requirement_id": "REQ-INT-002",
+      "normative_statement": "QUIC/H3 SHOULD integrate with established QUIC interoperability infrastructure."
+    },
+    {
+      "requirement_id": "REQ-INT-003",
+      "normative_statement": "QUIC/H3 SHOULD be tested against multiple independent stacks."
+    },
+    {
+      "requirement_id": "REQ-INT-004",
+      "normative_statement": "Interop evidence SHALL permit disagreement investigation."
+    },
+    {
+      "requirement_id": "REQ-INT-005",
+      "normative_statement": "Interop disagreement SHALL trigger standards-based analysis."
+    },
+    {
+      "requirement_id": "REQ-BRW-001",
+      "normative_statement": "AsmWeb SHALL be tested with mainstream independent browsers."
+    },
+    {
+      "requirement_id": "REQ-BRW-002",
+      "normative_statement": "Applicable H1 behaviour SHALL be tested."
+    },
+    {
+      "requirement_id": "REQ-BRW-003",
+      "normative_statement": "Applicable H2 behaviour SHALL be tested."
+    },
+    {
+      "requirement_id": "REQ-BRW-004",
+      "normative_statement": "Applicable H3 behaviour SHALL be tested."
+    },
+    {
+      "requirement_id": "REQ-BRW-005",
+      "normative_statement": "TLS and ALPN SHALL be tested."
+    },
+    {
+      "requirement_id": "REQ-BRW-006",
+      "normative_statement": "Connection reuse SHALL be tested where applicable."
+    },
+    {
+      "requirement_id": "REQ-BRW-007",
+      "normative_statement": "Multiplexed resources SHALL be tested where applicable."
+    },
+    {
+      "requirement_id": "REQ-BRW-008",
+      "normative_statement": "Static assets SHALL be tested."
+    },
+    {
+      "requirement_id": "REQ-BRW-009",
+      "normative_statement": "Larger resource transfer SHALL be tested."
+    },
+    {
+      "requirement_id": "REQ-BRW-010",
+      "normative_statement": "Browser success SHALL NOT replace protocol qualification."
+    },
+    {
+      "requirement_id": "REQ-END-001",
+      "normative_statement": "AsmWeb SHALL undergo sustained endurance qualification."
+    },
+    {
+      "requirement_id": "REQ-END-002",
+      "normative_statement": "After workload quiescence and required grace periods, outstanding objects SHALL equal the expected quiescent baseline."
+    },
+    {
+      "requirement_id": "REQ-END-003",
+      "normative_statement": "Unexplained progressive resource growth SHALL prevent successful endurance qualification."
+    },
+    {
+      "requirement_id": "REQ-END-004",
+      "normative_statement": "Kernel-resource leakage SHALL prevent successful endurance qualification."
+    },
+    {
+      "requirement_id": "REQ-PER-001",
+      "normative_statement": "Performance claims SHALL use reproducible evidence."
+    },
+    {
+      "requirement_id": "REQ-PER-002",
+      "normative_statement": "Significant optimisation SHALL produce before/after evidence."
+    },
+    {
+      "requirement_id": "REQ-PER-003",
+      "normative_statement": "Assembly appearance SHALL NOT constitute performance evidence."
+    },
+    {
+      "requirement_id": "REQ-PER-004",
+      "normative_statement": "Material losses SHALL be reportable alongside wins."
+    },
+    {
+      "requirement_id": "REQ-PER-005",
+      "normative_statement": "Major request and response paths SHOULD permit measurement of copy volume where practical."
+    },
+    {
+      "requirement_id": "REQ-PER-006",
+      "normative_statement": "Use of kernel-assisted or zero-copy mechanisms SHALL be recorded where material to results."
+    },
+    {
+      "requirement_id": "REQ-MPT-001",
+      "normative_statement": "Benchmark evidence SHALL identify material instrumentation enabled during measurement."
+    },
+    {
+      "requirement_id": "REQ-MPT-002",
+      "normative_statement": "qlog, debug assertions, tracing and unusually detailed diagnostics SHALL be identified when enabled."
+    },
+    {
+      "requirement_id": "REQ-MPT-003",
+      "normative_statement": "Instrumentation SHALL NOT be assumed to have zero performance cost."
+    },
+    {
+      "requirement_id": "REQ-MPT-004",
+      "normative_statement": "Where practical, formal performance qualification SHALL distinguish minimally instrumented and heavily instrumented builds."
+    },
+    {
+      "requirement_id": "REQ-MPT-005",
+      "normative_statement": "An optimisation conclusion SHALL NOT rely on a comparison in which instrumentation differences materially confound the result."
+    },
+    {
+      "requirement_id": "REQ-MPT-006",
+      "normative_statement": "Measurement tooling overhead SHOULD be characterised where it can materially alter the metric under investigation."
+    },
+    {
+      "requirement_id": "REQ-BMK-001",
+      "normative_statement": "Benchmark methodology SHALL be declared before results are used for architectural decisions."
+    },
+    {
+      "requirement_id": "REQ-BMK-002",
+      "normative_statement": "Individual favourable runs SHALL NOT be cherry-picked as representative evidence."
+    },
+    {
+      "requirement_id": "REQ-BMK-003",
+      "normative_statement": "CPU and network laboratories SHALL remain conceptually distinct."
+    },
+    {
+      "requirement_id": "REQ-XPM-001",
+      "normative_statement": "Equivalent semantics SHALL be used across H1, H2 and H3."
+    },
+    {
+      "requirement_id": "REQ-XPM-002",
+      "normative_statement": "H1 SHALL be measured."
+    },
+    {
+      "requirement_id": "REQ-XPM-003",
+      "normative_statement": "H2 SHALL be measured."
+    },
+    {
+      "requirement_id": "REQ-XPM-004",
+      "normative_statement": "H3 SHALL be measured."
+    },
+    {
+      "requirement_id": "REQ-XPM-005",
+      "normative_statement": "Instructions and cycles SHALL be measured where supported."
+    },
+    {
+      "requirement_id": "REQ-XPM-006",
+      "normative_statement": "Latency and throughput SHALL be measured."
+    },
+    {
+      "requirement_id": "REQ-XPM-007",
+      "normative_statement": "Relevant memory cost SHALL be measured."
+    },
+    {
+      "requirement_id": "REQ-XPM-008",
+      "normative_statement": "Branch, cache and wire behaviour SHOULD be measured."
+    },
+    {
+      "requirement_id": "REQ-QLF-001",
+      "normative_statement": "No single result SHALL be treated as proof of all six dimensions."
+    },
+    {
+      "requirement_id": "REQ-QLF-002",
+      "normative_statement": "Each release claim SHALL identify the qualification dimensions relevant to it."
+    },
+    {
+      "requirement_id": "REQ-QRI-001",
+      "normative_statement": "PASS SHALL NOT be recorded when mandatory evidence required by the verification plan is absent."
+    },
+    {
+      "requirement_id": "REQ-QRI-002",
+      "normative_statement": "A harness failure SHALL NOT be reported as UNSUPPORTED merely to avoid FAIL or INCONCLUSIVE."
+    },
+    {
+      "requirement_id": "REQ-QRI-003",
+      "normative_statement": "NOT_RUN SHALL remain distinguishable from UNSUPPORTED."
+    },
+    {
+      "requirement_id": "REQ-QRI-004",
+      "normative_statement": "INCONCLUSIVE SHALL NOT be converted into PASS for release aggregation."
+    },
+    {
+      "requirement_id": "REQ-QRI-005",
+      "normative_statement": "EXPECTED_REJECTION SHALL require rejection for the expected class of reason."
+    },
+    {
+      "requirement_id": "REQ-QRI-006",
+      "normative_statement": "EXPECTED_REJECTION SHALL require failure at an acceptable scope."
+    },
+    {
+      "requirement_id": "REQ-QRI-007",
+      "normative_statement": "Unexpected process termination SHALL NOT satisfy EXPECTED_REJECTION."
+    },
+    {
+      "requirement_id": "REQ-QRI-008",
+      "normative_statement": "Waived failures SHALL remain visible as waivers rather than being rewritten as PASS."
+    },
+    {
+      "requirement_id": "REQ-EVD-001",
+      "normative_statement": "Formal qualification artifacts SHALL identify source commit."
+    },
+    {
+      "requirement_id": "REQ-EVD-002",
+      "normative_statement": "Formal qualification artifacts SHALL identify configuration identity."
+    },
+    {
+      "requirement_id": "REQ-EVD-003",
+      "normative_statement": "Formal qualification artifacts SHALL identify dependency versions."
+    },
+    {
+      "requirement_id": "REQ-EVD-004",
+      "normative_statement": "Formal qualification artifacts SHALL identify crypto provider where applicable."
+    },
+    {
+      "requirement_id": "REQ-EVD-005",
+      "normative_statement": "Formal qualification artifacts SHALL identify toolchain."
+    },
+    {
+      "requirement_id": "REQ-EVD-006",
+      "normative_statement": "Formal qualification artifacts SHALL identify build flags/mode."
+    },
+    {
+      "requirement_id": "REQ-EVD-007",
+      "normative_statement": "Formal qualification artifacts SHALL identify binary hash."
+    },
+    {
+      "requirement_id": "REQ-EVD-008",
+      "normative_statement": "Unknown binaries SHALL NOT support formal release claims."
+    },
+    {
+      "requirement_id": "REQ-EVI-001",
+      "normative_statement": "Formal evidence artifacts SHALL have integrity identities or cryptographic digests where practical."
+    },
+    {
+      "requirement_id": "REQ-EVI-002",
+      "normative_statement": "An evidence manifest SHALL identify the artifacts belonging to a formal qualification run."
+    },
+    {
+      "requirement_id": "REQ-EVI-003",
+      "normative_statement": "Artifact substitution SHALL be detectable where formal release claims depend upon artifact identity."
+    },
+    {
+      "requirement_id": "REQ-EVI-004",
+      "normative_statement": "Historical qualification results SHOULD be retained in an immutable, append-only or otherwise tamper-evident form where practical."
+    },
+    {
+      "requirement_id": "REQ-EVI-005",
+      "normative_statement": "Re-running qualification SHALL create a new result identity rather than silently rewriting historical evidence."
+    },
+    {
+      "requirement_id": "REQ-EVI-006",
+      "normative_statement": "Evidence retention SHALL obey secret-handling requirements."
+    },
+    {
+      "requirement_id": "REQ-EVI-007",
+      "normative_statement": "Evidence SHALL remain attributable to the binary and configuration actually tested."
+    },
+    {
+      "requirement_id": "REQ-EVI-008",
+      "normative_statement": "Missing evidence artifacts SHALL remain visible as missing rather than silently reconstructed from unrelated later runs."
+    },
+    {
+      "requirement_id": "REQ-QMF-001",
+      "normative_statement": "Requirement-level results SHALL be traceable from the qualification manifest."
+    },
+    {
+      "requirement_id": "REQ-QMF-002",
+      "normative_statement": "Known failures SHALL NOT be silently omitted."
+    },
+    {
+      "requirement_id": "REQ-QMF-003",
+      "normative_statement": "Unsupported capabilities SHALL be represented explicitly."
+    },
+    {
+      "requirement_id": "REQ-BLD-001",
+      "normative_statement": "Builds SHALL be scriptable."
+    },
+    {
+      "requirement_id": "REQ-BLD-002",
+      "normative_statement": "Release and qualification builds SHOULD be reproducible where practical."
+    },
+    {
+      "requirement_id": "REQ-BLD-003",
+      "normative_statement": "Formal builds SHALL identify source commit."
+    },
+    {
+      "requirement_id": "REQ-BLD-004",
+      "normative_statement": "Formal builds SHALL identify assembler version."
+    },
+    {
+      "requirement_id": "REQ-BLD-005",
+      "normative_statement": "Formal builds SHALL identify linker version."
+    },
+    {
+      "requirement_id": "REQ-BLD-006",
+      "normative_statement": "Formal builds SHALL identify configuration."
+    },
+    {
+      "requirement_id": "REQ-BLD-007",
+      "normative_statement": "Formal builds SHALL identify relevant feature flags."
+    },
+    {
+      "requirement_id": "REQ-BLD-008",
+      "normative_statement": "Formal builds SHALL identify crypto provider where applicable."
+    },
+    {
+      "requirement_id": "REQ-BLD-009",
+      "normative_statement": "Qualification builds SHALL be uniquely identifiable."
+    },
+    {
+      "requirement_id": "REQ-BLD-010",
+      "normative_statement": "Assembler selection SHALL be resolved through ADR evidence."
+    },
+    {
+      "requirement_id": "REQ-DEP-001",
+      "normative_statement": "Runtime dependencies SHALL be deliberately minimised."
+    },
+    {
+      "requirement_id": "REQ-DEP-002",
+      "normative_statement": "Each runtime dependency SHALL have documented purpose."
+    },
+    {
+      "requirement_id": "REQ-DEP-003",
+      "normative_statement": "Each runtime dependency SHALL have version identity."
+    },
+    {
+      "requirement_id": "REQ-DEP-004",
+      "normative_statement": "Each runtime dependency SHALL have provenance."
+    },
+    {
+      "requirement_id": "REQ-DEP-005",
+      "normative_statement": "Each runtime dependency SHALL have an integrity mechanism."
+    },
+    {
+      "requirement_id": "REQ-DEP-006",
+      "normative_statement": "Each runtime dependency SHALL have an update policy."
+    },
+    {
+      "requirement_id": "REQ-DEP-007",
+      "normative_statement": "Security relevance SHALL be identified."
+    },
+    {
+      "requirement_id": "REQ-DEP-008",
+      "normative_statement": "Cryptographic dependencies SHALL receive particular scrutiny."
+    },
+    {
+      "requirement_id": "REQ-SUP-001",
+      "normative_statement": "Release provenance SHOULD permit reconstruction of source revision, build environment, dependency origin, dependency versions and binary identity."
+    },
+    {
+      "requirement_id": "REQ-ASM-001",
+      "normative_statement": "AsmWeb SHALL define an Assembly Engineering Standard before substantial M0 implementation."
+    },
+    {
+      "requirement_id": "REQ-ASM-002",
+      "normative_statement": "Critical implementation invariants SHALL NOT depend solely on undocumented programmer knowledge."
+    },
+    {
+      "requirement_id": "REQ-VRF-001",
+      "normative_statement": "A requirement SHALL NOT be marked qualified solely through an inappropriate verification class."
+    },
+    {
+      "requirement_id": "REQ-STS-001",
+      "normative_statement": "Implementation state and qualification result SHALL remain distinct."
+    },
+    {
+      "requirement_id": "REQ-STS-002",
+      "normative_statement": "IMPLEMENTED SHALL NOT imply PASS."
+    },
+    {
+      "requirement_id": "REQ-STS-003",
+      "normative_statement": "NOT_APPLICABLE SHALL require justification for any otherwise mandatory requirement."
+    },
+    {
+      "requirement_id": "REQ-MVR-001",
+      "normative_statement": "Every normative REQ-* identifier appearing in this specification SHALL appear in the Requirements Registry."
+    },
+    {
+      "requirement_id": "REQ-MVR-002",
+      "normative_statement": "Every registry requirement SHALL correspond to a normative requirement in the controlled requirements baseline."
+    },
+    {
+      "requirement_id": "REQ-MVR-003",
+      "normative_statement": "Duplicate requirement identifiers SHALL fail registry validation."
+    },
+    {
+      "requirement_id": "REQ-MVR-004",
+      "normative_statement": "Unknown requirement references SHALL fail registry validation."
+    },
+    {
+      "requirement_id": "REQ-MVR-005",
+      "normative_statement": "A QUALIFIED mandatory requirement SHALL have at least one applicable evidence reference."
+    },
+    {
+      "requirement_id": "REQ-MVR-006",
+      "normative_statement": "A release claim SHALL have at least one requirement reference."
+    },
+    {
+      "requirement_id": "REQ-MVR-007",
+      "normative_statement": "A formal test SHALL identify the requirements it verifies where applicable."
+    },
+    {
+      "requirement_id": "REQ-MVR-008",
+      "normative_statement": "Dangling implementation, test, evidence or claim references SHALL be detectable."
+    },
+    {
+      "requirement_id": "REQ-MVR-009",
+      "normative_statement": "Retired requirements SHALL remain historically identifiable."
+    },
+    {
+      "requirement_id": "REQ-MVR-010",
+      "normative_statement": "Registry validation SHALL be automatable."
+    },
+    {
+      "requirement_id": "REQ-MVR-011",
+      "normative_statement": "Registry validation failure SHALL prevent formal release qualification."
+    },
+    {
+      "requirement_id": "REQ-MVR-012",
+      "normative_statement": "The project SHOULD provide a single repeatable traceability-validation command or equivalent automated target."
+    },
+    {
+      "requirement_id": "REQ-TRG-001",
+      "normative_statement": "Orphan mandatory requirements SHALL be detectable."
+    },
+    {
+      "requirement_id": "REQ-TRG-002",
+      "normative_statement": "Orphan release claims SHALL be prohibited."
+    },
+    {
+      "requirement_id": "REQ-TRG-003",
+      "normative_statement": "Unknown evidence references SHALL be detectable."
+    },
+    {
+      "requirement_id": "REQ-TRG-004",
+      "normative_statement": "Unknown test references SHALL be detectable."
+    },
+    {
+      "requirement_id": "REQ-TRG-005",
+      "normative_statement": "Unknown implementation references SHALL be detectable."
+    },
+    {
+      "requirement_id": "REQ-TRG-006",
+      "normative_statement": "Traceability validation SHALL distinguish legitimately not-yet-implemented future requirements from broken references."
+    },
+    {
+      "requirement_id": "REQ-TRG-007",
+      "normative_statement": "Traceability data SHALL be version-controlled with the source baseline."
+    },
+    {
+      "requirement_id": "REQ-MIL-001",
+      "normative_statement": "A milestone exit SHALL identify all requirements for which that milestone is the first mandatory qualification point."
+    },
+    {
+      "requirement_id": "REQ-MIL-002",
+      "normative_statement": "A milestone SHALL NOT be considered formally closed while an applicable mandatory requirement assigned to it remains unexplained FAILED or BLOCKED."
+    },
+    {
+      "requirement_id": "REQ-MIL-003",
+      "normative_statement": "An accepted waiver SHALL remain explicit."
+    },
+    {
+      "requirement_id": "REQ-MIL-004",
+      "normative_statement": "Later milestones SHALL inherit applicable earlier regression requirements."
+    },
+    {
+      "requirement_id": "REQ-CLM-001",
+      "normative_statement": "Every substantive technical release claim SHALL trace to applicable requirements."
+    },
+    {
+      "requirement_id": "REQ-CLM-002",
+      "normative_statement": "Every qualified release claim SHALL trace to qualification evidence."
+    },
+    {
+      "requirement_id": "REQ-CLM-003",
+      "normative_statement": "A public claim SHALL NOT exceed qualified capability represented by the Compatibility Matrix."
+    },
+    {
+      "requirement_id": "REQ-CLM-004",
+      "normative_statement": "Known limitations materially affecting a claim SHALL accompany that claim or be directly traceable."
+    },
+    {
+      "requirement_id": "REQ-CLM-005",
+      "normative_statement": "A claim SHALL NOT be upgraded from experimental or partial support to qualified support solely because ordinary use appears successful."
+    },
+    {
+      "requirement_id": "REQ-CLM-006",
+      "normative_statement": "Benchmark claims SHALL trace to benchmark evidence."
+    },
+    {
+      "requirement_id": "REQ-CLM-007",
+      "normative_statement": "Security claims SHALL trace to specific requirements and qualification dimensions rather than vague assertions of being “secure”."
+    },
+    {
+      "requirement_id": "REQ-MON-001",
+      "normative_statement": "New capability SHALL inherit applicable regression requirements."
+    },
+    {
+      "requirement_id": "REQ-MON-002",
+      "normative_statement": "Adding H3 SHALL NOT silently invalidate H2 qualification."
+    },
+    {
+      "requirement_id": "REQ-MON-003",
+      "normative_statement": "Optimising QUIC SHALL NOT silently regress H1."
+    },
+    {
+      "requirement_id": "REQ-MON-004",
+      "normative_statement": "Previously qualified capability SHALL remain in regression coverage unless explicitly superseded."
+    },
+    {
+      "requirement_id": "REQ-MON-005",
+      "normative_statement": "Supersession SHALL be documented."
+    },
+    {
+      "requirement_id": "REQ-CHG-001",
+      "normative_statement": "Material requirement changes SHALL have recorded history."
+    },
+    {
+      "requirement_id": "REQ-CHG-002",
+      "normative_statement": "Architecture-affecting requirement changes SHALL trigger ADR review."
+    },
+    {
+      "requirement_id": "REQ-CHG-003",
+      "normative_statement": "Changes affecting qualified behaviour SHALL identify required regression qualification."
+    },
+    {
+      "requirement_id": "REQ-CHG-004",
+      "normative_statement": "A requirement SHALL NOT be weakened merely to make a failing implementation pass."
+    },
+    {
+      "requirement_id": "REQ-CHG-005",
+      "normative_statement": "Requirements MAY be strengthened when standards, implementation, security or qualification evidence justifies doing so."
+    },
+    {
+      "requirement_id": "REQ-CHG-006",
+      "normative_statement": "Standards- or vulnerability-driven changes SHALL identify their cause."
+    },
+    {
+      "requirement_id": "REQ-CHG-007",
+      "normative_statement": "Superseded requirements SHALL remain historically traceable."
+    },
+    {
+      "requirement_id": "REQ-DEF-001",
+      "normative_statement": "A deferred decision SHALL NOT be silently resolved through incidental implementation."
+    },
+    {
+      "requirement_id": "REQ-DEF-002",
+      "normative_statement": "A prototype MAY implement one candidate without converting that candidate into an architectural decision."
+    },
+    {
+      "requirement_id": "REQ-DEF-003",
+      "normative_statement": "Where measurement is required, the decision SHALL remain open until sufficient evidence exists."
+    },
+    {
+      "requirement_id": "REQ-NON-001",
+      "normative_statement": "Executable size SHALL NOT be minimised at the expense of correctness."
+    },
+    {
+      "requirement_id": "REQ-NON-002",
+      "normative_statement": "Assembly purity SHALL NOT be pursued at the expense of security."
+    },
+    {
+      "requirement_id": "REQ-NON-003",
+      "normative_statement": "Benchmark marketing SHALL NOT define architecture."
+    },
+    {
+      "requirement_id": "REQ-NON-004",
+      "normative_statement": "Protocol shortcuts that impair required interoperability SHALL NOT be accepted."
+    },
+    {
+      "requirement_id": "REQ-NON-005",
+      "normative_statement": "Complexity without architectural or measured justification SHALL be rejected."
+    },
+    {
+      "requirement_id": "REQ-ACC-001",
+      "normative_statement": "Start directly on supported Linux x86-64."
+    },
+    {
+      "requirement_id": "REQ-ACC-002",
+      "normative_statement": "Operate primarily from assembly implementation."
+    },
+    {
+      "requirement_id": "REQ-ACC-003",
+      "normative_statement": "Use explicit Linux interfaces."
+    },
+    {
+      "requirement_id": "REQ-ACC-004",
+      "normative_statement": "Operate with bounded steady-state resources."
+    },
+    {
+      "requirement_id": "REQ-ACC-005",
+      "normative_statement": "Avoid general-purpose allocation on the designed normal request path."
+    },
+    {
+      "requirement_id": "REQ-ACC-006",
+      "normative_statement": "Serve qualified HTTP/1.1."
+    },
+    {
+      "requirement_id": "REQ-ACC-007",
+      "normative_statement": "Serve qualified HTTP/2."
+    },
+    {
+      "requirement_id": "REQ-ACC-008",
+      "normative_statement": "Implement bounded qualified HPACK."
+    },
+    {
+      "requirement_id": "REQ-ACC-009",
+      "normative_statement": "Establish qualified standards-compliant QUIC connections."
+    },
+    {
+      "requirement_id": "REQ-ACC-010",
+      "normative_statement": "Integrate TLS 1.3 correctly."
+    },
+    {
+      "requirement_id": "REQ-ACC-011",
+      "normative_statement": "Serve HTTP/3 natively."
+    },
+    {
+      "requirement_id": "REQ-ACC-012",
+      "normative_statement": "Implement bounded qualified QPACK."
+    },
+    {
+      "requirement_id": "REQ-ACC-013",
+      "normative_statement": "Expose common HTTP semantics across H1/H2/H3."
+    },
+    {
+      "requirement_id": "REQ-ACC-014",
+      "normative_statement": "Stream bodies with bounded backpressure."
+    },
+    {
+      "requirement_id": "REQ-ACC-015",
+      "normative_statement": "Serve a real website to qualified mainstream browsers."
+    },
+    {
+      "requirement_id": "REQ-ACC-016",
+      "normative_statement": "Survive malformed input without demonstrated memory corruption."
+    },
+    {
+      "requirement_id": "REQ-ACC-017",
+      "normative_statement": "Survive configured resource exhaustion deterministically."
+    },
+    {
+      "requirement_id": "REQ-ACC-018",
+      "normative_statement": "Bound externally induced retained state."
+    },
+    {
+      "requirement_id": "REQ-ACC-019",
+      "normative_statement": "Measure designated externally induced computational work."
+    },
+    {
+      "requirement_id": "REQ-ACC-020",
+      "normative_statement": "Enforce QUIC amplification requirements."
+    },
+    {
+      "requirement_id": "REQ-ACC-021",
+      "normative_statement": "Expose meaningful bounded metrics."
+    },
+    {
+      "requirement_id": "REQ-ACC-022",
+      "normative_statement": "Pass required independent interoperability qualification."
+    },
+    {
+      "requirement_id": "REQ-ACC-023",
+      "normative_statement": "Pass sustained endurance qualification."
+    },
+    {
+      "requirement_id": "REQ-ACC-024",
+      "normative_statement": "Return pools to expected quiescent state."
+    },
+    {
+      "requirement_id": "REQ-ACC-025",
+      "normative_statement": "Produce reproducible performance evidence."
+    },
+    {
+      "requirement_id": "REQ-ACC-026",
+      "normative_statement": "Compare H1/H2/H3 using equivalent semantic workloads."
+    },
+    {
+      "requirement_id": "REQ-ACC-027",
+      "normative_statement": "Produce RAF evidence."
+    },
+    {
+      "requirement_id": "REQ-ACC-028",
+      "normative_statement": "Report material performance losses as well as wins."
+    },
+    {
+      "requirement_id": "REQ-ACC-029",
+      "normative_statement": "Produce inspectable qualification evidence."
+    },
+    {
+      "requirement_id": "REQ-ACC-030",
+      "normative_statement": "Document unsupported and deferred capabilities."
+    },
+    {
+      "requirement_id": "REQ-ACC-031",
+      "normative_statement": "Maintain a release Compatibility Matrix."
+    },
+    {
+      "requirement_id": "REQ-ACC-032",
+      "normative_statement": "Maintain traceability from release claims to evidence."
+    },
+    {
+      "requirement_id": "REQ-ACC-033",
+      "normative_statement": "Have no silently waived mandatory release failure."
+    },
+    {
+      "requirement_id": "REQ-ACC-034",
+      "normative_statement": "Pass machine-verifiable requirements and traceability validation."
+    },
+    {
+      "requirement_id": "REQ-ACC-035",
+      "normative_statement": "Demonstrate bounded cryptographic admission under designated hostile load."
+    },
+    {
+      "requirement_id": "REQ-ACC-036",
+      "normative_statement": "Demonstrate distributed-load protection beyond per-connection limits."
+    },
+    {
+      "requirement_id": "REQ-ACC-037",
+      "normative_statement": "Demonstrate deterministic resource reclamation after designated churn workloads."
+    },
+    {
+      "requirement_id": "REQ-M0-001",
+      "normative_statement": "M0 SHALL NOT be required to implement later HTTP protocol functionality."
+    },
+    {
+      "requirement_id": "REQ-M0-002",
+      "normative_statement": "M0 SHALL avoid decisions that make mandatory later requirements impossible without unjustified redesign."
+    },
+    {
+      "requirement_id": "REQ-M0-003",
+      "normative_statement": "M0 exit SHALL identify every M0-owned requirement and its qualification status."
+    },
+    {
+      "requirement_id": "REQ-M0-004",
+      "normative_statement": "M0 SHALL establish automated detection of duplicate or unknown requirement identifiers."
+    },
+    {
+      "requirement_id": "REQ-M0-005",
+      "normative_statement": "M0 SHALL establish a reproducible mechanism for identifying the binary under qualification."
+    },
+    {
+      "requirement_id": "REQ-TRC-001",
+      "normative_statement": "Formal release claims SHALL be traversable backward through this chain."
+    },
+    {
+      "requirement_id": "REQ-TRC-002",
+      "normative_statement": "Critical implementation behaviour SHOULD be traversable forward from its governing requirement."
+    },
+    {
+      "requirement_id": "REQ-TRC-003",
+      "normative_statement": "Orphan mandatory requirements SHALL be detectable."
+    },
+    {
+      "requirement_id": "REQ-TRC-004",
+      "normative_statement": "Orphan release claims SHALL be prohibited."
+    },
+    {
+      "requirement_id": "REQ-DEV-001",
+      "normative_statement": "Code existence SHALL NOT constitute requirement satisfaction."
+    },
+    {
+      "requirement_id": "REQ-DEV-002",
+      "normative_statement": "Happy-path operation SHALL NOT constitute subsystem completion."
+    },
+    {
+      "requirement_id": "REQ-DEV-003",
+      "normative_statement": "Performance optimisation SHALL NOT supersede correctness, boundedness, security or interoperability requirements."
+    }
+  ]
+}

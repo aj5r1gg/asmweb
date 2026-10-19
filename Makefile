@@ -821,3 +821,12 @@ build-qrr:
 
 qualify-qrr-authority:
 	python3 tests/qualification/qrr_authority.py
+
+# ---------------------------------------------------------------------------
+# M0 qualification — frozen Requirements source authority
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-requirements-authority
+qualify-requirements-authority:
+	python3 qualification/tools/requirements_authority.py
+	python3 tests/qualification/requirements_authority.py
