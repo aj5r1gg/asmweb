@@ -867,3 +867,12 @@ qualify-m0-ownership-proposals:
 qualify-m0-ownership-dry-run:
 	python3 qualification/tools/m0_ownership_dry_run.py --requirement REQ-M0-001
 	python3 tests/qualification/m0_ownership_dry_run.py
+
+# ---------------------------------------------------------------------------
+# M0 qualification — unadopted ownership decision contract
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-ownership-decision-contract
+qualify-ownership-decision-contract:
+	python3 qualification/tools/ownership_decision_contract.py
+	python3 tests/qualification/ownership_decision_contract.py

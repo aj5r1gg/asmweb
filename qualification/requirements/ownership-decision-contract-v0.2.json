@@ -1,0 +1,467 @@
+{
+  "schema_version": 2,
+  "contract_id": "ASMWEB-M0-OWNERSHIP-APPROVAL-001",
+  "contract_version": "0.2",
+  "replaces_version": "0.1",
+  "replaces_sha256": "398d9a6bd3f2a6197809f01af52bb68e82a9991ffa5217062581fbc94b4b4ecc",
+  "status": "DRAFT_PENDING_ADVERSARIAL_QUALIFICATION",
+  "authority_status": "NOT_ESTABLISHED",
+  "approval_enabled": false,
+  "effective_publication_enabled": false,
+  "governing_sources": [
+    {
+      "document": "AsmWeb-Requirements-n-ScopeSpecification-v0.3.odt",
+      "section": "108",
+      "subject": "Milestone Traceability"
+    },
+    {
+      "document": "AsmWeb-Qualification-n-VerificationSpecification-v0.3.odt",
+      "section": "37",
+      "subject": "Qualification Aggregation and Milestone Qualification"
+    }
+  ],
+  "requirements_authority": "AsmWeb — Requirements & Scope Specification v0.3",
+  "scope": {
+    "requirement_count": 1001,
+    "milestones": [
+      "M0",
+      "M1",
+      "M2",
+      "M3",
+      "M4",
+      "M5",
+      "M6",
+      "M7",
+      "M8",
+      "M9",
+      "M10",
+      "M11",
+      "M12",
+      "M13",
+      "M14",
+      "M15",
+      "M16"
+    ],
+    "first_mandatory_assignment_required": true,
+    "individual_review_required": true,
+    "discovery_hints_are_approvals": false,
+    "explicit_m0_proposals_exhaustive": false,
+    "effective_approvals": 0,
+    "unreviewed_requirements": 1001
+  },
+  "authority_model": {
+    "designation_required": true,
+    "designated_authority": null,
+    "designation_record_ref": null,
+    "verification_method": null,
+    "trusted_verifier_ref": null,
+    "authentication_and_authorisation_required": true,
+    "authority_scope_must_include_requirement_and_milestone": true,
+    "authority_revocation_checked_at_decision": true,
+    "self_declaration_permitted": false,
+    "missing_or_unverified_authority_result": "REJECT",
+    "bootstrap_rule": "No designation may become effective merely by appearing inside the decision requesting approval."
+  },
+  "decision_record_schema": {
+    "unknown_fields": "REJECT",
+    "missing_required_fields": "REJECT",
+    "duplicate_json_keys": "REJECT",
+    "nonfinite_numbers": "REJECT",
+    "encoding": "UTF-8",
+    "fields": {
+      "schema_version": "integer_exact_1",
+      "decision_id": "nonempty_unique_string",
+      "requirement_id": "frozen_membership_identity",
+      "first_mandatory_milestone": "M0_TO_M16",
+      "decision_status": "PROPOSED_APPROVED_DISPUTED_REVOKED",
+      "decision_rationale": "nonempty_requirement_specific_string",
+      "source_authority_refs": "nonempty_unique_resolvable_ref_array",
+      "review_evidence_refs": "unique_resolvable_ref_array",
+      "authority_designation_ref": "resolvable_designation_ref",
+      "approval_evidence_ref": "resolvable_immutable_ref",
+      "baseline_snapshot_id": "content_addressed_snapshot_id",
+      "decision_provenance": "verified_provenance_object",
+      "supersedes_decision_ref": "nullable_resolvable_decision_ref"
+    },
+    "approved_decision_requires_all_authority_and_evidence_fields": true,
+    "unresolved_reference_result": "REJECT"
+  },
+  "snapshot_contract": {
+    "digest_algorithm": "SHA-256",
+    "snapshot_members": [
+      "requirements_source",
+      "requirements_membership",
+      "requirements_registry",
+      "ownership_register",
+      "milestone_records",
+      "decision_journal",
+      "approval_authority_register",
+      "applicable_evidence"
+    ],
+    "snapshot_identity": "Deterministically hash canonical manifest containing path, role, content digest and schema identity for every member.",
+    "snapshot_identity_implementation": "NOT_IMPLEMENTED",
+    "freshness_check": "Compare every member against the accepted base snapshot immediately before publication.",
+    "stale_snapshot_result": "REJECT",
+    "untracked_member_result": "REJECT"
+  },
+  "decision_state_machine": {
+    "states": [
+      "UNREVIEWED",
+      "PROPOSED",
+      "APPROVED",
+      "DISPUTED",
+      "REVOKED"
+    ],
+    "allowed_transitions": [
+      [
+        "UNREVIEWED",
+        "PROPOSED"
+      ],
+      [
+        "PROPOSED",
+        "APPROVED"
+      ],
+      [
+        "PROPOSED",
+        "DISPUTED"
+      ],
+      [
+        "DISPUTED",
+        "PROPOSED"
+      ],
+      [
+        "APPROVED",
+        "REVOKED"
+      ],
+      [
+        "REVOKED",
+        "PROPOSED"
+      ]
+    ],
+    "transition_requires_new_unique_decision": true,
+    "approved_is_effective_only_after_publication": true,
+    "disputed_is_effective": false,
+    "revoked_is_effective": false,
+    "conflicting_live_approvals": "REJECT",
+    "replay_of_decision_id": "REJECT",
+    "supersession_requires_old_decision_reference": true,
+    "historical_decisions_immutable": true,
+    "no_implicit_deletion_of_history": true
+  },
+  "transaction_phases": [
+    {
+      "id": 1,
+      "name": "PARSE_AND_VALIDATE_REQUEST",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 2,
+      "name": "VERIFY_SOURCE_AND_REQUIREMENT_IDENTITY",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 3,
+      "name": "RESOLVE_AUTHORITY_AND_SCOPE",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 4,
+      "name": "VERIFY_APPROVAL_EVIDENCE",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 5,
+      "name": "VERIFY_DECISION_HISTORY_AND_REPLAY",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 6,
+      "name": "VERIFY_SNAPSHOT_FRESHNESS",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 7,
+      "name": "PROJECT_ALL_AFFECTED_RECORDS",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 8,
+      "name": "VALIDATE_PROJECTED_GLOBAL_STATE",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 9,
+      "name": "PREPARE_COMPLETE_IMMUTABLE_PUBLICATION",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 10,
+      "name": "PUBLISH_SINGLE_EFFECTIVE_ROOT",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    },
+    {
+      "id": 11,
+      "name": "REOPEN_AND_RECONCILE_PUBLICATION",
+      "failure": "REJECT_WITH_NO_EFFECTIVE_STATE_CHANGE"
+    }
+  ],
+  "publication_contract": {
+    "model": "CONTENT_ADDRESSED_GENERATIONS_WITH_ROOT_POINTER",
+    "publication_design_status": "PROPOSED_NOT_IMPLEMENTED",
+    "generation_member_writes": "IMMUTABLE_PREPARED_MEMBERS",
+    "visible_effective_state": "Only the generation referenced by a validated effective-root record may be treated as effective.",
+    "effective_root_publication": "Single atomic replacement after successful generation validation; underlying filesystem atomicity and durability assumptions must be qualified.",
+    "prepare_failure": "DISCARD_UNREFERENCED_GENERATION",
+    "prepublication_crash": "PREVIOUS_VALID_ROOT_REMAINS_EFFECTIVE",
+    "postpublication_crash": "VERIFY_ROOT_AND_ALL_REFERENCED_MEMBERS_BEFORE_USE",
+    "corrupt_or_missing_member": "BLOCK_EFFECTIVENESS",
+    "recovery_policy": "Never invent or silently repair an approval. Recovery must identify a demonstrably valid generation.",
+    "reader_must_resolve_one_generation": true,
+    "mixing_generation_members": "PROHIBITED",
+    "durability_testing_required": true
+  },
+  "cross_registry_rules": {
+    "effective_decision_requires_ownership_record": true,
+    "effective_decision_requires_requirements_registry": true,
+    "m0_decision_requires_m0_requirement_reference": true,
+    "approved_milestone_values_must_match": true,
+    "no_unknown_or_duplicate_requirement_refs": true,
+    "all_1001_records_must_be_accounted_for": true,
+    "effective_ownership_is_distinct_from_qualification": true,
+    "ownership_cannot_advance_implementation_state": true,
+    "ownership_cannot_advance_qualification_result": true,
+    "ownership_cannot_close_milestone": true
+  },
+  "coverage_plan": {
+    "method": "EXHAUSTIVE_INDIVIDUAL_REQUIREMENT_REVIEW",
+    "discovery": "SPEC_SECTION_108_PLUS_NORMATIVE_DEPENDENCIES",
+    "review_unit": "ONE_FROZEN_REQUIREMENT_ID",
+    "classification_outcomes": [
+      "APPROVED_FIRST_MANDATORY_MILESTONE",
+      "DISPUTED_PENDING_DECISION",
+      "UNREVIEWED"
+    ],
+    "completion_requires_zero_unreviewed": true,
+    "completion_requires_zero_unresolved_disputes": true,
+    "completion_requires_full_membership_reconciliation": true,
+    "candidate_hints_never_imply_approval": true
+  },
+  "acceptance_scenarios": [
+    {
+      "id": "AC-001",
+      "condition": "Unknown requirement identifier",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-002",
+      "condition": "Duplicate decision identifier",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-003",
+      "condition": "Boolean supplied where integer required",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-004",
+      "condition": "Unsupported milestone identifier",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-005",
+      "condition": "Changed frozen normative statement",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-006",
+      "condition": "Missing authority designation",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-007",
+      "condition": "Self-declared approval authority",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-008",
+      "condition": "Unverifiable approval evidence",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-009",
+      "condition": "Revoked authorisation",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-010",
+      "condition": "Replayed approval decision",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-011",
+      "condition": "Concurrent conflicting assignments",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-012",
+      "condition": "Stale source or registry snapshot",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-013",
+      "condition": "Tampered referenced evidence",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-014",
+      "condition": "Unresolved dispute",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-015",
+      "condition": "Unjustified reassignment",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-016",
+      "condition": "Partial publication or missing manifest member",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-017",
+      "condition": "Interrupted publication without recovery proof",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-018",
+      "condition": "Unclassified requirement omitted from coverage",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-019",
+      "condition": "Ownership approval upgrades qualification result",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "id": "AC-020",
+      "condition": "Ownership approval closes M0",
+      "expected": "REJECT",
+      "execution_status": "NOT_IMPLEMENTED"
+    }
+  ],
+  "audit_findings": [
+    {
+      "finding_id": "OWN-001",
+      "subject": "Authority designation and independent verification",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-002",
+      "subject": "Approval evidence integrity and provenance",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-003",
+      "subject": "Single effective publication boundary",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-004",
+      "subject": "Crash recovery and rollback",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-005",
+      "subject": "Decision identity, uniqueness and replay prevention",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-006",
+      "subject": "Dispute, supersession and revocation",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-007",
+      "subject": "Typed record and reference constraints",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-008",
+      "subject": "Immutable snapshot and freshness validation",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-009",
+      "subject": "Complete projected-state reconciliation",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-010",
+      "subject": "Defined phase failure semantics",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-011",
+      "subject": "Exhaustive 1001-requirement classification",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "finding_id": "OWN-012",
+      "subject": "Independent semantic acceptance beyond integrity hashing",
+      "design_disposition": "ADDRESSED_IN_DRAFT",
+      "verification_status": "NOT_IMPLEMENTED"
+    }
+  ],
+  "adoption_gates": {
+    "authority_designated_and_verified": false,
+    "evidence_schema_and_verifier_qualified": false,
+    "replay_and_supersession_qualified": false,
+    "snapshot_freshness_qualified": false,
+    "atomic_publication_and_recovery_qualified": false,
+    "cross_registry_reconciliation_qualified": false,
+    "all_acceptance_scenarios_passed": false,
+    "full_ownership_coverage": false
+  },
+  "m0_status": {
+    "closure_status": "BLOCKED",
+    "blocker_ids": [
+      "M0-BLOCK-QRR",
+      "M0-BLOCK-IR",
+      "M0-BLOCK-LR",
+      "M0-BLOCK-ELM",
+      "M0-BLOCK-DIAGNOSTICS",
+      "M0-BLOCK-CONFIGURATION"
+    ],
+    "this_draft_resolves_no_m0_blocker": true
+  }
+}

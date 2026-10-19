@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "contract_id": "ASMWEB-M0-OWNERSHIP-APPROVAL-001",
+  "contract_version": "0.1",
+  "contract_name": "Ownership Decision and Approval Contract",
+  "contract_status": "DRAFT_UNADOPTED",
+  "authority_status": "NOT_ESTABLISHED",
+  "approval_enabled": false,
+  "effective_writes_enabled": false,
+  "governing_sources": [
+    {
+      "document": "AsmWeb-Requirements-n-ScopeSpecification-v0.3.odt",
+      "section": "108",
+      "subject": "Milestone Traceability"
+    },
+    {
+      "document": "AsmWeb-Qualification-n-VerificationSpecification-v0.3.odt",
+      "section": "37",
+      "subject": "Qualification Aggregation and Milestone Qualification"
+    }
+  ],
+  "controlled_baseline": {
+    "requirements_authority": "AsmWeb — Requirements & Scope Specification v0.3",
+    "requirement_count": 1001,
+    "ownership_register": "qualification/requirements/requirements-milestone-ownership-v0.3.json",
+    "requirements_registry": "qualification/requirements/requirements-registry-v0.3.json",
+    "m0_milestone": "qualification/milestones/M0.json",
+    "m0_proposals": "qualification/requirements/m0-ownership-proposals-v0.3.json"
+  },
+  "decision_model": {
+    "available_statuses": [
+      "UNREVIEWED",
+      "PROPOSED",
+      "APPROVED",
+      "DISPUTED"
+    ],
+    "allowed_milestones": [
+      "M0",
+      "M1",
+      "M2",
+      "M3",
+      "M4",
+      "M5",
+      "M6",
+      "M7",
+      "M8",
+      "M9",
+      "M10",
+      "M11",
+      "M12",
+      "M13",
+      "M14",
+      "M15",
+      "M16"
+    ],
+    "effective_status": "APPROVED",
+    "default_status": "UNREVIEWED",
+    "proposals_are_effective": false,
+    "simulations_are_effective": false,
+    "discovery_hints_are_authoritative": false,
+    "individual_review_required": true
+  },
+  "authority_contract": {
+    "designated_approval_authority": null,
+    "designation_evidence_ref": null,
+    "authentication_mechanism": null,
+    "authorisation_verifier": null,
+    "revocation_and_supersession_policy": null,
+    "unresolved_authority_blocks_approval": true,
+    "self_declared_authority_is_sufficient": false
+  },
+  "proposed_decision_record_fields": [
+    "decision_id",
+    "requirement_id",
+    "proposed_first_mandatory_milestone",
+    "decision_status",
+    "decision_rationale",
+    "source_authority_refs",
+    "review_evidence_refs",
+    "approval_authority_ref",
+    "approval_evidence_ref",
+    "controlled_baseline_digests",
+    "decision_provenance",
+    "supersedes_decision_ref"
+  ],
+  "proposed_acceptance_rules": [
+    "Requirement identity resolves uniquely to frozen membership.",
+    "Milestone is within M0 through M16.",
+    "Decision rationale is specific to the requirement.",
+    "Normative source identity and text are verified.",
+    "Decision authority is explicitly established.",
+    "Decision authority is independently verified.",
+    "Supporting authority and evidence references resolve.",
+    "Conflicting or duplicate effective approvals are rejected.",
+    "Stale baseline digests reject transaction application.",
+    "Disputed decisions cannot establish effective ownership.",
+    "Approval does not imply implementation or qualification.",
+    "All affected records must agree before effectiveness.",
+    "Partial publication must never constitute approval.",
+    "Milestone closure remains independently qualified."
+  ],
+  "future_transaction_model": {
+    "phase_1": "VALIDATE_PROPOSAL",
+    "phase_2": "RESOLVE_DECISION_AUTHORITY",
+    "phase_3": "VERIFY_APPROVAL_EVIDENCE",
+    "phase_4": "VALIDATE_BASELINE_CONSISTENCY",
+    "phase_5": "PREPARE_COMPLETE_CHANGESET",
+    "phase_6": "VALIDATE_PROJECTED_STATE",
+    "phase_7": "PUBLISH_CONTROLLED_DECISION",
+    "phase_8": "RECONCILE_EFFECTIVE_REGISTERS",
+    "partial_effectiveness_permitted": false,
+    "publication_atomicity_design": null,
+    "publication_recovery_design": null,
+    "effective_transaction_implemented": false
+  },
+  "coverage_contract": {
+    "all_requirements_require_review": true,
+    "approved_m0_candidates_are_exhaustive": false,
+    "unreviewed_requirement_count": 1001,
+    "pending_m0_proposal_count": 5,
+    "approved_assignment_count": 0,
+    "coverage_complete": false
+  },
+  "qualification_separation": {
+    "ownership_approval_changes_implementation_state": false,
+    "ownership_approval_changes_qualification_result": false,
+    "ownership_approval_closes_milestone": false,
+    "m0_closure_status": "BLOCKED"
+  },
+  "unresolved_controls": [
+    "DECISION_AUTHORITY_DESIGNATION",
+    "AUTHORITY_AUTHENTICATION",
+    "APPROVAL_EVIDENCE_SCHEMA",
+    "EVIDENCE_REFERENCE_RESOLUTION",
+    "DECISION_SUPERSESSION",
+    "ATOMIC_PUBLICATION_AND_RECOVERY",
+    "CROSS_REGISTRY_EFFECTIVENESS_VALIDATION",
+    "COMPLETE_REQUIREMENT_OWNERSHIP_REVIEW"
+  ]
+}
