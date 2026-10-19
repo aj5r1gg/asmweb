@@ -815,3 +815,9 @@ qualification-m0-foundation-evidence: $(TARGET)
 .PHONY: qualify-qrr-slice
 qualify-qrr-slice:
 	python3 tests/qualification/qrr_slice.py
+
+build-qrr:
+	python3 qualification/tools/qrr_authority.py build
+
+qualify-qrr-authority:
+	python3 tests/qualification/qrr_authority.py
