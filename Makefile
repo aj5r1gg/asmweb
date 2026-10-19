@@ -858,3 +858,12 @@ qualify-requirements-ownership:
 qualify-m0-ownership-proposals:
 	python3 qualification/tools/m0_ownership_proposals.py
 	python3 tests/qualification/m0_ownership_proposals.py
+
+# ---------------------------------------------------------------------------
+# M0 qualification — non-effective ownership approval simulation
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-m0-ownership-dry-run
+qualify-m0-ownership-dry-run:
+	python3 qualification/tools/m0_ownership_dry_run.py --requirement REQ-M0-001
+	python3 tests/qualification/m0_ownership_dry_run.py
