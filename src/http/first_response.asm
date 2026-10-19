@@ -35,9 +35,20 @@ align 4
 reuse_address:
     dd 1
 
-request_line:
+; M1.5.1 deliberately restricted request grammar.
+; A complete received request must match one of these byte sequences.
+; This is NOT a general-purpose HTTP/1.1 parser.
+request_local:
     db 'GET / HTTP/1.1', 13, 10
-request_line_end:
+    db 'Host: localhost', 13, 10
+    db 13, 10
+request_local_end:
+
+request_ip:
+    db 'GET / HTTP/1.1', 13, 10
+    db 'Host: 127.0.0.1', 13, 10
+    db 13, 10
+request_ip_end:
 
 response_ok:
     db 'HTTP/1.1 200 OK', 13, 10
@@ -232,16 +243,29 @@ asm_http_serve_once:
     jmp .read
 
 .complete:
-    ; Only recognise the fixed M1 request line.
-    mov ecx, request_line_end - request_line
-    cmp r14, rcx
-    jb .bad_request
+    ; Require the complete buffered request to match one supported
+    ; M1.5.1 request representation. No implicit extra headers,
+    ; body framing, duplicate Host or trailing buffered bytes.
+    cmp r14, request_local_end - request_local
+    jne .try_ip
 
-    lea rsi, [rel request_line]
+    mov ecx, request_local_end - request_local
+    lea rsi, [rel request_local]
+    lea rdi, [rel request_buffer]
+    repe cmpsb
+    je .accepted
+
+.try_ip:
+    cmp r14, request_ip_end - request_ip
+    jne .bad_request
+
+    mov ecx, request_ip_end - request_ip
+    lea rsi, [rel request_ip]
     lea rdi, [rel request_buffer]
     repe cmpsb
     jne .bad_request
 
+.accepted:
     lea r15, [rel response_ok]
     mov ebx, response_ok_end - response_ok
     jmp .send

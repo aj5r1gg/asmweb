@@ -30,6 +30,62 @@ CASES = [
         b"HTTP/1.1 431 Request Header Fields Too Large",
         b"Header Too Large\n",
     ),
+    (
+        "VALID_LOCALHOST",
+        b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n",
+        b"HTTP/1.1 200 OK",
+        b"AsmWeb\n",
+    ),
+    (
+        "VALID_LOOPBACK_IP",
+        b"GET / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n",
+        b"HTTP/1.1 200 OK",
+        b"AsmWeb\n",
+    ),
+    (
+        "MISSING_HOST",
+        b"GET / HTTP/1.1\r\n\r\n",
+        b"HTTP/1.1 400 Bad Request",
+        b"Bad Request\n",
+    ),
+    (
+        "DUPLICATE_HOST",
+        b"GET / HTTP/1.1\r\nHost: localhost\r\n"
+        b"Host: localhost\r\n\r\n",
+        b"HTTP/1.1 400 Bad Request",
+        b"Bad Request\n",
+    ),
+    (
+        "UNSUPPORTED_METHOD",
+        b"POST / HTTP/1.1\r\nHost: localhost\r\n\r\n",
+        b"HTTP/1.1 400 Bad Request",
+        b"Bad Request\n",
+    ),
+    (
+        "UNSUPPORTED_PATH",
+        b"GET /admin HTTP/1.1\r\nHost: localhost\r\n\r\n",
+        b"HTTP/1.1 400 Bad Request",
+        b"Bad Request\n",
+    ),
+    (
+        "BODY_FRAMING",
+        b"GET / HTTP/1.1\r\nHost: localhost\r\n"
+        b"Content-Length: 3\r\n\r\nabc",
+        b"HTTP/1.1 400 Bad Request",
+        b"Bad Request\n",
+    ),
+    (
+        "TRAILING_BYTES",
+        b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\nJUNK",
+        b"HTTP/1.1 400 Bad Request",
+        b"Bad Request\n",
+    ),
+    (
+        "EMBEDDED_NUL",
+        b"GET / HTTP/1.1\r\nHost: local\x00host\r\n\r\n",
+        b"HTTP/1.1 400 Bad Request",
+        b"Bad Request\n",
+    ),
 ]
 
 
