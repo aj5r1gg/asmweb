@@ -19,7 +19,7 @@ jobs:
       - name: Install build and test dependencies
         run: dnf install -y git make nasm binutils python3 findutils coreutils
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Record toolchain
         shell: bash
         run: |
