@@ -32,7 +32,7 @@ $(BUILD_DIR):
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.asm
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(TARGET): $(OBJECTS)
 	@if [ -z "$(OBJECTS)" ]; then \
@@ -74,7 +74,7 @@ PROCESS_ENTRY_QUAL_TARGET := $(BUILD_DIR)/qualification/process-entry
 
 $(PROCESS_ENTRY_QUAL_OBJECT): $(PROCESS_ENTRY_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(PROCESS_ENTRY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -100,7 +100,7 @@ ENTROPY_QUAL_TARGET := $(BUILD_DIR)/qualification/entropy
 
 $(ENTROPY_QUAL_OBJECT): $(ENTROPY_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(ENTROPY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -126,7 +126,7 @@ CPU_QUAL_TARGET := $(BUILD_DIR)/qualification/cpu
 
 $(CPU_QUAL_OBJECT): $(CPU_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(CPU_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -152,7 +152,7 @@ TIME_QUAL_TARGET := $(BUILD_DIR)/qualification/time
 
 $(TIME_QUAL_OBJECT): $(TIME_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(TIME_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -178,7 +178,7 @@ MEMORY_QUAL_TARGET := $(BUILD_DIR)/qualification/memory
 
 $(MEMORY_QUAL_OBJECT): $(MEMORY_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(MEMORY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -204,7 +204,7 @@ MAPPING_CAPACITY_QUAL_TARGET := $(BUILD_DIR)/qualification/mapping-capacity
 
 $(MAPPING_CAPACITY_QUAL_OBJECT): $(MAPPING_CAPACITY_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(MAPPING_CAPACITY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -232,7 +232,7 @@ MEMORY_CEILING_QUAL_TARGET := $(BUILD_DIR)/qualification/memory-ceiling
 
 $(MEMORY_CEILING_QUAL_OBJECT): $(MEMORY_CEILING_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(MEMORY_CEILING_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -260,7 +260,7 @@ ARITHMETIC_QUAL_TARGET := $(BUILD_DIR)/qualification/arithmetic
 
 $(ARITHMETIC_QUAL_OBJECT): $(ARITHMETIC_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(ARITHMETIC_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -286,7 +286,7 @@ PRODUCTION_REGISTRY_QUAL_TARGET := $(BUILD_DIR)/qualification/production-registr
 
 $(PRODUCTION_REGISTRY_QUAL_OBJECT): $(PRODUCTION_REGISTRY_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(PRODUCTION_REGISTRY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -319,7 +319,7 @@ PROCESS_RUNTIME_QUAL_TARGET := $(BUILD_DIR)/qualification/process-runtime
 
 $(PROCESS_RUNTIME_QUAL_OBJECT): $(PROCESS_RUNTIME_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(PROCESS_RUNTIME_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -353,7 +353,7 @@ RUNTIME_RULES_QUAL_TARGET := $(BUILD_DIR)/qualification/runtime-rules
 
 $(RUNTIME_RULES_QUAL_OBJECT): $(RUNTIME_RULES_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(RUNTIME_RULES_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -388,7 +388,7 @@ RRR_QUAL_TARGET := $(BUILD_DIR)/qualification/rrr
 
 $(RRR_QUAL_OBJECT): $(RRR_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(RRR_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -418,7 +418,7 @@ REGISTRY_QUAL_TARGET := $(BUILD_DIR)/qualification/registry
 
 $(REGISTRY_QUAL_OBJECT): $(REGISTRY_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(REGISTRY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -448,7 +448,7 @@ STARTUP_MEMORY_QUAL_TARGET := $(BUILD_DIR)/qualification/startup-memory
 
 $(STARTUP_MEMORY_QUAL_OBJECT): $(STARTUP_MEMORY_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(STARTUP_MEMORY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -477,7 +477,7 @@ STACK_QUAL_TARGET := $(BUILD_DIR)/qualification/stack
 
 $(STACK_QUAL_OBJECT): $(STACK_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(STACK_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -508,7 +508,7 @@ POOL_QUAL_TARGET := $(BUILD_DIR)/qualification/pool
 
 $(POOL_QUAL_OBJECT): $(POOL_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(POOL_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -535,7 +535,7 @@ TELEMETRY_QUAL_TARGET := $(BUILD_DIR)/qualification/telemetry
 
 $(TELEMETRY_QUAL_OBJECT): $(TELEMETRY_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(TELEMETRY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -580,7 +580,7 @@ RUNTIME_INVARIANT_QUAL_TARGET := $(BUILD_DIR)/qualification/runtime-invariant
 
 $(RUNTIME_INVARIANT_QUAL_OBJECT): $(RUNTIME_INVARIANT_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(RUNTIME_INVARIANT_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -619,7 +619,7 @@ CONFIG_DEPENDENCY_QUAL_TARGET := $(BUILD_DIR)/qualification/config-dependency
 
 $(CONFIG_DEPENDENCY_QUAL_OBJECT): $(CONFIG_DEPENDENCY_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(CONFIG_DEPENDENCY_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -648,7 +648,7 @@ QUIESCENCE_QUAL_TARGET := $(BUILD_DIR)/qualification/quiescence
 
 $(QUIESCENCE_QUAL_OBJECT): $(QUIESCENCE_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(QUIESCENCE_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -681,7 +681,7 @@ OWNERSHIP_PUBLICATION_QUAL_TARGET := $(BUILD_DIR)/qualification/ownership-public
 
 $(OWNERSHIP_PUBLICATION_QUAL_OBJECT): $(OWNERSHIP_PUBLICATION_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(OWNERSHIP_PUBLICATION_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -744,7 +744,7 @@ ACQUISITION_ROLLBACK_QUAL_TARGET := $(BUILD_DIR)/qualification/acquisition-rollb
 
 $(ACQUISITION_ROLLBACK_QUAL_OBJECT): $(ACQUISITION_ROLLBACK_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(ACQUISITION_ROLLBACK_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -771,7 +771,7 @@ STALE_CANDIDATE_QUAL_TARGET := $(BUILD_DIR)/qualification/stale-candidate
 
 $(STALE_CANDIDATE_QUAL_OBJECT): $(STALE_CANDIDATE_QUAL_SOURCE)
 	mkdir -p $(dir $@)
-	$(NASM) $(NASMFLAGS) -o $@ $<
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
 $(STALE_CANDIDATE_QUAL_TARGET): \
 		$(BUILD_DIR)/linux/syscall.o \
@@ -898,3 +898,17 @@ qualify-mot-ceiling-integration:
 qualify-production-limit-manifest:
 	python3 qualification/tools/production_limit_manifest.py
 	python3 tests/qualification/production_limit_manifest.py
+
+# ---------------------------------------------------------------------------
+# NASM generated dependency files
+#
+# Every assembled object produces a matching .d file using NASM's own
+# transitive include discovery.
+#
+# Missing dependency files are permitted during the first build.
+# Existing dependency files are included for incremental rebuilds.
+#
+# Production and qualification objects use the same mechanism.
+# ---------------------------------------------------------------------------
+
+-include $(wildcard $(BUILD_DIR)/*.d $(BUILD_DIR)/*/*.d $(BUILD_DIR)/*/*/*.d)
