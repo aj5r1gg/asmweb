@@ -131,6 +131,141 @@ def calculate(document):
 
     return payload
 
+
+# Exact machine-validation MOT descriptor from registry.inc.
+# These fields are distinct from the configured-limit projection.
+MOT_FIELDS = (
+    "limit_id",
+    "status",
+    "object_id",
+    "actual_size_bytes",
+    "effective_stride_bytes",
+    "pool_metadata_bytes",
+    "mapping_overhead_bytes",
+    "maximum_count",
+    "physical_capacity",
+    "configured_capacity",
+    "owner_resource_id",
+)
+
+MOT_ACTIVE = 1
+MOT_DEFERRED = 2
+MOT_SUPERSEDED = 3
+MOT_RETIRED = 4
+MOT_MAX_ENTRIES = 256
+
+
+def calculate_mot_ceiling(document):
+    """Derive the arithmetic M_direct_capacity_max projection.
+
+    Matches asm_memory_direct_capacity_from_mot for already-resolved
+    MOT arithmetic operands. This does not validate OLR/RCT linkage
+    or establish authoritative configuration provenance.
+    """
+    require(type(document) is dict, "MOT root type")
+    require(
+        set(document) == {"schema_version", "entries"},
+        "MOT root fields",
+    )
+    require(
+        type(document["schema_version"]) is int
+        and document["schema_version"] == 1,
+        "MOT schema version",
+    )
+
+    records = document["entries"]
+    require(type(records) is list, "MOT entries type")
+    require(len(records) <= MOT_MAX_ENTRIES, "MOT entry bound")
+
+    total = 0
+    active = []
+    skipped = []
+    identities = set()
+
+    for record in records:
+        require(type(record) is dict, "MOT record type")
+        require(set(record) == set(MOT_FIELDS), "MOT fields")
+
+        entry = {
+            name: u64(record[name], name)
+            for name in MOT_FIELDS
+        }
+
+        status = entry["status"]
+        require(
+            MOT_ACTIVE <= status <= MOT_RETIRED,
+            "invalid MOT lifecycle status",
+        )
+
+        # Identity uniqueness belongs to the full registry validator,
+        # but reject ambiguity in this projection as well.
+        identity = entry["limit_id"]
+        require(identity != 0, "zero MOT identity")
+        require(identity not in identities, "duplicate MOT identity")
+        identities.add(identity)
+
+        if status != MOT_ACTIVE:
+            skipped.append(identity)
+            continue
+
+        # Unlike configured-capacity projection, this deliberately
+        # consumes maximum_count. Zero arithmetic operands are valid
+        # already-resolved uint64 quantities at this layer.
+        payload = multiply(
+            entry["effective_stride_bytes"],
+            entry["maximum_count"],
+        )
+        contribution = add(
+            add(payload, entry["pool_metadata_bytes"]),
+            entry["mapping_overhead_bytes"],
+        )
+        total = add(total, contribution)
+
+        active.append({
+            "limit_id": identity,
+            "maximum_class_bytes": contribution,
+        })
+
+    active.sort(key=lambda item: item["limit_id"])
+    skipped.sort()
+
+    return {
+        "schema_version": 1,
+        "document_type": "MOT_DIRECT_MEMORY_CEILING_PROJECTION",
+        "authoritative_manifest": False,
+        "registry_cross_references_validated": False,
+        "configuration_provenance_validated": False,
+        "entry_count": len(records),
+        "active_entry_count": len(active),
+        "entries": active,
+        "skipped_limit_ids": skipped,
+        "M_direct_capacity_max": total,
+    }
+
+
+def calculate_mot_ceiling_bytes(raw):
+    def unique_pairs(items):
+        result = {}
+        for key, value in items:
+            require(key not in result, "duplicate JSON key")
+            result[key] = value
+        return result
+
+    def reject_constant(value):
+        raise LimitError("nonfinite MOT JSON constant")
+
+    try:
+        document = json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=unique_pairs,
+            parse_constant=reject_constant,
+        )
+    except (UnicodeError, ValueError) as exc:
+        raise LimitError("invalid MOT JSON: " + str(exc)) from exc
+
+    return calculate_mot_ceiling(document)
+
+
 def canonical(obj):
     return (
         json.dumps(

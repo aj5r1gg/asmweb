@@ -887,3 +887,8 @@ qualify-runtime-invariant-register:
 .PHONY: qualify-effective-limit-engine
 qualify-effective-limit-engine:
 	python3 tests/qualification/effective_limit_engine.py
+
+# M0 assembly-compatible MOT maximum-memory derivation
+.PHONY: qualify-mot-ceiling-integration
+qualify-mot-ceiling-integration:
+	python3 tests/qualification/mot_ceiling_integration.py
