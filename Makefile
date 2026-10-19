@@ -892,3 +892,9 @@ qualify-effective-limit-engine:
 .PHONY: qualify-mot-ceiling-integration
 qualify-mot-ceiling-integration:
 	python3 tests/qualification/mot_ceiling_integration.py
+
+# M0 production registry derived MOT projection
+.PHONY: qualify-production-limit-manifest
+qualify-production-limit-manifest:
+	python3 qualification/tools/production_limit_manifest.py
+	python3 tests/qualification/production_limit_manifest.py
