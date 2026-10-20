@@ -1099,3 +1099,25 @@ qualify-tcp-accept4: $(TCP_ACCEPT4_TARGET)
 	timeout 5s $(TCP_ACCEPT4_TARGET)
 
 -include $(TCP_ACCEPT4_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 — Network Error and Datagram Boundary Verification
+# ---------------------------------------------------------------------------
+
+NETWORK_ERRORS_SOURCE := tests/qualification/network_error_paths.asm
+NETWORK_ERRORS_OBJECT := $(BUILD_DIR)/tests/qualification/network_error_paths.o
+NETWORK_ERRORS_TARGET := $(BUILD_DIR)/qualification/network-error-paths
+
+$(NETWORK_ERRORS_OBJECT): $(NETWORK_ERRORS_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(NETWORK_ERRORS_TARGET): $(NETWORK_ERRORS_OBJECT) $(BUILD_DIR)/linux/network.o
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-network-error-paths
+qualify-network-error-paths: $(NETWORK_ERRORS_TARGET)
+	timeout 5s $(NETWORK_ERRORS_TARGET)
+
+-include $(NETWORK_ERRORS_OBJECT:.o=.d)

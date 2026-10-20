@@ -52,6 +52,7 @@ jobs:
           make qualify-http-descriptor-mutations
           make qualify-udp-loopback
           make qualify-tcp-accept4
+          make qualify-network-error-paths
           make qualify-checkpoint-reconciliation
           make qualify-checkpoint-reconciliation-adversarial
           make qualify-diagnostic
