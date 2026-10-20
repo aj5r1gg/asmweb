@@ -1165,3 +1165,25 @@ qualify-stream-short-write: $(STREAM_SHORT_WRITE_TARGET)
 	timeout 5s $(STREAM_SHORT_WRITE_TARGET)
 
 -include $(STREAM_SHORT_WRITE_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 — Genuine Linux EINTR Verification
+# ---------------------------------------------------------------------------
+
+NETWORK_EINTR_SOURCE := tests/qualification/network_eintr.asm
+NETWORK_EINTR_OBJECT := $(BUILD_DIR)/tests/qualification/network_eintr.o
+NETWORK_EINTR_TARGET := $(BUILD_DIR)/qualification/network-eintr
+
+$(NETWORK_EINTR_OBJECT): $(NETWORK_EINTR_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(NETWORK_EINTR_TARGET): $(NETWORK_EINTR_OBJECT) $(BUILD_DIR)/linux/network.o
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-network-eintr
+qualify-network-eintr: $(NETWORK_EINTR_TARGET)
+	timeout 5s $(NETWORK_EINTR_TARGET)
+
+-include $(NETWORK_EINTR_OBJECT:.o=.d)
