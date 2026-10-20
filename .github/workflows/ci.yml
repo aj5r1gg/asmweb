@@ -52,5 +52,8 @@ jobs:
           make qualify-http-descriptor-mutations
           make qualify-checkpoint-reconciliation
           make qualify-checkpoint-reconciliation-adversarial
+          make qualify-diagnostic
+          make qualify-diagnostic-adversarial
+          make qualify-diagnostic-boundary
       - name: Verify clean incremental build
         run: make all

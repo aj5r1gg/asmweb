@@ -952,3 +952,63 @@ qualify-checkpoint-reconciliation:
 .PHONY: qualify-checkpoint-reconciliation-adversarial
 qualify-checkpoint-reconciliation-adversarial: qualify-checkpoint-reconciliation
 	python3 tests/qualification/checkpoint_reconciliation.py
+
+# ---------------------------------------------------------------------------
+# M0-DIAG-001 — bounded first-failure diagnostics (engineering-only)
+# ---------------------------------------------------------------------------
+
+DIAGNOSTIC_QUAL_SOURCE := tests/qualification/diagnostic.asm
+DIAGNOSTIC_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/diagnostic.o
+DIAGNOSTIC_QUAL_TARGET := $(BUILD_DIR)/qualification/diagnostic
+
+$(DIAGNOSTIC_QUAL_OBJECT): $(DIAGNOSTIC_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(DIAGNOSTIC_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/diagnostic.o \
+		$(DIAGNOSTIC_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/diagnostic.o \
+		$(DIAGNOSTIC_QUAL_OBJECT)
+
+.PHONY: qualify-diagnostic
+qualify-diagnostic: $(DIAGNOSTIC_QUAL_TARGET)
+	$(DIAGNOSTIC_QUAL_TARGET)
+
+-include $(DIAGNOSTIC_QUAL_OBJECT:.o=.d)
+
+.PHONY: qualify-diagnostic-adversarial
+qualify-diagnostic-adversarial: qualify-diagnostic
+	python3 tests/qualification/diagnostic_mutations.py
+
+# ---------------------------------------------------------------------------
+# M0-DIAG-001 — permanent independent boundary and ABI harness
+# ---------------------------------------------------------------------------
+
+DIAGNOSTIC_BOUNDARY_SOURCE := tests/qualification/diagnostic_boundary.asm
+DIAGNOSTIC_BOUNDARY_OBJECT := $(BUILD_DIR)/tests/qualification/diagnostic_boundary.o
+DIAGNOSTIC_BOUNDARY_TARGET := $(BUILD_DIR)/qualification/diagnostic-boundary
+
+$(DIAGNOSTIC_BOUNDARY_OBJECT): $(DIAGNOSTIC_BOUNDARY_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(DIAGNOSTIC_BOUNDARY_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/diagnostic.o \
+		$(DIAGNOSTIC_BOUNDARY_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/diagnostic.o \
+		$(DIAGNOSTIC_BOUNDARY_OBJECT)
+
+.PHONY: qualify-diagnostic-boundary
+qualify-diagnostic-boundary: $(DIAGNOSTIC_BOUNDARY_TARGET)
+	$(DIAGNOSTIC_BOUNDARY_TARGET)
+
+-include $(DIAGNOSTIC_BOUNDARY_OBJECT:.o=.d)
