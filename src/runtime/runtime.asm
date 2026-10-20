@@ -12,6 +12,7 @@ bits 64
 %include "asmweb/memory_ceiling.inc"
 %include "asmweb/config_dependency.inc"
 %include "asmweb/runtime_invariant.inc"
+%include "asmweb/diagnostic.inc"
 
 global asm_runtime_main
 
@@ -30,7 +31,8 @@ extern asm_startup_memory_account_baseline
 
 extern asm_memory_direct_capacity_from_mot
 extern asm_capacity_dependency_validate
-extern asm_runtime_invariant_validate_ready
+extern asm_diagnostic_init
+extern asm_runtime_ready_validate_diagnose
 
 extern asm_runtime_rules_init
 extern asm_runtime_rules_get
@@ -137,13 +139,16 @@ asm_runtime_main:
     ;
     ;   [rsp + 0]   published registry-set pointer
     ;   [rsp + 8]   temporary ASMWEB_RUNTIME_INVARIANT_VIEW
-    ;   [rsp + 96]  alignment/padding
+    ;   [rsp + 96]  padding
+    ;   [rsp + 104] caller-owned ASMWEB_DIAGNOSTIC (48 bytes)
     ;
-    ; ASMWEB_RUNTIME_INVARIANT_VIEW is currently 88 bytes.
+    ; ASMWEB_RUNTIME_INVARIANT_VIEW is 88 bytes.
+    ; ASMWEB_DIAGNOSTIC is 48 bytes.
     ;
-    ; Total local frame = 104 bytes.
-    ; 104 mod 16 == 8, therefore RSP is 16-byte aligned before CALL.
-    sub rsp, 104
+    ; Total local frame = 152 bytes.
+    ; 152 mod 16 == 8; RSP is aligned before CALL.
+    ; Diagnostic storage is transient and single-writer only.
+    sub rsp, 152
 
     ; Preserve explicit bootstrap-state pointers in callee-saved registers.
     mov rbx, rdi
@@ -152,6 +157,33 @@ asm_runtime_main:
     mov r13, rcx
     mov r14, r8
     mov r15, r9
+
+    ; Establish a pristine caller-owned diagnostic record.
+    ;
+    ; Reserving stack space does not zero it. The diagnostic
+    ; initializer requires every field to be zero before READY
+    ; publication. Explicitly clear the entire 48-byte record.
+    ;
+    ; RDI, RAX and RCX are caller-saved. All six original runtime
+    ; input pointers have already been retained in callee-saved
+    ; registers. DF remains clear at call boundaries.
+    ;
+    ; No allocation, syscalls or persistent diagnostic storage.
+
+%if ASMWEB_DIAGNOSTIC_size != 48
+    %error "Unexpected diagnostic record size: review stack layout"
+%endif
+
+    lea rdi, [rsp + 104]
+    xor eax, eax
+    mov ecx, ASMWEB_DIAGNOSTIC_size / 8
+    rep stosq
+
+    lea rdi, [rsp + 104]
+    call asm_diagnostic_init
+
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .failure
 
 
     ; -----------------------------------------------------------------------
@@ -380,7 +412,8 @@ asm_runtime_main:
     mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_edge_count], 0
 
     mov rdi, r10
-    call asm_runtime_invariant_validate_ready
+    lea rsi, [rsp + 104]
+    call asm_runtime_ready_validate_diagnose
 
     cmp eax, ASMWEB_RESOURCE_OK
     jne .failure
@@ -459,7 +492,7 @@ asm_runtime_main:
     mov eax, 1
 
 .restore:
-    add rsp, 104
+    add rsp, 152
 
     pop r15
     pop r14

@@ -1012,3 +1012,41 @@ qualify-diagnostic-boundary: $(DIAGNOSTIC_BOUNDARY_TARGET)
 	$(DIAGNOSTIC_BOUNDARY_TARGET)
 
 -include $(DIAGNOSTIC_BOUNDARY_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M0-DIAG-002 — actual READY-validator diagnostic adapter
+# ---------------------------------------------------------------------------
+
+READY_DIAGNOSTIC_QUAL_SOURCE := tests/qualification/ready_diagnostic.asm
+READY_DIAGNOSTIC_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/ready_diagnostic.o
+READY_DIAGNOSTIC_QUAL_TARGET := $(BUILD_DIR)/qualification/ready-diagnostic
+
+$(READY_DIAGNOSTIC_QUAL_OBJECT): $(READY_DIAGNOSTIC_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(READY_DIAGNOSTIC_QUAL_TARGET): \
+		$(BUILD_DIR)/linux/syscall.o \
+		$(BUILD_DIR)/runtime/arithmetic.o \
+		$(BUILD_DIR)/runtime/memory_ceiling.o \
+		$(BUILD_DIR)/runtime/registry.o \
+		$(BUILD_DIR)/runtime/process_runtime.o \
+		$(BUILD_DIR)/runtime/startup_memory.o \
+		$(BUILD_DIR)/runtime/config_dependency.o \
+		$(BUILD_DIR)/runtime/runtime_invariant.o \
+		$(BUILD_DIR)/runtime/diagnostic.o \
+		$(BUILD_DIR)/runtime/ready_diagnostic.o \
+		$(READY_DIAGNOSTIC_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-ready-diagnostic
+qualify-ready-diagnostic: $(READY_DIAGNOSTIC_QUAL_TARGET)
+	$(READY_DIAGNOSTIC_QUAL_TARGET)
+
+-include $(READY_DIAGNOSTIC_QUAL_OBJECT:.o=.d)
+
+# M0-DIAG-002 — controlled full-bootstrap failure injection.
+.PHONY: qualify-ready-bootstrap-injection
+qualify-ready-bootstrap-injection: all
+	python3 tests/qualification/ready_bootstrap_injection.py
