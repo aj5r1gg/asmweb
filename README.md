@@ -239,7 +239,7 @@ A useful end state would be a very small process that does a narrow job predicta
 
 ## License and contributions
 
-**No licence has been selected for this repository. All rights reserved unless and until a licence is explicitly added.**
+**License:** Mozilla Public License, Version 2.0 (MPL-2.0). See [LICENSE](LICENSE) and [LICENSING.md](LICENSING.md).
 
 Issues and reproducible bug reports are welcome through the [GitHub repository](https://github.com/aj5r1gg/asmweb). For changes, please include the relevant build and qualification evidence, and avoid broadening the M1 scope without an explicit engineering reason.
 
