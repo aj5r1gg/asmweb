@@ -1187,3 +1187,29 @@ qualify-network-eintr: $(NETWORK_EINTR_TARGET)
 	timeout 5s $(NETWORK_EINTR_TARGET)
 
 -include $(NETWORK_EINTR_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 qualification — absolute deadline arithmetic
+# ---------------------------------------------------------------------------
+
+DEADLINE_QUAL_SOURCE := tests/qualification/deadline.asm
+DEADLINE_QUAL_OBJECT := $(BUILD_DIR)/tests/qualification/deadline.o
+DEADLINE_QUAL_TARGET := $(BUILD_DIR)/qualification/deadline
+
+$(DEADLINE_QUAL_OBJECT): $(DEADLINE_QUAL_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(DEADLINE_QUAL_TARGET): \
+        $(BUILD_DIR)/platform/deadline.o \
+        $(DEADLINE_QUAL_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ \
+		$(BUILD_DIR)/platform/deadline.o \
+		$(DEADLINE_QUAL_OBJECT)
+
+.PHONY: qualify-deadline
+qualify-deadline: $(DEADLINE_QUAL_TARGET)
+	timeout 5s $(DEADLINE_QUAL_TARGET)
+
+-include $(DEADLINE_QUAL_OBJECT:.o=.d)
