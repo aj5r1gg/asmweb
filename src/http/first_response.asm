@@ -351,8 +351,37 @@ asm_http_serve_common:
     jbe .name_valid
 
 .hyphen:
+    ; Accept HTTP field-name tchar characters.
     cmp al, '-'
-    jne .bad_request
+    je .name_valid
+    cmp al, '_'
+    je .name_valid
+    cmp al, '!'
+    je .name_valid
+    cmp al, '#'
+    je .name_valid
+    cmp al, '$'
+    je .name_valid
+    cmp al, '%'
+    je .name_valid
+    cmp al, '&'
+    je .name_valid
+    cmp al, 39
+    je .name_valid
+    cmp al, '*'
+    je .name_valid
+    cmp al, '+'
+    je .name_valid
+    cmp al, '^'
+    je .name_valid
+    cmp al, '`'
+    je .name_valid
+    cmp al, '|'
+    je .name_valid
+    cmp al, '~'
+    je .name_valid
+
+    jmp .bad_request
 
 .name_valid:
     inc r10

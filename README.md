@@ -79,3 +79,54 @@ Correctness, memory boundedness, computational boundedness, and required interop
 ## License
 
 No licence has been selected for this repository. **All rights reserved unless and until a licence is explicitly added.**
+
+<!-- ASMWEB-WEBSITE-START -->
+
+## Working HTTP Server
+
+AsmWeb is an experimental native x86-64 Linux web server
+written in NASM assembly.
+
+The current implementation supports:
+
+- IPv4 loopback listening at `127.0.0.1:18080`.
+- Persistent sequential client acceptance.
+- `GET / HTTP/1.1` requests with ordinary HTTP headers.
+- Required and nonduplicate Host headers.
+- Serving `www/index.html` directly from disk.
+- Dynamic Content-Length calculation.
+- Connection closure after each response.
+- Basic HTTP error responses.
+
+### Build and Run
+
+From the repository root:
+
+    make all
+    ./build/asmweb
+
+Open a browser at:
+
+http://127.0.0.1:18080/
+
+Press Ctrl+C to stop the server.
+
+The document path is currently relative to the working directory.
+
+### Current Limitations
+
+- Only `www/index.html` is served.
+- Maximum HTML file size: 4,096 bytes.
+- Maximum received request headers: 1,024 bytes.
+- Sequential connections only.
+- No HTTP keep-alive or pipelining.
+- No request-body support.
+- No general static-file routing.
+- IPv4 loopback only.
+- Not yet production-ready.
+
+### Design Philosophy
+
+**Do less. Bound everything. Measure the rest.**
+
+<!-- ASMWEB-WEBSITE-END -->
