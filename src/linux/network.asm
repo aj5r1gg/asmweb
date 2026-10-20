@@ -9,6 +9,8 @@ global asm_linux_listen
 global asm_linux_accept
 global asm_linux_recv
 global asm_linux_send
+global asm_linux_recvfrom
+global asm_linux_sendto
 global asm_linux_close
 global asm_linux_setsockopt
 
@@ -80,6 +82,35 @@ asm_linux_send:
     or r10d, LINUX_MSG_NOSIGNAL
     xor r8d, r8d
     xor r9d, r9d
+    mov eax, LINUX_SYS_sendto
+    syscall
+    ret
+
+; recvfrom(fd, buffer, length, flags, address, address_length*)
+; RDI=fd, RSI=buffer, RDX=length, RCX=flags
+; R8=source sockaddr buffer or NULL
+; R9=source sockaddr length pointer or NULL
+;
+; Returns datagram length or negative Linux errno.
+; The caller owns and bounds all buffers.
+; The descriptor is borrowed.
+asm_linux_recvfrom:
+    mov r10, rcx
+    mov eax, LINUX_SYS_recvfrom
+    syscall
+    ret
+
+; sendto(fd, buffer, length, flags, address, address_length)
+; RDI=fd, RSI=buffer, RDX=length, RCX=flags
+; R8=destination sockaddr pointer
+; R9=destination sockaddr length
+;
+; Returns bytes sent or negative Linux errno.
+; MSG_NOSIGNAL is always enabled.
+; The descriptor is borrowed.
+asm_linux_sendto:
+    mov r10, rcx
+    or r10d, LINUX_MSG_NOSIGNAL
     mov eax, LINUX_SYS_sendto
     syscall
     ret

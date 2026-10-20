@@ -1055,3 +1055,25 @@ qualify-ready-bootstrap-injection: all
 .PHONY: qualify-ready-diagnostic-matrix
 qualify-ready-diagnostic-matrix: all
 	python3 tests/qualification/ready_diagnostic_matrix.py
+
+# ---------------------------------------------------------------------------
+# M1 — UDP Network I/O Loopback Verification
+# ---------------------------------------------------------------------------
+
+UDP_LOOPBACK_SOURCE := tests/qualification/udp_loopback.asm
+UDP_LOOPBACK_OBJECT := $(BUILD_DIR)/tests/qualification/udp_loopback.o
+UDP_LOOPBACK_TARGET := $(BUILD_DIR)/qualification/udp-loopback
+
+$(UDP_LOOPBACK_OBJECT): $(UDP_LOOPBACK_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(UDP_LOOPBACK_TARGET): $(UDP_LOOPBACK_OBJECT) $(BUILD_DIR)/linux/network.o
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-udp-loopback
+qualify-udp-loopback: $(UDP_LOOPBACK_TARGET)
+	timeout 5s $(UDP_LOOPBACK_TARGET)
+
+-include $(UDP_LOOPBACK_OBJECT:.o=.d)
