@@ -5,6 +5,7 @@ bits 64
 %include "linux/network.inc"
 
 global asm_http_serve_once
+global asm_http_serve_forever
 
 extern asm_linux_socket
 extern asm_linux_bind
@@ -35,20 +36,11 @@ align 4
 reuse_address:
     dd 1
 
-; M1.5.1 deliberately restricted request grammar.
-; A complete received request must match one of these byte sequences.
-; This is NOT a general-purpose HTTP/1.1 parser.
-request_local:
+; Supported request line.
+request_line:
     db 'GET / HTTP/1.1', 13, 10
-    db 'Host: localhost', 13, 10
-    db 13, 10
-request_local_end:
+request_line_end:
 
-request_ip:
-    db 'GET / HTTP/1.1', 13, 10
-    db 'Host: 127.0.0.1', 13, 10
-    db 13, 10
-request_ip_end:
 
 response_ok:
     db 'HTTP/1.1 200 OK', 13, 10
@@ -83,6 +75,9 @@ align 16
 request_buffer:
     resb ASMWEB_M1_REQUEST_CAPACITY
 
+serve_forever_mode:
+    resb 1
+
 section .text
 
 ; asm_http_serve_once
@@ -110,7 +105,14 @@ section .text
 ; The temporary fixed request buffer must be included in
 ; subsequent canonical memory/resource registry integration.
 
+asm_http_serve_forever:
+    mov byte [rel serve_forever_mode], 1
+    jmp asm_http_serve_common
+
 asm_http_serve_once:
+    mov byte [rel serve_forever_mode], 0
+
+asm_http_serve_common:
     cld
 
     push rbx
@@ -243,27 +245,141 @@ asm_http_serve_once:
     jmp .read
 
 .complete:
-    ; Require the complete buffered request to match one supported
-    ; M1.5.1 request representation. No implicit extra headers,
-    ; body framing, duplicate Host or trailing buffered bytes.
-    cmp r14, request_local_end - request_local
-    jne .try_ip
+    ; Check supported request line.
+    cmp r14, request_line_end - request_line + 2
+    jb .bad_request
 
-    mov ecx, request_local_end - request_local
-    lea rsi, [rel request_local]
-    lea rdi, [rel request_buffer]
-    repe cmpsb
-    je .accepted
-
-.try_ip:
-    cmp r14, request_ip_end - request_ip
-    jne .bad_request
-
-    mov ecx, request_ip_end - request_ip
-    lea rsi, [rel request_ip]
-    lea rdi, [rel request_buffer]
+    lea rsi, [rel request_buffer]
+    lea rdi, [rel request_line]
+    mov ecx, request_line_end - request_line
     repe cmpsb
     jne .bad_request
+
+    lea rsi, [rel request_buffer]
+    mov r9d, request_line_end - request_line
+    xor r8d, r8d
+
+.header_next:
+    cmp r9, r14
+    jae .bad_request
+
+    cmp byte [rsi+r9], 13
+    jne .header_name
+
+    lea r10, [r9+2]
+    cmp r10, r14
+    jne .bad_request
+    cmp byte [rsi+r9+1], 10
+    jne .bad_request
+    test r8d, r8d
+    jz .bad_request
+    jmp .accepted
+
+.header_name:
+    mov r10, r9
+
+.name_char:
+    cmp r10, r14
+    jae .bad_request
+
+    movzx eax, byte [rsi+r10]
+    cmp al, ':'
+    je .colon
+
+    cmp al, 'A'
+    jb .digit
+    cmp al, 'Z'
+    jbe .name_valid
+
+    cmp al, 'a'
+    jb .digit
+    cmp al, 'z'
+    jbe .name_valid
+
+.digit:
+    cmp al, '0'
+    jb .hyphen
+    cmp al, '9'
+    jbe .name_valid
+
+.hyphen:
+    cmp al, '-'
+    jne .bad_request
+
+.name_valid:
+    inc r10
+    jmp .name_char
+
+.colon:
+    cmp r10, r9
+    je .bad_request
+
+    mov r11, r10
+    sub r11, r9
+    cmp r11, 4
+    jne .header_value
+
+    mov eax, [rsi+r9]
+    or eax, 0x20202020
+    cmp eax, 0x74736f68
+    jne .header_value
+
+    ; Exactly one Host header.
+    test r8d, r8d
+    jnz .bad_request
+    mov r8d, 1
+
+    lea r11, [r10+1]
+
+.host_value:
+    cmp r11, r14
+    jae .bad_request
+
+    mov al, [rsi+r11]
+    cmp al, ' '
+    je .host_space
+    cmp al, 9
+    je .host_space
+    cmp al, 13
+    je .bad_request
+    jmp .header_value
+
+.host_space:
+    inc r11
+    jmp .host_value
+
+.header_value:
+    inc r10
+
+.value_char:
+    cmp r10, r14
+    jae .bad_request
+
+    movzx eax, byte [rsi+r10]
+    cmp al, 13
+    je .line_end
+
+    cmp al, 9
+    je .value_valid
+    cmp al, 32
+    jb .bad_request
+    cmp al, 126
+    ja .bad_request
+
+.value_valid:
+    inc r10
+    jmp .value_char
+
+.line_end:
+    lea r11, [r10+1]
+    cmp r11, r14
+    jae .bad_request
+
+    cmp byte [rsi+r11], 10
+    jne .bad_request
+
+    lea r9, [r10+2]
+    jmp .header_next
 
 .accepted:
     lea r15, [rel response_ok]
@@ -308,9 +424,20 @@ asm_http_serve_once:
 
     mov rdi, r13
     call asm_linux_close
+    mov r13, -1
 
     test rax, rax
-    jns .close_listener
+    js .client_close_failure
+
+    test ebp, ebp
+    jnz .close_listener
+
+    cmp byte [rel serve_forever_mode], 0
+    jne .accept
+
+    jmp .close_listener
+
+.client_close_failure:
     mov ebp, 1
 
 .close_listener:

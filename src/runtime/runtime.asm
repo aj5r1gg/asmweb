@@ -17,7 +17,7 @@ bits 64
 global asm_runtime_main
 
 extern asm_abi_probe
-extern asm_http_serve_once
+extern asm_http_serve_forever
 extern asm_entropy_bootstrap
 extern asm_cpu_discover
 extern asm_monotonic_now
@@ -480,7 +480,7 @@ asm_runtime_main:
 
     ; M1 prototype: serve one loopback HTTP connection only
     ; after all M0 READY and ABI gates have passed.
-    call asm_http_serve_once
+    call asm_http_serve_forever
     test eax, eax
     jnz .failure
 
