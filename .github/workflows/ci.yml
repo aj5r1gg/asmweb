@@ -57,5 +57,6 @@ jobs:
           make qualify-diagnostic-boundary
           make qualify-ready-diagnostic
           make qualify-ready-bootstrap-injection
+          make qualify-ready-diagnostic-matrix
       - name: Verify clean incremental build
         run: make all

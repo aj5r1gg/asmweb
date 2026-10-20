@@ -1050,3 +1050,8 @@ qualify-ready-diagnostic: $(READY_DIAGNOSTIC_QUAL_TARGET)
 .PHONY: qualify-ready-bootstrap-injection
 qualify-ready-bootstrap-injection: all
 	python3 tests/qualification/ready_bootstrap_injection.py
+
+# M0-DIAG-003 — all READY classifications through the real adapter.
+.PHONY: qualify-ready-diagnostic-matrix
+qualify-ready-diagnostic-matrix: all
+	python3 tests/qualification/ready_diagnostic_matrix.py
