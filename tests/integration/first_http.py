@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M1 experimental single-connection HTTP integration tests."""
+"""Integration checks for file-backed persistent HTTP serving."""
 
 import socket
 import subprocess
@@ -10,13 +10,14 @@ ROOT = Path(__file__).resolve().parents[2]
 SERVER = ROOT / "build" / "asmweb"
 HOST = "127.0.0.1"
 PORT = 18080
+HTML_BODY = (ROOT / "www" / "index.html").read_bytes()
 
 CASES = [
     (
         "HTTP_200",
         b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n",
         b"HTTP/1.1 200 OK",
-        b"AsmWeb\n",
+        HTML_BODY,
     ),
     (
         "HTTP_400",
@@ -34,13 +35,13 @@ CASES = [
         "VALID_LOCALHOST",
         b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n",
         b"HTTP/1.1 200 OK",
-        b"AsmWeb\n",
+        HTML_BODY,
     ),
     (
         "VALID_LOOPBACK_IP",
         b"GET / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n",
         b"HTTP/1.1 200 OK",
-        b"AsmWeb\n",
+        HTML_BODY,
     ),
     (
         "MISSING_HOST",
@@ -97,7 +98,7 @@ def run_case(name, request, status, body):
         stderr=subprocess.PIPE,
     )
 
-    try:
+    def exchange(payload):
         conn = None
 
         for _ in range(60):
@@ -119,46 +120,76 @@ def run_case(name, request, status, body):
 
         with conn:
             conn.settimeout(5)
-            conn.sendall(request)
-            response = bytearray()
+            conn.sendall(payload)
 
+            response = bytearray()
             while True:
                 chunk = conn.recv(4096)
                 if not chunk:
                     break
                 response.extend(chunk)
 
-        proc.wait(timeout=5)
+        return bytes(response)
+
+    try:
+        content_type = (
+            b"text/html; charset=utf-8"
+            if status == b"HTTP/1.1 200 OK"
+            else b"text/plain"
+        )
 
         expected = (
             status
-            + b"\r\nContent-Type: text/plain\r\n"
-            + b"Content-Length: "
+            + b"\r\nContent-Type: "
+            + content_type
+            + b"\r\nContent-Length: "
             + str(len(body)).encode("ascii")
             + b"\r\nConnection: close\r\n\r\n"
             + body
         )
 
-        if bytes(response) != expected:
+        actual = exchange(request)
+
+        if actual != expected:
             raise AssertionError(
-                f"response mismatch: got {bytes(response)!r}"
+                f"response mismatch: got {actual!r}"
             )
 
-        if proc.returncode != 0:
+        if proc.poll() is not None:
             raise AssertionError(
-                f"unexpected exit status {proc.returncode}"
+                f"server unexpectedly exited: {proc.returncode}"
             )
+
+        # Exercise persistence with a second connection for
+        # each successful HTTP request.
+        if status == b"HTTP/1.1 200 OK":
+            second = exchange(request)
+
+            if second != expected:
+                raise AssertionError(
+                    f"second response mismatch: got {second!r}"
+                )
+
+            if proc.poll() is not None:
+                raise AssertionError(
+                    "server exited after second connection"
+                )
 
         print(
-            f"{name}=PASS bytes={len(response)} "
-            f"exit={proc.returncode}",
+            f"{name}=PASS bytes={len(actual)} "
+            f"persistent={proc.poll() is None}",
             flush=True,
         )
 
     finally:
         if proc.poll() is None:
+            proc.terminate()
+
+        try:
+            proc.communicate(timeout=5)
+        except subprocess.TimeoutExpired:
             proc.kill()
-        proc.communicate(timeout=5)
+            proc.communicate(timeout=5)
 
 
 def main():
