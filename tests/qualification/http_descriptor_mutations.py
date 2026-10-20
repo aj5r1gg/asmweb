@@ -88,8 +88,11 @@ def main():
 
     source = HANDLER.read_text()
 
+    # Two file-close sites plus the accepted-client and
+    # listening-socket close sites.
+    # The mutations below still target only socket cleanup.
     require(
-        source.count(CLOSE) == 2,
+        source.count(CLOSE) == 4,
         "Unexpected total close topology",
     )
 
