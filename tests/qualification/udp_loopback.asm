@@ -5,6 +5,7 @@ default rel
 
 extern asm_linux_socket
 extern asm_linux_bind
+extern asm_linux_getsockname
 extern asm_linux_sendto
 extern asm_linux_recvfrom
 extern asm_linux_close
@@ -57,8 +58,7 @@ _start:
     mov rdi, [receiver_fd]
     lea rsi, [receiver_address]
     lea rdx, [address_length]
-    mov eax, 51                    ; getsockname
-    syscall
+    call asm_linux_getsockname
     test rax, rax
     js .fail_endpoint
 

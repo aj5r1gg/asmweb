@@ -5,6 +5,8 @@ default rel
 
 extern asm_linux_socket
 extern asm_linux_bind
+extern asm_linux_getsockname
+extern asm_linux_getpeername
 extern asm_linux_listen
 extern asm_linux_accept4
 extern asm_linux_close
@@ -12,7 +14,6 @@ extern asm_linux_close
 global _start
 
 %define SYS_CONNECT      42
-%define SYS_GETSOCKNAME  51
 %define SYS_FCNTL        72
 %define F_GETFD           1
 %define F_GETFL           3
@@ -28,6 +29,8 @@ endpoint:
     dq 0
 
 endpoint_length dd 16
+peer_length dd 16
+peer_endpoint: times 16 db 0
 
 section .text
 
@@ -60,8 +63,7 @@ _start:
     mov rdi, r12
     lea rsi, [endpoint]
     lea rdx, [endpoint_length]
-    mov eax, SYS_GETSOCKNAME
-    syscall
+    call asm_linux_getsockname
 
     test rax, rax
     js .fail_endpoint
@@ -122,6 +124,27 @@ _start:
 
     mov r14, rax
 
+    ; Obtain peer endpoint through the AsmWeb wrapper.
+    mov rdi, r14
+    lea rsi, [peer_endpoint]
+    lea rdx, [peer_length]
+    call asm_linux_getpeername
+
+    test rax, rax
+    jne .fail_peer
+
+    cmp dword [peer_length], 16
+    jne .fail_peer
+
+    cmp word [peer_endpoint], LINUX_AF_INET
+    jne .fail_peer
+
+    cmp dword [peer_endpoint + 4], 0x0100007f
+    jne .fail_peer
+
+    cmp word [peer_endpoint + 2], 0
+    je .fail_peer
+
     ; Verify O_NONBLOCK on accepted descriptor.
     mov rdi, r14
     mov esi, F_GETFL
@@ -161,6 +184,10 @@ _start:
     test eax, O_NONBLOCK
     jz .fail_listener_flags
 
+    jmp .cleanup
+
+.fail_peer:
+    mov ebx, 24
     jmp .cleanup
 
 .fail_socket:

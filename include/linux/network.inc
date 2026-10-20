@@ -11,6 +11,8 @@
 %define LINUX_SYS_recvfrom  45
 %define LINUX_SYS_bind      49
 %define LINUX_SYS_listen    50
+%define LINUX_SYS_getsockname 51
+%define LINUX_SYS_getpeername 52
 %define LINUX_SYS_setsockopt 54
 %define LINUX_SOCK_CLOEXEC 0x80000
 %define LINUX_SOL_SOCKET 1

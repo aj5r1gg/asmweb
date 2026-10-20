@@ -14,6 +14,8 @@ global asm_linux_recvfrom
 global asm_linux_sendto
 global asm_linux_close
 global asm_linux_setsockopt
+global asm_linux_getsockname
+global asm_linux_getpeername
 
 section .text
 
@@ -127,6 +129,30 @@ asm_linux_sendto:
     mov r10, rcx
     or r10d, LINUX_MSG_NOSIGNAL
     mov eax, LINUX_SYS_sendto
+    syscall
+    ret
+
+; getsockname(fd, sockaddr*, socklen_t*)
+; RDI=descriptor
+; RSI=writable address buffer
+; RDX=in/out address length pointer
+;
+; Returns zero or negative Linux errno.
+; Descriptor is borrowed; no allocation or implicit retry.
+asm_linux_getsockname:
+    mov eax, LINUX_SYS_getsockname
+    syscall
+    ret
+
+; getpeername(fd, sockaddr*, socklen_t*)
+; RDI=connected descriptor
+; RSI=writable address buffer
+; RDX=in/out address length pointer
+;
+; Returns zero or negative Linux errno.
+; Descriptor is borrowed; no allocation or implicit retry.
+asm_linux_getpeername:
+    mov eax, LINUX_SYS_getpeername
     syscall
     ret
 
