@@ -940,3 +940,15 @@ qualify-http-descriptor-mutations: $(HTTP_FD_QUAL_TARGET)
 
 # Track NASM include-file dependencies for the HTTP lifecycle harness.
 -include $(HTTP_FD_QUAL_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# CP-LEGACY-M1-5 — Historical reconciliation engineering verification
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-checkpoint-reconciliation
+qualify-checkpoint-reconciliation:
+	python3 qualification/tools/checkpoint_reconciliation.py
+
+.PHONY: qualify-checkpoint-reconciliation-adversarial
+qualify-checkpoint-reconciliation-adversarial: qualify-checkpoint-reconciliation
+	python3 tests/qualification/checkpoint_reconciliation.py

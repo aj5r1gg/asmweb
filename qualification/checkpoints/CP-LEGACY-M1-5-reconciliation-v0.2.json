@@ -1,0 +1,292 @@
+{
+  "record_type": "LEGACY_CHECKPOINT_RECONCILIATION_DRAFT",
+  "report_version": "0.2",
+  "checkpoint_id": "CP-LEGACY-M1-5",
+  "historical_label": "M1.5",
+  "historical_sub_labels": [
+    "M1.5.1",
+    "M1.5.2-D4"
+  ],
+  "reconciliation_state": "IN_PROGRESS",
+  "source_revision": "173db3f12e77977116ae5b914ae450f2186b9bd6",
+  "governing_specification": {
+    "document_id": "ASM-MIL-001",
+    "version": "0.3",
+    "section": "17",
+    "status": "ADVERSARIAL_REVIEW_CANDIDATE"
+  },
+  "commercial_boundary": {
+    "document_id": "ASM-COM-001",
+    "version": "0.3",
+    "status": "ADVERSARIAL_REVIEW_CANDIDATE",
+    "release_claim": "NONE"
+  },
+  "historical_definition": {
+    "status": "NOT_RECOVERED",
+    "definition_source_ref": null,
+    "finding": "No independently controlled historical M1.5 acceptance definition was recovered from the examined Git history, branches or tags. This does not prove that no such definition ever existed outside the examined repository.",
+    "search_scope": "Repository history and references available at the pinned source revision."
+  },
+  "historically_reported_completion": {
+    "state": "REPORTED_ENGINEERING_PROGRESS",
+    "scope": "Restricted first HTTP response and subsequent descriptor-lifecycle verification.",
+    "formal_checkpoint_acceptance": "NOT_ESTABLISHED"
+  },
+  "contributions": [
+    {
+      "id": "CP-M15-CONTRIB-001",
+      "description": "Linux TCP socket syscall wrappers and descriptor ownership interface.",
+      "commit": "f691f662277527de75045b5d4955b93221697836",
+      "artifact_paths": [
+        "src/linux/network.asm",
+        "include/linux/network.inc"
+      ],
+      "baseline_milestones": [
+        "M1"
+      ],
+      "implementation_state": "PARTIAL",
+      "qualification_state": "NOT_FORMALLY_DETERMINED",
+      "artifact_evidence": [
+        {
+          "path": "src/linux/network.asm",
+          "historical_git_blob": "f9ea4cd0b1f736161d321599a9f870c5302cb37a",
+          "baseline_git_blob": "f9ea4cd0b1f736161d321599a9f870c5302cb37a",
+          "baseline_sha256": "1bada4eded185fdceb90df7478c7f308887fbbacc3f73baa87de88b6518c258c"
+        },
+        {
+          "path": "include/linux/network.inc",
+          "historical_git_blob": "51661a3b09cdba84d3bcf4ee6d935549c9921fd3",
+          "baseline_git_blob": "51661a3b09cdba84d3bcf4ee6d935549c9921fd3",
+          "baseline_sha256": "399183e105134d990d13f400ecbb15bfc7c322d55818947c51a0314467272eaa"
+        }
+      ],
+      "allocation_authority": "PROPOSED_NOT_APPROVED",
+      "formal_milestone_credit": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "CP-M15-CONTRIB-002",
+      "description": "Single-connection loopback HTTP response with restricted exact request grammar.",
+      "commit": "f691f662277527de75045b5d4955b93221697836",
+      "additional_commit": "375f4d82fcfbf64190508bab94faef6547f2b286",
+      "artifact_paths": [
+        "src/http/first_response.asm",
+        "tests/integration/first_http.py"
+      ],
+      "baseline_milestones": [
+        "M4"
+      ],
+      "implementation_state": "PRELIMINARY",
+      "qualification_state": "NOT_FORMALLY_DETERMINED",
+      "artifact_evidence": [
+        {
+          "path": "src/http/first_response.asm",
+          "historical_git_blob": "79f993d0157ed96282339be137aeeed408f8bae5",
+          "baseline_git_blob": "be5f9e82930b5d71cd9d2b5e2e13d428f1dc1cf2",
+          "baseline_sha256": "d86280bb344efe8dfdd31d9d1b5f36406e4d321f5c3fdff0fec68b14ed2d2d04"
+        },
+        {
+          "path": "tests/integration/first_http.py",
+          "historical_git_blob": "32b1a87e171866981ef6f91a00a729930577a07e",
+          "baseline_git_blob": "3d093cc0dfaaaaa94b99c521d73bdaf71e52e6b4",
+          "baseline_sha256": "d6e5361649b79a33ffbc73f9e63c73f78540c29e3fd0c0b3da429d809507e83d"
+        }
+      ],
+      "allocation_authority": "PROPOSED_NOT_APPROVED",
+      "formal_milestone_credit": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "CP-M15-CONTRIB-003",
+      "description": "Production HTTP memory and descriptor capacity registration.",
+      "commit": "9a0c875476b298df7dd71007a92a3da7afe5efcb",
+      "artifact_paths": [
+        "include/asmweb/production_registry.inc",
+        "src/runtime/production_registry.asm"
+      ],
+      "baseline_milestones": [
+        "M0",
+        "M1"
+      ],
+      "implementation_state": "IMPLEMENTED_SLICE",
+      "qualification_state": "NOT_FORMALLY_DETERMINED",
+      "artifact_evidence": [
+        {
+          "path": "include/asmweb/production_registry.inc",
+          "historical_git_blob": "689cf7495efbd786b4399562d35f994ffce7b10c",
+          "baseline_git_blob": "689cf7495efbd786b4399562d35f994ffce7b10c",
+          "baseline_sha256": "7b42ff731ef4bbcd04526b677181865183ee3e0f5ca028a6fd590183974d66e5"
+        },
+        {
+          "path": "src/runtime/production_registry.asm",
+          "historical_git_blob": "6ed16277d880a04f2a7ed4d7cebfeb78b05e4e0d",
+          "baseline_git_blob": "6ed16277d880a04f2a7ed4d7cebfeb78b05e4e0d",
+          "baseline_sha256": "b10e9f7ec2f0c07042142d15cda88ebec20ef4ba6ff95685628313a59b6ebc09"
+        }
+      ],
+      "allocation_authority": "PROPOSED_NOT_APPROVED",
+      "formal_milestone_credit": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "CP-M15-CONTRIB-004",
+      "description": "Socket acquisition and bind-failure integration regressions.",
+      "commit": "497a73b91e8ea6bcb1fb8ce4e28fe6245477878d",
+      "artifact_paths": [
+        "tests/integration/socket_failures.py"
+      ],
+      "baseline_milestones": [
+        "M1"
+      ],
+      "implementation_state": "IMPLEMENTED_SLICE",
+      "qualification_state": "ENGINEERING_TESTS_ONLY",
+      "artifact_evidence": [
+        {
+          "path": "tests/integration/socket_failures.py",
+          "historical_git_blob": "2c896d48a15cc4b59589f48f7d38b587c89e33a9",
+          "baseline_git_blob": "2c896d48a15cc4b59589f48f7d38b587c89e33a9",
+          "baseline_sha256": "f6b6a23a29ea77065fe23a24e6ddf5af1842605fbeffd82c03ce944ff916a673"
+        }
+      ],
+      "allocation_authority": "PROPOSED_NOT_APPROVED",
+      "formal_milestone_credit": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "CP-M15-CONTRIB-005",
+      "description": "Descriptor ownership lifecycle harness, fault scenarios and adversarial mutations.",
+      "commit": "173db3f12e77977116ae5b914ae450f2186b9bd6",
+      "artifact_paths": [
+        "tests/qualification/http_descriptor_lifecycle.asm",
+        "tests/qualification/http_descriptor_mutations.py"
+      ],
+      "baseline_milestones": [
+        "M1",
+        "M2"
+      ],
+      "implementation_state": "IMPLEMENTED_SLICE",
+      "qualification_state": "ENGINEERING_TESTS_ONLY",
+      "artifact_evidence": [
+        {
+          "path": "tests/qualification/http_descriptor_lifecycle.asm",
+          "historical_git_blob": "92edb64ad2d17d6d201abead9cd6956285ac4fa2",
+          "baseline_git_blob": "92edb64ad2d17d6d201abead9cd6956285ac4fa2",
+          "baseline_sha256": "364840ca7c3b51090e975a9d6e55ac92e20e1158f8a0380c9011136a6b5b09f6"
+        },
+        {
+          "path": "tests/qualification/http_descriptor_mutations.py",
+          "historical_git_blob": "b6cc110254835de4bc58e652266eb12e630e3d36",
+          "baseline_git_blob": "b6cc110254835de4bc58e652266eb12e630e3d36",
+          "baseline_sha256": "783a9c4a9ca5df121617c22503f63d096e95f22b60f4e7d8c2b52732bd135211"
+        }
+      ],
+      "allocation_authority": "PROPOSED_NOT_APPROVED",
+      "formal_milestone_credit": "NOT_ESTABLISHED"
+    }
+  ],
+  "observed_capability": {
+    "platform": "Linux x86-64",
+    "transport": "TCP IPv4 loopback",
+    "listen_address": "127.0.0.1",
+    "port": 18080,
+    "accepted_connections_per_process": 1,
+    "request_buffer_bytes": 1024,
+    "supported_method": "GET",
+    "supported_path": "/",
+    "supported_http_version": "HTTP/1.1",
+    "responses": [
+      200,
+      400,
+      431
+    ],
+    "connection_persistence": false,
+    "general_http_parser": false,
+    "tls": false,
+    "http2": false,
+    "http3": false,
+    "request_acceptance_model": "EXACT_BYTE_SEQUENCE",
+    "accepted_request_representations": [
+      {
+        "request_line": "GET / HTTP/1.1",
+        "host_header": "Host: localhost",
+        "line_ending": "CRLF",
+        "termination": "CRLF CRLF",
+        "additional_headers": false,
+        "request_body": false,
+        "trailing_bytes": false
+      },
+      {
+        "request_line": "GET / HTTP/1.1",
+        "host_header": "Host: 127.0.0.1",
+        "line_ending": "CRLF",
+        "termination": "CRLF CRLF",
+        "additional_headers": false,
+        "request_body": false,
+        "trailing_bytes": false
+      }
+    ],
+    "general_get_request_support": false,
+    "general_http11_conformance": false,
+    "public_network_listener": false,
+    "total_processing_deadline_established": false
+  },
+  "engineering_evidence": {
+    "http_integration_scenarios": 12,
+    "socket_failure_scenarios": 2,
+    "controlled_lifecycle_scenarios": 14,
+    "adversarial_mutations_rejected": 4,
+    "ci_run_id": "39240463549",
+    "ci_outcome": "SUCCESS",
+    "production_direct_capacity_bytes": 3488,
+    "authoritative_effective_limit_manifest": false,
+    "evidence_class": "HISTORICAL_ENGINEERING_VERIFICATION",
+    "formal_qualification_result": "NOT_ESTABLISHED",
+    "memory_measurement_kind": "REGISTERED_DIRECT_CAPACITY_NOT_RSS",
+    "test_coverage_scope": "Enumerated integration cases, controlled lifecycle scenarios and mutation rejection; not exhaustive protocol or runtime qualification.",
+    "ci_workflow_path": ".github/workflows/ci.yml"
+  },
+  "limitations": [
+    "No recovered original M1.5 acceptance definition.",
+    "No formal baseline milestone closure determination.",
+    "No general HTTP/1.1 request parser.",
+    "No TLS, HTTP/2 or HTTP/3 capability.",
+    "No request persistence or pipelining.",
+    "No static filesystem serving.",
+    "No accept deadline.",
+    "No established total request-processing deadline.",
+    "Repeated EINTR may prolong syscall retry loops.",
+    "Resource qualification is scenario-based, not exhaustive.",
+    "Source-level RCT checks do not independently establish runtime materialised RCT authority.",
+    "Direct-memory capacity is not equivalent to process RSS.",
+    "Commercial release has not been approved."
+  ],
+  "formal_baseline_status": {
+    "M0": "BLOCKED",
+    "M1": "NOT_FORMALLY_CLOSED",
+    "M2": "NOT_FORMALLY_CLOSED",
+    "M4": "NOT_FORMALLY_CLOSED"
+  },
+  "reconciliation_blockers": [
+    "Recover or formally classify the unavailable historical M1.5 definition and acceptance criteria.",
+    "Approve allocation of each contribution to baseline scope.",
+    "Establish applicable qualification determinations under ASM-QUA authority.",
+    "Implement and validate the checkpoint schema and controlled registers required by ASM-MIL-001.",
+    "Resolve applicable M0 foundation and authority blockers.",
+    "Publish a separately approved reconciliation decision."
+  ],
+  "checkpoint_acceptance": "NOT_ESTABLISHED",
+  "formal_qualification": "NOT_ESTABLISHED",
+  "formal_milestone_closure": false,
+  "commercial_distribution_approval": false,
+  "notes": [
+    "Historical engineering progress is preserved.",
+    "The report does not replace authoritative qualification evidence.",
+    "This is a reconciliation draft, not an approved ASM-MIL-001 closure record."
+  ],
+  "supersedes_draft": "CP-LEGACY-M1-5-reconciliation-v0.1.json",
+  "superseded_draft_sha256": "32fbfe75dc9545e6d77382e0e7947b04d082c3089563c726c407ab5295cff358",
+  "reconciliation_authority": {
+    "engineering_evidence_review": "FIRST_CONSISTENCY_AUDIT_PASS",
+    "checkpoint_allocation": "PROPOSED",
+    "checkpoint_acceptance": "NOT_ESTABLISHED",
+    "authoritative_qualification": "NOT_ESTABLISHED",
+    "milestone_closure": "NOT_ESTABLISHED",
+    "commercial_release": "NOT_APPROVED"
+  }
+}

@@ -4,7 +4,7 @@
 
 AsmWeb is an experimental, resource-conscious web server and runtime built primarily in **x86-64 assembly** for Linux. Its engineering focus is explicit resource bounds, small executable and memory footprints, predictable failure behaviour, and reproducible measurement—not assembly language for its own sake.
 
-> **Development status — M0 engineering baseline; M1 HTTP implementation in progress.** The executable currently contains an assembly runtime and bootstrap machinery. It **does not yet serve HTTP traffic**. Do not deploy it as a production web server.
+> **Development status — experimental engineering implementation, not production qualified.** AsmWeb currently serves a restricted HTTP/1.1 response on `127.0.0.1:18080`, accepting one connection per process. Only two exact `GET / HTTP/1.1` request representations are accepted, with `Host: localhost` or `Host: 127.0.0.1`. General HTTP parsing, persistence, TLS, HTTP/2 and HTTP/3 are not implemented. No M0–M16 milestone is formally closed by this experimental HTTP implementation. Do not deploy it as a production web server.
 
 ## Project goals
 
@@ -33,7 +33,7 @@ make all
 
 The resulting executable is expected at `build/asmweb`.
 
-**Important:** Until M1 HTTP networking is implemented and verified, executing `build/asmweb` does not start an HTTP listener.
+**Important:** Running `build/asmweb` starts the experimental loopback-only HTTP listener on TCP port `18080`. The process accepts one connection and then exits. It is not a general-purpose or production-qualified HTTP server.
 
 ## Verification
 
@@ -50,9 +50,27 @@ make all
 
 GitHub Actions runs these same engineering checks on pushes and pull requests. A green CI workflow indicates that its **listed tests passed on that runner**; it does **not** mean formal M0 qualification, complete specification compliance, or production readiness.
 
-## Next milestone: first HTTP response
+## Milestone reconciliation
 
-M1 will add the controlled Linux TCP syscall boundary, then a loopback-only, single-connection HTTP/1.1 path with fixed bounded storage and an initial `GET /` route. Acceptance requires a real TCP connection, an exact HTTP response, complete writes, descriptor cleanup, explicit bounded error handling, and preservation of M0 regressions.
+The historical engineering checkpoint labelled `M1.5` is being reconciled with the controlled M0–M16 baseline defined by ASM-MIL-001 v0.3.
+
+The draft reconciliation records are:
+
+- `qualification/checkpoints/CP-LEGACY-M1-5-reconciliation-v0.1.json`
+- `qualification/checkpoints/CP-LEGACY-M1-5-reconciliation-v0.2.json`
+
+They map the existing network, resource and restricted HTTP engineering contributions to proposed M0, M1, M2 and M4 allocations. These allocations are not formal qualification determinations or milestone closures.
+
+The production listener is restricted to IPv4 loopback, and the current implementation has no established total request-processing deadline. Successful CI establishes only the listed engineering test results.
+
+Verify the reconciliation with:
+
+```sh
+make qualify-checkpoint-reconciliation
+make qualify-checkpoint-reconciliation-adversarial
+```
+
+Further engineering work will follow the governed milestone allocations and product boundaries rather than treating the historical M1.5 label as a new baseline milestone.
 
 ## Design principles
 

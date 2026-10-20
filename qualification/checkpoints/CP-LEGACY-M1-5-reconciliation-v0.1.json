@@ -1,0 +1,177 @@
+{
+  "record_type": "LEGACY_CHECKPOINT_RECONCILIATION_DRAFT",
+  "report_version": "0.1",
+  "checkpoint_id": "CP-LEGACY-M1-5",
+  "historical_label": "M1.5",
+  "historical_sub_labels": [
+    "M1.5.1",
+    "M1.5.2-D4"
+  ],
+  "reconciliation_state": "IN_PROGRESS",
+  "source_revision": "173db3f12e77977116ae5b914ae450f2186b9bd6",
+  "governing_specification": {
+    "document_id": "ASM-MIL-001",
+    "version": "0.3",
+    "section": "17",
+    "status": "ADVERSARIAL_REVIEW_CANDIDATE"
+  },
+  "commercial_boundary": {
+    "document_id": "ASM-COM-001",
+    "version": "0.3",
+    "status": "ADVERSARIAL_REVIEW_CANDIDATE",
+    "release_claim": "NONE"
+  },
+  "historical_definition": {
+    "status": "NOT_RECOVERED",
+    "definition_source_ref": null,
+    "finding": "No independently controlled M1.5 acceptance definition was found in the examined repository history, branches or tags."
+  },
+  "historically_reported_completion": {
+    "state": "REPORTED_ENGINEERING_PROGRESS",
+    "scope": "Restricted first HTTP response and subsequent descriptor-lifecycle verification.",
+    "formal_checkpoint_acceptance": "NOT_ESTABLISHED"
+  },
+  "contributions": [
+    {
+      "id": "CP-M15-CONTRIB-001",
+      "description": "Linux TCP socket syscall wrappers and descriptor ownership interface.",
+      "commit": "f691f66",
+      "artifact_paths": [
+        "src/linux/network.asm",
+        "include/linux/network.inc"
+      ],
+      "baseline_milestones": [
+        "M1"
+      ],
+      "implementation_state": "PARTIAL",
+      "qualification_state": "NOT_FORMALLY_DETERMINED"
+    },
+    {
+      "id": "CP-M15-CONTRIB-002",
+      "description": "Single-connection loopback HTTP response with restricted exact request grammar.",
+      "commit": "f691f66",
+      "additional_commit": "375f4d8",
+      "artifact_paths": [
+        "src/http/first_response.asm",
+        "tests/integration/first_http.py"
+      ],
+      "baseline_milestones": [
+        "M4"
+      ],
+      "implementation_state": "PRELIMINARY",
+      "qualification_state": "NOT_FORMALLY_DETERMINED"
+    },
+    {
+      "id": "CP-M15-CONTRIB-003",
+      "description": "Production HTTP memory and descriptor capacity registration.",
+      "commit": "9a0c875",
+      "artifact_paths": [
+        "include/asmweb/production_registry.inc",
+        "src/runtime/production_registry.asm"
+      ],
+      "baseline_milestones": [
+        "M0",
+        "M1"
+      ],
+      "implementation_state": "IMPLEMENTED_SLICE",
+      "qualification_state": "NOT_FORMALLY_DETERMINED"
+    },
+    {
+      "id": "CP-M15-CONTRIB-004",
+      "description": "Socket acquisition and bind-failure integration regressions.",
+      "commit": "497a73b",
+      "artifact_paths": [
+        "tests/integration/socket_failures.py"
+      ],
+      "baseline_milestones": [
+        "M1"
+      ],
+      "implementation_state": "IMPLEMENTED_SLICE",
+      "qualification_state": "ENGINEERING_TESTS_ONLY"
+    },
+    {
+      "id": "CP-M15-CONTRIB-005",
+      "description": "Descriptor ownership lifecycle harness, fault scenarios and adversarial mutations.",
+      "commit": "173db3f",
+      "artifact_paths": [
+        "tests/qualification/http_descriptor_lifecycle.asm",
+        "tests/qualification/http_descriptor_mutations.py"
+      ],
+      "baseline_milestones": [
+        "M1",
+        "M2"
+      ],
+      "implementation_state": "IMPLEMENTED_SLICE",
+      "qualification_state": "ENGINEERING_TESTS_ONLY"
+    }
+  ],
+  "observed_capability": {
+    "platform": "Linux x86-64",
+    "transport": "TCP IPv4 loopback",
+    "listen_address": "127.0.0.1",
+    "port": 18080,
+    "accepted_connections_per_process": 1,
+    "request_buffer_bytes": 1024,
+    "supported_method": "GET",
+    "supported_path": "/",
+    "supported_http_version": "HTTP/1.1",
+    "responses": [
+      200,
+      400,
+      431
+    ],
+    "connection_persistence": false,
+    "general_http_parser": false,
+    "tls": false,
+    "http2": false,
+    "http3": false
+  },
+  "engineering_evidence": {
+    "http_integration_scenarios": 12,
+    "socket_failure_scenarios": 2,
+    "controlled_lifecycle_scenarios": 14,
+    "adversarial_mutations_rejected": 4,
+    "ci_run_id": "39240463549",
+    "ci_outcome": "SUCCESS",
+    "production_direct_capacity_bytes": 3488,
+    "authoritative_effective_limit_manifest": false
+  },
+  "limitations": [
+    "No recovered original M1.5 acceptance definition.",
+    "No formal baseline milestone closure determination.",
+    "No general HTTP/1.1 request parser.",
+    "No TLS, HTTP/2 or HTTP/3 capability.",
+    "No request persistence or pipelining.",
+    "No static filesystem serving.",
+    "No accept deadline.",
+    "No established total request-processing deadline.",
+    "Repeated EINTR may prolong syscall retry loops.",
+    "Resource qualification is scenario-based, not exhaustive.",
+    "Source-level RCT checks do not independently establish runtime materialised RCT authority.",
+    "Direct-memory capacity is not equivalent to process RSS.",
+    "Commercial release has not been approved."
+  ],
+  "formal_baseline_status": {
+    "M0": "BLOCKED",
+    "M1": "NOT_FORMALLY_CLOSED",
+    "M2": "NOT_FORMALLY_CLOSED",
+    "M4": "NOT_FORMALLY_CLOSED"
+  },
+  "reconciliation_blockers": [
+    "Recover or formally classify the unavailable historical M1.5 definition and acceptance criteria.",
+    "Approve allocation of each contribution to baseline scope.",
+    "Establish applicable qualification determinations under ASM-QUA authority.",
+    "Implement and validate the checkpoint schema and controlled registers required by ASM-MIL-001.",
+    "Resolve applicable M0 foundation and authority blockers.",
+    "Publish a separately approved reconciliation decision."
+  ],
+  "checkpoint_acceptance": "NOT_ESTABLISHED",
+  "formal_qualification": "NOT_ESTABLISHED",
+  "formal_milestone_closure": false,
+  "commercial_distribution_approval": false,
+  "notes": [
+    "Historical engineering progress is preserved.",
+    "The report does not replace authoritative qualification evidence.",
+    "This is a reconciliation draft, not an approved ASM-MIL-001 closure record."
+  ]
+}
