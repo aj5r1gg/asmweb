@@ -1121,3 +1121,47 @@ qualify-network-error-paths: $(NETWORK_ERRORS_TARGET)
 	timeout 5s $(NETWORK_ERRORS_TARGET)
 
 -include $(NETWORK_ERRORS_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 — Fragmented Stream I/O Verification
+# ---------------------------------------------------------------------------
+
+STREAM_FRAGMENTS_SOURCE := tests/qualification/stream_fragments.asm
+STREAM_FRAGMENTS_OBJECT := $(BUILD_DIR)/tests/qualification/stream_fragments.o
+STREAM_FRAGMENTS_TARGET := $(BUILD_DIR)/qualification/stream-fragments
+
+$(STREAM_FRAGMENTS_OBJECT): $(STREAM_FRAGMENTS_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(STREAM_FRAGMENTS_TARGET): $(STREAM_FRAGMENTS_OBJECT) $(BUILD_DIR)/linux/network.o
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-stream-fragments
+qualify-stream-fragments: $(STREAM_FRAGMENTS_TARGET)
+	timeout 5s $(STREAM_FRAGMENTS_TARGET)
+
+-include $(STREAM_FRAGMENTS_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 — Nonblocking Stream Short-Write Verification
+# ---------------------------------------------------------------------------
+
+STREAM_SHORT_WRITE_SOURCE := tests/qualification/stream_short_write.asm
+STREAM_SHORT_WRITE_OBJECT := $(BUILD_DIR)/tests/qualification/stream_short_write.o
+STREAM_SHORT_WRITE_TARGET := $(BUILD_DIR)/qualification/stream-short-write
+
+$(STREAM_SHORT_WRITE_OBJECT): $(STREAM_SHORT_WRITE_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(STREAM_SHORT_WRITE_TARGET): $(STREAM_SHORT_WRITE_OBJECT) $(BUILD_DIR)/linux/network.o
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-stream-short-write
+qualify-stream-short-write: $(STREAM_SHORT_WRITE_TARGET)
+	timeout 5s $(STREAM_SHORT_WRITE_TARGET)
+
+-include $(STREAM_SHORT_WRITE_OBJECT:.o=.d)
