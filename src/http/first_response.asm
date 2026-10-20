@@ -7,6 +7,9 @@ bits 64
 global asm_http_serve_once
 global asm_http_serve_forever
 
+%define ASMWEB_PAGE_MAX 4096
+%define ASMWEB_PAGE_READ_CAP 4097
+
 extern asm_linux_socket
 extern asm_linux_bind
 extern asm_linux_listen
@@ -42,6 +45,38 @@ request_line:
 request_line_end:
 
 
+; Local development document root.
+; Launch AsmWeb from the repository directory.
+
+page_path:
+    db 'www/index.html', 0
+
+page_prefix:
+    db 'HTTP/1.1 200 OK', 13, 10
+    db 'Content-Type: text/html; charset=utf-8', 13, 10
+    db 'Content-Length: '
+page_prefix_end:
+
+page_suffix:
+    db 13, 10
+    db 'Connection: close', 13, 10
+    db 13, 10
+page_suffix_end:
+
+response_missing:
+    db 'HTTP/1.1 404 Not Found', 13, 10
+    db 'Content-Length: 0', 13, 10
+    db 'Connection: close', 13, 10
+    db 13, 10
+response_missing_end:
+
+response_file_error:
+    db 'HTTP/1.1 500 Internal Server Error', 13, 10
+    db 'Content-Length: 0', 13, 10
+    db 'Connection: close', 13, 10
+    db 13, 10
+response_file_error_end:
+
 response_ok:
     db 'HTTP/1.1 200 OK', 13, 10
     db 'Content-Type: text/plain', 13, 10
@@ -69,14 +104,27 @@ response_large:
     db 'Header Too Large', 10
 response_large_end:
 
-section .bss
 
+align 16
+
+
+
+align 16
+
+align 16
+
+section .bss
 align 16
 request_buffer:
     resb ASMWEB_M1_REQUEST_CAPACITY
-
 serve_forever_mode:
     resb 1
+page_buffer:
+    resb ASMWEB_PAGE_READ_CAP
+page_response:
+    resb 4608
+decimal_digits:
+    resb 16
 
 section .text
 
@@ -382,6 +430,117 @@ asm_http_serve_common:
     jmp .header_next
 
 .accepted:
+    ; Preserve the existing one-shot response for internal callers.
+    cmp byte [rel serve_forever_mode], 0
+    je .accepted_legacy
+
+    ; openat(AT_FDCWD, "www/index.html",
+    ;        O_RDONLY|O_CLOEXEC|O_NOFOLLOW, 0)
+.page_open:
+    mov eax, 257
+    mov edi, -100
+    lea rsi, [rel page_path]
+    mov edx, 0xA0000
+    xor r10d, r10d
+    syscall
+
+    cmp rax, -4                 ; EINTR
+    je .page_open
+    cmp rax, -2                 ; ENOENT
+    je .page_missing
+    test rax, rax
+    js .page_error
+
+    mov r15, rax                ; File descriptor
+    xor ebx, ebx               ; Accumulated file bytes
+
+.page_read:
+    cmp rbx, ASMWEB_PAGE_READ_CAP
+    jae .page_read_finished
+
+    xor eax, eax               ; read(2)
+    mov rdi, r15
+    lea rsi, [rel page_buffer]
+    add rsi, rbx
+    mov edx, ASMWEB_PAGE_READ_CAP
+    sub rdx, rbx
+    syscall
+
+    cmp rax, -4
+    je .page_read
+
+    test rax, rax
+    js .page_read_error
+    jz .page_read_finished
+
+    add rbx, rax
+    jmp .page_read
+
+.page_read_error:
+    mov rdi, r15
+    call asm_linux_close
+    jmp .page_error
+
+.page_read_finished:
+    mov rdi, r15
+    call asm_linux_close
+    test rax, rax
+    js .page_error
+
+    ; Reject files that exceed the fixed page capacity.
+    cmp rbx, ASMWEB_PAGE_MAX
+    ja .page_error
+
+    ; Construct the entire response in a bounded buffer.
+    lea rdi, [rel page_response]
+    lea rsi, [rel page_prefix]
+    mov ecx, page_prefix_end - page_prefix
+    rep movsb
+
+    ; Convert the actual file length to decimal.
+    mov rax, rbx
+    lea r10, [rel decimal_digits + 16]
+
+.page_decimal:
+    xor edx, edx
+    mov ecx, 10
+    div rcx
+    dec r10
+    add dl, '0'
+    mov [r10], dl
+    test rax, rax
+    jnz .page_decimal
+
+    mov rsi, r10
+    lea rcx, [rel decimal_digits + 16]
+    sub rcx, r10
+    rep movsb
+
+    lea rsi, [rel page_suffix]
+    mov ecx, page_suffix_end - page_suffix
+    rep movsb
+
+    lea rsi, [rel page_buffer]
+    mov rcx, rbx
+    rep movsb
+
+    ; R15 = response pointer, RBX = response byte count.
+    mov rbx, rdi
+    lea r15, [rel page_response]
+    sub rbx, r15
+    jmp .send
+
+.page_missing:
+    lea r15, [rel response_missing]
+    mov ebx, response_missing_end - response_missing
+    jmp .send
+
+.page_error:
+    lea r15, [rel response_file_error]
+    mov ebx, response_file_error_end - response_file_error
+    jmp .send
+
+.accepted_legacy:
     lea r15, [rel response_ok]
     mov ebx, response_ok_end - response_ok
     jmp .send
