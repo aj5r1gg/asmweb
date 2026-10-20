@@ -238,7 +238,7 @@ asm_http_serve_common:
     call asm_linux_setsockopt
 
     test rax, rax
-    js .cleanup
+    js .drop_client
 
     mov rdi, r13
     mov esi, LINUX_SOL_SOCKET
@@ -248,7 +248,7 @@ asm_http_serve_common:
     call asm_linux_setsockopt
 
     test rax, rax
-    js .cleanup
+    js .drop_client
 
     xor r14d, r14d
 
@@ -267,7 +267,7 @@ asm_http_serve_common:
     je .read
 
     test rax, rax
-    js .cleanup
+    js .drop_client
 
     test rax, rax
     jz .bad_request
@@ -597,11 +597,20 @@ asm_http_serve_common:
     je .send
 
     test rax, rax
-    jle .cleanup
+    jle .drop_client
 
     add r15, rax
     sub rbx, rax
     jmp .send
+
+; A failed client must not terminate the persistent listener.
+; In one-shot mode, retain the existing failure status.
+.drop_client:
+    cmp byte [rel serve_forever_mode], 0
+    je .cleanup
+
+    xor ebp, ebp
+    jmp .cleanup
 
 .served:
     xor ebp, ebp
