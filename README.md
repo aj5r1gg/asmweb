@@ -239,9 +239,20 @@ A useful end state would be a very small process that does a narrow job predicta
 
 ## License and contributions
 
-**License:** Mozilla Public License, Version 2.0 (MPL-2.0). See [LICENSE](LICENSE) and [LICENSING.md](LICENSING.md).
+AsmWeb is open-source software licensed under the **Mozilla Public License, Version 2.0 (MPL-2.0)**. See [LICENSE](LICENSE) for the full licence and [LICENSING.md](LICENSING.md) for its scope.
 
-Issues and reproducible bug reports are welcome through the [GitHub repository](https://github.com/aj5r1gg/asmweb). For changes, please include the relevant build and qualification evidence, and avoid broadening the M1 scope without an explicit engineering reason.
+AsmWeb maintains one common engineering foundation. Future commercial offerings may include:
+
+- **Free:** The open-source AsmWeb Core.
+- **Pro:** Additional professional tooling and documentation.
+- **OEM:** Device integration, qualification and manufacturer-specific services.
+- **Enterprise:** Organisational deployment, assurance and support services.
+
+These commercial offerings are planned, not currently released. The existing MPL-2.0 rights remain independent of any additional commercial agreement.
+
+Issues and reproducible bug reports are welcome through the [GitHub repository](https://github.com/aj5r1gg/asmweb).
+
+Contributions are welcome subject to the project engineering requirements and [contribution guidelines](CONTRIBUTING.md). Please include relevant build and qualification evidence and preserve the project's deliberately limited scope.
 
 ---
 
