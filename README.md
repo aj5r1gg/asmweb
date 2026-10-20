@@ -1,396 +1,248 @@
 # AsmWeb
 
-**Do less. Bound everything. Measure the rest.**
+**A deliberately small, resource-bounded web server written in native x86-64 assembly for Linux.**
 
-AsmWeb is an experimental, resource-conscious web server and runtime
-built primarily in **NASM x86-64 assembly for Linux**.
+> **Do less. Bound everything. Measure the rest.**
 
-The project explores how small, predictable, fast and resource-bounded
-a useful native web server can become.
+AsmWeb explores a simple engineering question: how much useful web-serving infrastructure can be built directly in assembly, with explicit ownership, bounded memory, predictable failure handling, and tests that exercise real Linux kernel behaviour?
 
-Assembly is the implementation method, not the purpose. The purpose is
-to produce useful software with explicit limits, controlled resource
-ownership, predictable behaviour and measurable performance.
+The purpose is **not** to claim that assembly is inherently faster, more secure, or a better choice than established web servers. It is to construct a narrowly scoped server whose behaviour can be understood, measured, and challenged at the syscall, runtime, and HTTP levels.
 
-## Development Status
+**Current status:** Experimental M1 development. The repository contains a functioning loopback-only HTTP server and substantial low-level and integration qualification. **It is not production-ready, and it is not yet protected against slow clients by an enforced absolute request deadline.**
 
-**Experimental implementation — not production qualified.**
-
-AsmWeb now runs as a native Linux HTTP server and serves an actual HTML
-page from disk. The page has been demonstrated in Firefox.
-
-The current implementation:
-
-- Starts a native TCP listener.
-- Binds to `127.0.0.1:18080`.
-- Accepts successive client connections without restarting.
-- Processes client connections sequentially.
-- Handles a restricted subset of HTTP/1.1.
-- Accepts `GET / HTTP/1.1` with ordinary request headers.
-- Requires a Host header and rejects duplicate Host headers.
-- Serves `www/index.html` from disk.
-- Generates Content-Length from the file's actual byte count.
-- Returns basic HTTP error responses.
-- Closes each client connection after responding.
-
-The implementation has been demonstrated through direct HTTP requests
-and a real Firefox browser session.
-
-This is a functional engineering achievement, not a declaration of
-complete HTTP/1.1 compliance, formal milestone closure or production
-readiness.
-
-## Quick Start
+## Quick start
 
 ### Requirements
 
-- Linux on x86-64.
-- NASM.
-- GNU Make.
-- GNU binutils, including the linker.
-- A terminal and web browser.
+- Linux on **x86-64** (the assembly and syscalls are Linux-specific)
+- **NASM**
+- GNU **make** and **ld** (typically supplied by binutils)
+- **Python 3** for integration tests
+- `timeout` from GNU coreutils for selected qualification targets
+- **Git** to clone the repository
 
-Development has been carried out using Fedora Toolbox.
+The primary build uses NASM and GNU `ld`; it does not require a C compiler to link the server.
 
-### Build
+```bash
+git clone https://github.com/aj5r1gg/asmweb.git
+cd asmweb
+make -j2 all
+./build/asmweb
+```
 
-From the repository root:
+In another terminal:
 
-    make all
+```bash
+curl --http1.1 -i http://127.0.0.1:18080/
+```
 
-This produces:
+Run the executable **from the repository root**: the current file-backed response opens `www/index.html` relative to the process working directory. Stop the server with Ctrl+C.
 
-    build/asmweb
+The listener is fixed to **127.0.0.1:18080**; it is not a general network-facing deployment configuration.
 
-### Start the Server
+## What works today
 
-From the repository root:
+### HTTP serving
 
-    ./build/asmweb
+- A persistent, **sequential** TCP listener on IPv4 loopback.
+- A constrained `GET / HTTP/1.1` request path.
+- A required, single `Host` header with supported localhost values.
+- File-backed responses from `www/index.html` with a fixed **4,096-byte maximum page size**.
+- Connection-closing responses with explicit `Content-Length`.
+- Responses for the implemented success and rejection cases, including **200**, **400**, and **431**; file errors include **404** and **500** handling.
+- Bounded request acquisition using a **1,024-byte header buffer**.
+- Correct handling of headers split across multiple socket reads.
+- Partial-write handling during response transmission.
+- Recovery after incomplete requests, client half-closes, and accepted-client receive timeouts.
 
-The process runs a persistent, sequential HTTP listener.
+This is a **restricted HTTP/1.1 implementation**, not a complete HTTP/1.1 server. In particular, arbitrary routes, request bodies, keep-alive, pipelining, TLS, and general-purpose virtual hosting are not currently implemented. The application closes connections after a response.
 
-The current page path is relative to the process working directory.
-Start AsmWeb from the repository root so `www/index.html` can be found.
+### Linux networking primitives
 
-### View the Website
+The codebase exposes small wrappers for Linux socket operations, including socket creation, bind, listen, accept, `accept4`, receive, send, datagram send/receive, socket options, socket identity queries, and close.
 
-Open a browser on the same machine at:
+Wrappers follow the project's internal calling convention and expose **raw Linux syscall results** rather than silently retrying operations or translating errors. Newly acquired descriptors are owned by the caller; operations that inspect or use a descriptor borrow it; close consumes it.
 
-http://127.0.0.1:18080/
+The networking test suite exercises actual sockets and syscalls, including TCP and UDP loopback, stream fragmentation, nonblocking short writes, truncation and error paths, descriptor cleanup, and signal-driven `EINTR`.
 
-The current demonstration page describes AsmWeb and its engineering
-philosophy.
+### Runtime and resource controls
 
-Stop the server using Ctrl+C in its terminal.
+AsmWeb has a substantial runtime foundation alongside the HTTP prototype. The repository includes platform, runtime, memory, process-entry, invariant, registry, and qualification modules.
 
-### Request From a Terminal
+The existing monotonic-clock routine obtains `CLOCK_MONOTONIC`, validates the sample, and converts it to an overflow-checked unsigned nanosecond representation. A separate **deadline arithmetic** module computes remaining time and a positive Linux `timeval`, with explicit active, expired, and invalid results.
 
-A normal HTTP request can also be made with:
+**Important distinction:** Deadline arithmetic has been implemented and locally qualified, but it has **not yet been wired into the HTTP receive loop**. A client sending bytes at intervals shorter than the socket's idle timeout can still occupy the sequential server for more than three seconds.
 
-    curl --http1.1 -i http://127.0.0.1:18080/
+## Explicit limits and current boundaries
 
-A successful response for the included page has the structure:
-
-    HTTP/1.1 200 OK
-    Content-Type: text/html; charset=utf-8
-    Content-Length: 681
-    Connection: close
-
-The body contains the HTML document from `www/index.html`.
-
-The byte count shown above is for the currently supplied demonstration
-page. Content-Length is constructed from the file contents rather than
-being fixed to that example value.
-
-## What AsmWeb Is
-
-AsmWeb is both an experimental web server and the foundation for a
-small, resource-conscious native runtime.
-
-It is intended to investigate whether useful server functionality
-can be implemented with:
-
-- Explicit memory and request limits.
-- Small executable and memory footprints.
-- Predictable resource acquisition and cleanup.
-- Minimal runtime dependencies.
-- Controlled operating-system interfaces.
-- Deterministic or bounded failure behaviour wherever established.
-- Reproducible performance measurements.
-
-The project does not assume assembly code is automatically faster,
-smaller or more efficient. Those are engineering claims to establish
-through measurements.
-
-## Current Architecture
-
-AsmWeb uses a native Linux x86-64 executable assembled with NASM and
-linked using GNU binutils.
-
-Its implementation includes several cooperating areas.
-
-### Process and Runtime
-
-The runtime includes Linux process entry, bootstrap mechanisms,
-registry and capacity validation, startup memory accounting, runtime
-invariant checks, and readiness publication.
-
-The existing engineering baseline also includes work on resource
-ownership, memory ceilings and runtime invariants.
-
-### Linux Interfaces
-
-The server interfaces with Linux through native syscall boundaries.
-
-Networking is implemented without Apache, Nginx, Node.js or a separate
-application-language runtime.
-
-### HTTP Handling
-
-The current HTTP implementation is in:
-
-    src/http/first_response.asm
-
-The production runtime invokes a persistent server entry point.
-
-The older one-shot entry point is retained for existing internal
-engineering callers.
-
-The HTTP handling path is intentionally restricted and bounded.
-It is not yet a general-purpose HTTP implementation.
-
-### HTML File Serving
-
-The current production server opens:
-
-    www/index.html
-
-It reads the document within its configured size limit, constructs an
-HTTP response containing the actual file length, and sends the
-response to the connected client.
-
-At present, this is a single-document server, not a general static-file
-server.
-
-## Current HTTP Behaviour
-
-The production listener uses:
-
-| Property | Current behaviour |
+| Area | Current boundary |
 | --- | --- |
-| Network family | IPv4 |
-| Bind address | 127.0.0.1 |
-| TCP port | 18080 |
-| Supported successful request | GET / HTTP/1.1 |
-| Request headers | Restricted HTTP/1.1 subset |
-| Host header | Required, duplicate rejected |
-| Successful content | www/index.html |
-| Content type | text/html; charset=utf-8 |
-| Connection handling | Sequential |
-| Listener lifetime | Persistent |
-| Response connection | Closed after response |
-| Maximum request buffer | 1,024 bytes |
-| Maximum HTML file size | 4,096 bytes |
+| Platform | Linux x86-64 |
+| Binding | IPv4 loopback, `127.0.0.1:18080` |
+| Concurrency | One accepted connection processed at a time |
+| Supported request | Restricted HTTP/1.1 `GET /` |
+| Request header buffer | 1,024 bytes |
+| Served file | `www/index.html` relative to working directory |
+| Served file size | Up to 4,096 bytes |
+| Socket receive/send idle timeout | 3 seconds per blocking operation |
+| Absolute HTTP request-acquisition deadline | **Not yet enforced** |
+| TLS | Not implemented |
+| General routing / dynamic content | Not implemented |
+| HTTP persistent connections / pipelining | Not implemented |
+| Deployment status | Experimental; loopback development use |
 
-The file-serving implementation uses fixed-capacity buffers and does
-not permit arbitrarily large HTML documents.
+A 3-second **idle timeout** is **not** a 3-second **total request deadline**. An accepted client that periodically delivers more data can still prevent the sequential server from servicing another request. This limitation has been reproduced in an integration probe and is a current M1 work item.
 
-Existing responses include successful delivery and basic error
-responses. The implementation is not claimed to satisfy every HTTP
-protocol error-handling requirement.
+Likewise, successful local tests are not a substitute for production hardening, comprehensive protocol conformance, fuzzing, external security review, or deployment-specific performance measurement.
 
-## Known Limitations
+## Build and qualification
 
-The current development version has important limitations:
+Build the application:
 
-- Only the root document is served.
-- HTML files are limited to 4,096 bytes.
-- Received request headers are limited to 1,024 bytes.
-- Client connections are processed sequentially.
-- There is no HTTP connection reuse or pipelining.
-- There is no general static-file routing.
-- Request bodies and general request framing are not implemented.
-- There is no MIME-type selection for multiple file types.
-- Full HTTP/1.1 interoperability remains incomplete.
-- HTTP/2 and HTTP/3 are not implemented.
-- TLS is not implemented.
-- The listener is restricted to IPv4 loopback.
-- Configuration and deployment interfaces remain experimental.
-- A comprehensive total request-processing deadline has not yet been
-  established.
-- The implementation is not production-ready.
+```bash
+make -j2 all
+```
 
-The parser and file-serving code require further hardening before the
-server should be exposed to untrusted remote clients.
+Run the existing application integration tests:
 
-## Engineering Principles
+```bash
+python3 tests/integration/first_http.py
+python3 tests/integration/socket_failures.py
+python3 tests/integration/http_idle_survival.py
+```
 
-AsmWeb prioritises:
+Run the targeted assembly and behavioural qualifications:
 
-1. Correctness.
-2. Explicit resource boundaries.
-3. Controlled ownership and cleanup.
-4. Predictable failure behaviour.
-5. Required interoperability.
-6. Measured performance.
+```bash
+make qualify-time
+make qualify-deadline
+make qualify-udp-loopback
+make qualify-tcp-accept4
+make qualify-network-error-paths
+make qualify-stream-fragments
+make qualify-stream-short-write
+make qualify-network-eintr
+make qualify-http-descriptor-lifecycle
+make qualify-http-descriptor-mutations
+```
 
-These priorities are deliberate.
+`make qualify-deadline` currently tests **15 arithmetic boundary cases**, including exact expiry, overflow, backward time samples, sub-microsecond positive intervals, register preservation, and buffer guards. The deadline qualification was also repeated successfully across 20 local executions before publication.
 
-An assembly implementation that is smaller or faster but violates
-resource limits or behaves unpredictably is not a successful result.
+`make qualify-network-eintr` installs a real signal handler, uses a kernel timer to interrupt a blocking receive, verifies that `-EINTR` is returned, and checks buffer integrity, socket reuse and descriptor cleanup.
 
-**Do less. Bound everything. Measure the rest.**
+The `http_idle_survival.py` regression verifies that an incomplete, idle client does **not** terminate the persistent listener and that a subsequent valid client receives HTTP 200. Its sensitivity was checked against both an original vulnerable server (expected failure) and the corrected server (expected success).
 
-## Development Roadmap
+The HTTP descriptor mutation qualification deliberately changes cleanup behaviour and verifies that the lifecycle tests reject those mutations.
 
-The immediate functional direction is:
+### Continuous integration
 
-1. **Working HTTP foundation — demonstrated.**
-   Native listening, HTTP responses and sequential persistence.
+GitHub Actions runs the project build and registered qualification targets. See [the CI workflow](.github/workflows/ci.yml) for the authoritative current command list.
 
-2. **HTML file serving — demonstrated.**
-   Delivery of the root document from disk to Firefox.
+The latest locally verified revision for this README update is:
 
-3. **General static-file serving — next.**
-   Bounded URL routing, multiple files, safe file access and MIME types.
+```text
+6aab023 feat(time): add qualified deadline arithmetic
+```
 
-4. **HTTP interoperability.**
-   Improve parsing, framing, error handling and connection lifecycle
-   without sacrificing bounded resource use.
+The deadline arithmetic changes passed local qualification and GitHub Actions on `main` (commit `6aab023`, workflow run `39399296594`). A successful CI run verifies its executed checks; it does not establish production readiness or formal milestone closure.
 
-5. **Configuration and deployment.**
-   Move beyond hard-coded development paths and settings.
+## Milestone and qualification governance
 
-6. **Performance and memory measurement.**
-   Establish actual executable size, resident memory usage, startup
-   cost, throughput and latency.
-
-7. **Further protocol capabilities.**
-   Progress toward the native HTTP/1.1, HTTP/2 and HTTP/3 architecture
-   described in the project specifications.
-
-These are development directions, not claims that all features have
-been implemented or formally qualified.
-
-## Build and Verification
-
-The normal production build is:
-
-    make all
-
-The repository also includes engineering regression and qualification
-infrastructure.
-
-Selected existing checks include:
-
-    make qualify-production-registry
-    make qualify-production-limit-manifest
-    make qualify-mot-ceiling-integration
-    make qualify-memory-ceiling
-    make qualify-runtime-invariant
-    make qualify-http-descriptor-lifecycle
-
-Other qualification and adversarial checks are available through the
-Makefile and the `tests/` tree.
-
-The GitHub Actions workflow is located at:
-
-    .github/workflows/ci.yml
-
-GitHub Actions runs engineering checks on supported workflow events.
-
-**A green CI run establishes that its executed checks passed. It does
-not establish production readiness or formal milestone qualification.**
-
-The HTTP integration checks cover file-backed HTML responses,
-persistent sequential connections, request validation and basic error
-responses.
-
-GitHub Actions also executes additional runtime, descriptor-lifecycle
-and engineering regression checks. The status of each workflow run
-must be established from its actual GitHub Actions result.
-
-## Milestone and Qualification Context
-
-AsmWeb uses a controlled M0–M16 milestone baseline.
+AsmWeb follows a controlled **M0–M16 milestone baseline**.
 
 The M0 engineering implementation includes process entry, runtime
-bootstrap, memory accounting, capacity validation and runtime
-invariant work.
+bootstrap, startup memory accounting, capacity validation and runtime
+invariant work. **Formal M0 qualification has not been declared
+complete.**
 
-Formal M0 qualification has not been declared complete.
+The original engineering record identifies outstanding authoritative
+qualification obligations involving the Qualification Rule Register,
+Invariant Register, Limit Register, Effective Limit Manifest, common
+diagnostics, and effective configuration/provenance identity. Their
+current closure status must be established from the relevant
+qualification evidence, not inferred from passing tests.
 
-Outstanding authoritative qualification work has included the
-Qualification Rule Register, Invariant Register, Limit Register,
-Effective Limit Manifest, common diagnostics, and effective
-configuration/provenance identity.
+Functional M1 HTTP development can proceed while earlier formal
+qualification obligations remain open. **Implemented, locally tested,
+CI-passing and formally milestone-qualified are distinct statuses.**
 
-Functional HTTP development can continue while these formal
-qualification obligations remain open.
+### Historical M1.5 reconciliation
 
-### Historical M1.5 Reconciliation
-
-The historical engineering checkpoint labelled M1.5 is reconciled
-against the controlled milestone structure rather than treated as
-a separate authoritative milestone.
+The historical checkpoint called M1.5 is reconciled into the
+controlled milestone structure rather than treated as a separate
+authoritative milestone.
 
 Existing reconciliation records include:
 
 - `qualification/checkpoints/CP-LEGACY-M1-5-reconciliation-v0.1.json`
 - `qualification/checkpoints/CP-LEGACY-M1-5-reconciliation-v0.2.json`
 
-The repository includes reconciliation verification targets:
+The repository provides these verification commands:
 
-    make qualify-checkpoint-reconciliation
-    make qualify-checkpoint-reconciliation-adversarial
+```bash
+make qualify-checkpoint-reconciliation
+make qualify-checkpoint-reconciliation-adversarial
+```
 
-These records and checks do not, by themselves, constitute formal
+These checks and records do not themselves constitute formal
 milestone closure.
 
-## Repository Layout
-
-Important repository paths include:
+## Repository guide
 
 | Path | Purpose |
 | --- | --- |
-| `src/` | Native assembly implementation |
-| `src/http/` | HTTP server implementation |
-| `src/linux/` | Linux syscall and networking interfaces |
-| `src/runtime/` | Runtime mechanisms |
-| `include/` | NASM includes and interfaces |
-| `www/` | Demonstration website |
-| `tests/` | Integration and engineering tests |
-| `qualification/` | Qualification records and tooling |
-| `.github/workflows/` | GitHub Actions CI |
-| `build/` | Generated executable and build artifacts |
-| `Makefile` | Build and verification targets |
+| `src/http/` | Restricted HTTP handler and response path |
+| `src/linux/` | Linux syscall boundaries and socket wrappers |
+| `src/platform/` | CPU, time, deadline, memory and platform facilities |
+| `src/runtime/` | Runtime bootstrap, accounting, registries and invariants |
+| `include/` | Internal ABI, constants and shared structures |
+| `tests/qualification/` | NASM-level component and invariant qualifications |
+| `tests/integration/` | End-to-end tests using the actual server executable |
+| `qualification/` | Qualification records, checkpoints and reconciliation tooling |
+| `www/index.html` | Current page served by `GET /` |
+| `.github/workflows/ci.yml` | CI build and qualification sequence |
+| `Makefile` | Build and test targets |
 
-The repository contains substantially more runtime and qualification
-work than the small HTML demonstration alone illustrates.
+The Makefile discovers `.asm` files under `src/` and produces the native executable at `build/asmweb`.
 
-## Intended Direction
+## Engineering principles
 
-AsmWeb is not being developed merely to demonstrate that assembly
-can respond to an HTTP request.
+AsmWeb is guided by a few non-negotiable habits:
 
-The larger objective is a useful native web server with deliberately
-small and measurable resource requirements.
+1. **Bound resources.** Prefer fixed, documented capacities and explicitly checked arithmetic.
+2. **Keep ownership visible.** Know which component acquires, borrows, and releases every descriptor and buffer.
+3. **Preserve failure semantics.** Expose kernel errors at the wrapper boundary, then handle them at the appropriate ownership level.
+4. **Isolate client failures.** An uncooperative accepted client should not needlessly terminate the listener.
+5. **Prove behaviour with real systems.** Use actual sockets, signals and Linux syscalls rather than mock-only success paths.
+6. **Require negative controls when practical.** A regression is stronger when it demonstrably rejects the earlier defective implementation.
+7. **Measure before claiming.** Small binaries, fast startup, memory savings and throughput improvements are hypotheses until supported by repeatable benchmarks.
 
-The immediate priority is working functionality:
+The implementation is intentionally explicit. That is part of the exercise, not a claim that assembly automatically yields superior software.
 
-- Serve multiple useful assets.
-- Improve interoperability.
-- Retain explicit limits.
-- Keep the implementation understandable.
-- Measure actual performance.
-- Harden what has been implemented.
+## Development status and next work
 
-Formal verification and qualification remain important, but should
-support implementation rather than replace it.
+**Current development phase: M1 — networking and HTTP robustness.**
 
-## License
+Completed and locally verified increments include UDP and TCP loopback primitives; `accept4`; endpoint identity wrappers; nonblocking error cases; fragmented streams and partial writes; signal-driven `EINTR`; persistent-listener survival after client I/O failures; and checked deadline arithmetic.
 
-No licence has been selected for this repository.
+The next important work is to connect the existing monotonic clock and deadline arithmetic to the HTTP receive loop and prove a **non-resettable request-acquisition deadline**. Acceptance must include a slow client being disconnected at the bounded deadline, the waiting legitimate request subsequently being served, ordinary fragmented requests continuing to work, and descriptor cleanup remaining correct.
 
-**All rights reserved unless and until a licence is explicitly added.**
+Further work includes more complete send-side deadline analysis, explicit protocol limitations, stronger adversarial testing, runtime measurements, and milestone qualification against the project specifications.
+
+**Do not treat a completed arithmetic primitive as a completed HTTP deadline feature.**
+
+## Project intent
+
+AsmWeb is simultaneously a real native-software engineering exercise and an experiment in deliberate constraint. Assembly is the chosen medium because making the resource, ABI, and kernel boundaries explicit is interesting and instructive—not because conventional software development is somehow invalid.
+
+A useful end state would be a very small process that does a narrow job predictably, consumes bounded resources, and has evidence for its claims. Whether that becomes competitive with existing servers is something to **measure**, not assert.
+
+## License and contributions
+
+**No licence has been selected for this repository. All rights reserved unless and until a licence is explicitly added.**
+
+Issues and reproducible bug reports are welcome through the [GitHub repository](https://github.com/aj5r1gg/asmweb). For changes, please include the relevant build and qualification evidence, and avoid broadening the M1 scope without an explicit engineering reason.
+
+---
+
+**AsmWeb:** *Do less. Bound everything. Measure the rest.*
