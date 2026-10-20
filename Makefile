@@ -1077,3 +1077,25 @@ qualify-udp-loopback: $(UDP_LOOPBACK_TARGET)
 	timeout 5s $(UDP_LOOPBACK_TARGET)
 
 -include $(UDP_LOOPBACK_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 — TCP accept4 Network I/O Verification
+# ---------------------------------------------------------------------------
+
+TCP_ACCEPT4_SOURCE := tests/qualification/tcp_accept4.asm
+TCP_ACCEPT4_OBJECT := $(BUILD_DIR)/tests/qualification/tcp_accept4.o
+TCP_ACCEPT4_TARGET := $(BUILD_DIR)/qualification/tcp-accept4
+
+$(TCP_ACCEPT4_OBJECT): $(TCP_ACCEPT4_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(TCP_ACCEPT4_TARGET): $(TCP_ACCEPT4_OBJECT) $(BUILD_DIR)/linux/network.o
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-tcp-accept4
+qualify-tcp-accept4: $(TCP_ACCEPT4_TARGET)
+	timeout 5s $(TCP_ACCEPT4_TARGET)
+
+-include $(TCP_ACCEPT4_OBJECT:.o=.d)

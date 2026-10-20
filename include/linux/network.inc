@@ -6,6 +6,7 @@
 %define LINUX_SYS_close      3
 %define LINUX_SYS_socket    41
 %define LINUX_SYS_accept    43
+%define LINUX_SYS_accept4  288
 %define LINUX_SYS_sendto    44
 %define LINUX_SYS_recvfrom  45
 %define LINUX_SYS_bind      49

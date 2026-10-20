@@ -50,6 +50,8 @@ jobs:
           python3 tests/integration/socket_failures.py
           make qualify-http-descriptor-lifecycle
           make qualify-http-descriptor-mutations
+          make qualify-udp-loopback
+          make qualify-tcp-accept4
           make qualify-checkpoint-reconciliation
           make qualify-checkpoint-reconciliation-adversarial
           make qualify-diagnostic

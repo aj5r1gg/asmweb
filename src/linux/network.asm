@@ -7,6 +7,7 @@ global asm_linux_socket
 global asm_linux_bind
 global asm_linux_listen
 global asm_linux_accept
+global asm_linux_accept4
 global asm_linux_recv
 global asm_linux_send
 global asm_linux_recvfrom
@@ -58,6 +59,20 @@ asm_linux_listen:
 ; RDI=fd, RSI=address or NULL, RDX=length pointer or NULL
 asm_linux_accept:
     mov eax, LINUX_SYS_accept
+    syscall
+    ret
+
+; accept4(fd, sockaddr*, socklen_t*, flags)
+; RDI=listener, RSI=address or NULL
+; RDX=address length pointer or NULL
+; RCX=SOCK_NONBLOCK | SOCK_CLOEXEC flags
+;
+; Returns a newly owned descriptor or negative Linux errno.
+; Flags apply to the accepted descriptor, not the listener.
+; No implicit retry, allocation or error conversion.
+asm_linux_accept4:
+    mov r10, rcx
+    mov eax, LINUX_SYS_accept4
     syscall
     ret
 
