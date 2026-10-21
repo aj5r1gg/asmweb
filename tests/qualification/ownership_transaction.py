@@ -18,6 +18,7 @@ import ownership_proposal_journal as journal
 import ownership_signed_decision as signed
 import ownership_snapshot as snapshot
 import ownership_transaction as transaction
+import ownership_transaction_checkpoint as checkpoint
 
 
 def command(*args):
@@ -286,6 +287,124 @@ with tempfile.TemporaryDirectory(
     parsed = json.loads(cli.stdout)
     assert parsed["receipt_sha256"] == result["receipt_sha256"]
     print("INDEPENDENT_CLI_RECEIPT=PASS")
+
+    # The checkpoint records the transaction-wide receipt.
+    # It never publishes ownership approvals.
+    store = base / "checkpoint-store"
+    inputs = (path, proposals, evidence, trusted, revoked)
+
+    first = checkpoint.publish(store, *inputs)
+
+    assert first["publication"] == "ATOMIC_ROOT_REPLACEMENT"
+    assert first["effective_approvals"] == 0
+
+    root_file = store / "checkpoint-root.json"
+    original_root = root_file.read_bytes()
+
+    verified = checkpoint.verify(store, *inputs)
+
+    assert (
+        verified["receipt_sha256"]
+        == result["receipt_sha256"]
+    )
+
+    again = checkpoint.publish(store, *inputs)
+    assert again["publication"] == "ALREADY_CURRENT"
+    assert root_file.read_bytes() == original_root
+
+    print("SIGNED_TRANSACTION_CHECKPOINT=PASS")
+    print("CHECKPOINT_IDEMPOTENCE=PASS")
+
+    # A valid but changed revocation register must invalidate
+    # the stored receipt until the original evidence is restored.
+    original_revocations = revoked.read_bytes()
+
+    revoked.write_bytes(authority.canonical({
+        "schema_version": 1,
+        "revoked_designation_ids": [
+            "UNRELATED-CHECKPOINT-TEST-002"
+        ],
+    }))
+
+    rejects(
+        "STALE_CHECKPOINT_REVOCATIONS",
+        lambda: checkpoint.verify(store, *inputs),
+    )
+
+    rejects(
+        "STALE_CHECKPOINT_REPUBLICATION",
+        lambda: checkpoint.publish(store, *inputs),
+    )
+
+    assert root_file.read_bytes() == original_root
+    revoked.write_bytes(original_revocations)
+
+    assert (
+        checkpoint.verify(store, *inputs)["result"]
+        == "VERIFIED_NON_EFFECTIVE_CHECKPOINT"
+    )
+    print("CHECKPOINT_EXPLICIT_RECOVERY=PASS")
+
+    generation_file = next(
+        (store / "generations").glob("*.json")
+    )
+    original_generation = generation_file.read_bytes()
+
+    generation_file.write_bytes(original_generation + b"x")
+
+    rejects(
+        "ALTERED_CHECKPOINT_GENERATION",
+        lambda: checkpoint.verify(store, *inputs),
+    )
+
+    rejects(
+        "ALTERED_CHECKPOINT_REPUBLICATION",
+        lambda: checkpoint.publish(store, *inputs),
+    )
+
+    generation_file.write_bytes(original_generation)
+
+    root_file.write_bytes(original_root + b"x")
+
+    rejects(
+        "CORRUPTED_CHECKPOINT_ROOT",
+        lambda: checkpoint.verify(store, *inputs),
+    )
+
+    root_file.write_bytes(original_root)
+
+    assert checkpoint.verify(store, *inputs)
+    print("CHECKPOINT_INTEGRITY_RECOVERY=PASS")
+
+    checkpoint_cli = subprocess.run(
+        [
+            sys.executable, "-B",
+            str(
+                ROOT / "qualification/tools/"
+                "ownership_transaction_checkpoint.py"
+            ),
+            "verify",
+            "--store", str(store),
+            "--manifest", str(path),
+            "--journal", str(proposals),
+            "--evidence", str(evidence),
+            "--trusted-root", str(trusted),
+            "--revocations", str(revoked),
+        ],
+        capture_output=True,
+        text=True,
+    )
+
+    assert checkpoint_cli.returncode == 0, (
+        checkpoint_cli.stderr
+    )
+
+    assert (
+        json.loads(checkpoint_cli.stdout)["receipt_sha256"]
+        == result["receipt_sha256"]
+    )
+
+    print("CHECKPOINT_CLI_VERIFICATION=PASS")
 
 print("EFFECTIVE_APPROVALS=0")
 print("INTEGRATED_OWNERSHIP_TRANSACTION=PASS")
