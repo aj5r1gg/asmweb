@@ -92,7 +92,7 @@ def main():
     # listening-socket close sites.
     # The mutations below still target only socket cleanup.
     require(
-        source.count(CLOSE) == 4,
+        source.count(CLOSE) == 5,
         "Unexpected total close topology",
     )
 

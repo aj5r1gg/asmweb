@@ -67,6 +67,8 @@ global asm_linux_socket
 global asm_linux_bind
 global asm_linux_listen
 global asm_linux_accept
+global asm_linux_accept4
+global asm_production_registry_get
 global asm_linux_recv
 global asm_linux_send
 global asm_linux_close
@@ -107,6 +109,30 @@ expected:
     dq 1, 2, 2, 2, 21
     dq 1, 2, 2, 2, 21
 
+section .data
+align 8
+
+qualification_http_rct:
+    ; Listener resource: 8 qwords.
+    dq ASMWEB_PROD_RESOURCE_HTTP_LISTENER
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq ASMWEB_M1_LISTENER_FD_CAPACITY
+    dq ASMWEB_M1_LISTENER_FD_CAPACITY
+    dq 0, 0, 0, 0
+
+    ; Accepted-client resource: 8 qwords.
+    dq ASMWEB_PROD_RESOURCE_HTTP_ACCEPTED
+    dq ASMWEB_REGISTRY_STATUS_ACTIVE
+    dq ASMWEB_M1_ACCEPTED_FD_CAPACITY
+    dq ASMWEB_M1_ACCEPTED_FD_CAPACITY
+    dq 0, 0, 0, 0
+
+qualification_http_registry:
+    dq 0, 0              ; OLR
+    dq 0, 0              ; MOT
+    dq 0                 ; RCT pointer, populated at runtime
+    dq ASMWEB_PRODUCTION_RCT_COUNT
+
 section .bss
 align 8
 
@@ -120,6 +146,7 @@ high_water:     resq 1
 acquisitions:   resq 1
 close_attempts: resq 1
 close_sequence: resq 1
+root_closes:    resq 1
 violations:     resq 1
 handler_return: resq 1
 accept_interrupts: resq 1
@@ -188,6 +215,11 @@ _start:
     jne .fail
 
     cmp qword [rel violations], 0
+    jne .fail
+
+    ; Every scenario obtains and releases exactly one
+    ; real document-root directory descriptor.
+    cmp qword [rel root_closes], 1
     jne .fail
 
     ; Scenarios 14-16 inject exactly one clock failure.
@@ -540,6 +572,18 @@ asm_linux_listen:
     mov rax, -9
     ret
 
+asm_linux_accept4:
+    ; Accept only SOCK_CLOEXEC, then delegate to the
+    ; existing synthetic accepted-descriptor implementation.
+    cmp ecx, 0x80000
+    jne .accept4_invalid
+    jmp asm_linux_accept
+
+.accept4_invalid:
+    inc qword [rel violations]
+    mov rax, -22
+    ret
+
 asm_linux_accept:
     cmp rdi, FD_LISTENER
     jne .invalid
@@ -753,7 +797,22 @@ asm_linux_close:
     je .close_accepted
     cmp rdi, FD_LISTENER
     je .close_listener
-    jmp .invalid
+
+    ; The document-root descriptor is opened by the real
+    ; openat syscall. Its cleanup is a real close syscall.
+    ; It must not count as a synthetic network descriptor.
+    cmp rdi, 0
+    jl .invalid
+
+    mov eax, 3
+    syscall
+
+    test rax, rax
+    js .invalid
+
+    inc qword [rel root_closes]
+    xor eax, eax
+    ret
 
 .close_accepted:
     cmp qword [rel accepted_owned], 1
@@ -800,4 +859,15 @@ asm_linux_close:
 .invalid:
     inc qword [rel violations]
     mov rax, -9
+    ret
+
+; Qualification-only borrowed published registry.
+; No production registry is modified or initialized here.
+asm_production_registry_get:
+    ; Populate the registry pointer using a RIP-relative
+    ; address calculation, avoiding absolute ELF relocations.
+    lea rax, [rel qualification_http_rct]
+    mov [rel qualification_http_registry + 32], rax
+
+    lea rax, [rel qualification_http_registry]
     ret
