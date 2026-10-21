@@ -1317,3 +1317,25 @@ qualify-udp-checked-descriptors: $(UDP_CHECKED_TARGET)
 	timeout 5s $(UDP_CHECKED_TARGET)
 
 -include $(UDP_CHECKED_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# NET-005 — checked connected-UDP real datagram transfer
+# ---------------------------------------------------------------------------
+
+UDP_CHECKED_TRANSFER_SOURCE := tests/qualification/udp_checked_transfer.asm
+UDP_CHECKED_TRANSFER_OBJECT := $(BUILD_DIR)/tests/qualification/udp_checked_transfer.o
+UDP_CHECKED_TRANSFER_TARGET := $(BUILD_DIR)/qualification/udp-checked-transfer
+
+$(UDP_CHECKED_TRANSFER_OBJECT): $(UDP_CHECKED_TRANSFER_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(UDP_CHECKED_TRANSFER_TARGET): $(BUILD_DIR)/linux/network.o $(UDP_CHECKED_TRANSFER_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-udp-checked-transfer
+qualify-udp-checked-transfer: $(UDP_CHECKED_TRANSFER_TARGET)
+	timeout 5s $(UDP_CHECKED_TRANSFER_TARGET)
+
+-include $(UDP_CHECKED_TRANSFER_OBJECT:.o=.d)
