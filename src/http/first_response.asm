@@ -72,14 +72,16 @@ request_version_end:
 ; Local development document root.
 ; Launch AsmWeb from the repository directory.
 
+web_root_path:
+    db 'www', 0
 page_path:
-    db 'www/index.html', 0
+    db 'index.html', 0
 page_path_about:
-    db 'www/about.html', 0
+    db 'about.html', 0
 page_path_style:
-    db 'www/style.css', 0
+    db 'style.css', 0
 page_path_icon:
-    db 'www/favicon.ico', 0
+    db 'favicon.ico', 0
 
 page_prefix:
     db 'HTTP/1.1 200 OK', 13, 10
@@ -223,13 +225,15 @@ asm_http_serve_common:
     ; [rsp+80] = borrowed accepted-resource RCT entry (8 bytes)
     ; [rsp+88] = immutable response start (32 bytes)
     ; [rsp+120] = Linux x86-64 struct stat (144 bytes)
-    ; Total 264 bytes preserves CALL alignment.
-    sub rsp, 264
+    ; [rsp+264] = owned document-root descriptor
+    ; Total 280 bytes preserves CALL alignment.
+    sub rsp, 280
 
     mov r12, -1
     mov r13, -1
     mov ebp, 1
     mov qword [rsp + 80], 0
+    mov qword [rsp + 264], -1
 
     ; The currently implemented HTTP engine owns exactly one
     ; listener and processes exactly one accepted client at a
@@ -267,6 +271,21 @@ asm_http_serve_common:
 
     ; Borrow the existing resource entry. No allocation.
     mov [rsp + 80], r11
+
+    ; Open the document root once, as a real directory.
+    ; O_CLOEXEC | O_NOFOLLOW | O_DIRECTORY = 0xB0000.
+    ; No symlink may substitute for the document root.
+    mov eax, 257
+    mov edi, -100
+    lea rsi, [rel web_root_path]
+    mov edx, 0xB0000
+    xor r10d, r10d
+    syscall
+
+    test rax, rax
+    js .cleanup
+
+    mov [rsp + 264], rax
 
     ; socket(AF_INET, SOCK_STREAM|CLOEXEC, IPPROTO_TCP)
     mov edi, LINUX_AF_INET
@@ -731,12 +750,13 @@ asm_http_serve_common:
     je .page_open
     lea r14, [rel page_path_icon]
 
-    ; Open fixed routes without following final symlinks.
-    ; O_NONBLOCK also prevents a FIFO pathname from blocking
-    ; the single-threaded listener during open().
+    ; Open only relative to the already validated,
+    ; permanently held document-root directory descriptor.
+    ; Final symlinks are refused; nonregular files are
+    ; rejected by the subsequent fstat check.
 .page_open:
     mov eax, 257
-    mov edi, -100
+    mov rdi, [rsp + 264]
     mov rsi, r14
     mov edx, 0xA0800
     xor r10d, r10d
@@ -1007,8 +1027,21 @@ asm_http_serve_common:
     mov ebp, 1
 
 .return:
+    ; Consume the owned document-root descriptor on every
+    ; return path, including startup failure.
+    mov rdi, [rsp + 264]
+    cmp rdi, 0
+    jl .return_complete
+
+    call asm_linux_close
+    mov qword [rsp + 264], -1
+    test rax, rax
+    jns .return_complete
+    mov ebp, 1
+
+.return_complete:
     mov eax, ebp
-    add rsp, 264
+    add rsp, 280
     pop r15
     pop r14
     pop r13
