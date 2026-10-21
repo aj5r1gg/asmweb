@@ -77,5 +77,7 @@ jobs:
         run: python3 -B tests/qualification/ownership_authority.py
       - name: Verify signed ownership decisions
         run: python3 -B tests/qualification/ownership_signed_decision.py
+      - name: Verify ownership generation publication
+        run: python3 -B tests/qualification/ownership_generation.py
       - name: Verify clean incremental build
         run: make all
