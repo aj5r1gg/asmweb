@@ -11,6 +11,7 @@ bits 64
 %include "asmweb/registry.inc"
 %include "asmweb/memory_ceiling.inc"
 %include "asmweb/config_dependency.inc"
+%include "asmweb/production_registry.inc"
 %include "asmweb/runtime_invariant.inc"
 %include "asmweb/diagnostic.inc"
 
@@ -141,14 +142,24 @@ asm_runtime_main:
     ;   [rsp + 8]   temporary ASMWEB_RUNTIME_INVARIANT_VIEW
     ;   [rsp + 96]  padding
     ;   [rsp + 104] caller-owned ASMWEB_DIAGNOSTIC (48 bytes)
+    ;   [rsp + 152] HTTP capacity nodes (3 * 32 bytes)
+    ;   [rsp + 248] HTTP dependency edges (2 * 24 bytes)
     ;
     ; ASMWEB_RUNTIME_INVARIANT_VIEW is 88 bytes.
     ; ASMWEB_DIAGNOSTIC is 48 bytes.
     ;
-    ; Total local frame = 152 bytes.
-    ; 152 mod 16 == 8; RSP is aligned before CALL.
-    ; Diagnostic storage is transient and single-writer only.
-    sub rsp, 152
+    ; Total local frame = 296 bytes.
+    ; 296 mod 16 == 8; RSP is aligned before CALL.
+    ; Graph and diagnostic storage are stack-local, single-writer.
+    ;
+    ; Build-time structure size requirements.
+%if ASMWEB_CAPACITY_DEPENDENCY_NODE_size != 32
+    %error "Unexpected capacity-node layout"
+%endif
+%if ASMWEB_CAPACITY_DEPENDENCY_EDGE_size != 24
+    %error "Unexpected capacity-edge layout"
+%endif
+    sub rsp, 296
 
     ; Preserve explicit bootstrap-state pointers in callee-saved registers.
     mov rbx, rdi
@@ -340,28 +351,108 @@ asm_runtime_main:
 
 
     ; -----------------------------------------------------------------------
-    ; Validate the complete current production capacity-dependency graph.
+    ; Materialise the production HTTP capacity dependency graph.
     ;
-    ; The present M0 production graph is canonically empty:
+    ;   listener (RCT[0], capacity 1)
+    ;       -> accepted descriptor (RCT[1], capacity 1)
+    ;           -> request buffer (MOT[8], capacity 1)
     ;
-    ;   - the production RCT is empty;
-    ;   - current production MOT entries are fixed process-persistent count-1
-    ;     objects;
-    ;   - no cross-capacity production dependency has yet been introduced.
+    ; Capacity identities and numerical bounds are read from the
+    ; published production registries, not separately maintained.
+    ; All three nodes and both edges are stack-local.
     ;
-    ; An empty graph is still passed through the authoritative dependency
-    ; validator before READY. When production dependent capacities are added,
-    ; this call site is the required startup gate and must receive that
-    ; resolved graph rather than being bypassed.
+    ; The graph validates provisionable relationships. Live
+    ; descriptor occupancy is owned by the HTTP admission path.
     ; -----------------------------------------------------------------------
 
-    xor edi, edi
-    xor esi, esi
-    xor edx, edx
-    xor ecx, ecx
+    mov rax, [rsp]
 
-    ; Use the existing initialized diagnostic record.
-    ; Preserve the original dependency validation result.
+    cmp qword [rax + ASMWEB_REGISTRY_VALIDATION_SET.rct_count],         ASMWEB_PRODUCTION_RCT_COUNT
+    jne .failure
+
+    cmp qword [rax + ASMWEB_REGISTRY_VALIDATION_SET.mot_count],         ASMWEB_PRODUCTION_MOT_COUNT
+    jne .failure
+
+    mov r8, [rax + ASMWEB_REGISTRY_VALIDATION_SET.rct_ptr]
+    mov r9, [rax + ASMWEB_REGISTRY_VALIDATION_SET.mot_ptr]
+
+    test r8, r8
+    jz .failure
+    test r9, r9
+    jz .failure
+
+    cmp qword [r8 + ASMWEB_RCT_VALIDATION_ENTRY.resource_id],         ASMWEB_PROD_RESOURCE_HTTP_LISTENER
+    jne .failure
+
+    cmp qword [r8 + ASMWEB_RCT_VALIDATION_ENTRY_size +         ASMWEB_RCT_VALIDATION_ENTRY.resource_id],         ASMWEB_PROD_RESOURCE_HTTP_ACCEPTED
+    jne .failure
+
+    cmp qword [r9 + 8 * ASMWEB_MOT_VALIDATION_ENTRY_size +         ASMWEB_MOT_VALIDATION_ENTRY.limit_id],         ASMWEB_PROD_LIMIT_HTTP_REQUEST_BUFFER
+    jne .failure
+
+    lea r10, [rsp + 152]       ; Three capacity nodes.
+
+    ; Node 0: listener descriptor.
+    mov rax, [r8 + ASMWEB_RCT_VALIDATION_ENTRY.resource_id]
+    mov [r10 + ASMWEB_CAPACITY_DEPENDENCY_NODE.capacity_id], rax
+
+    mov rax, [r8 + ASMWEB_RCT_VALIDATION_ENTRY.configured_capacity]
+    mov [r10 + ASMWEB_CAPACITY_DEPENDENCY_NODE.configured_capacity], rax
+
+    mov rax, [r8 + ASMWEB_RCT_VALIDATION_ENTRY.physical_capacity]
+    mov [r10 + ASMWEB_CAPACITY_DEPENDENCY_NODE.physical_capacity], rax
+
+    mov qword [r10 + ASMWEB_CAPACITY_DEPENDENCY_NODE.dependency_rank], 0
+
+    ; Node 1: accepted descriptor.
+    mov rax, [r8 + ASMWEB_RCT_VALIDATION_ENTRY_size +         ASMWEB_RCT_VALIDATION_ENTRY.resource_id]
+    mov [r10 + 32 + ASMWEB_CAPACITY_DEPENDENCY_NODE.capacity_id], rax
+
+    mov rax, [r8 + ASMWEB_RCT_VALIDATION_ENTRY_size +         ASMWEB_RCT_VALIDATION_ENTRY.configured_capacity]
+    mov [r10 + 32 + ASMWEB_CAPACITY_DEPENDENCY_NODE.configured_capacity], rax
+
+    mov rax, [r8 + ASMWEB_RCT_VALIDATION_ENTRY_size +         ASMWEB_RCT_VALIDATION_ENTRY.physical_capacity]
+    mov [r10 + 32 + ASMWEB_CAPACITY_DEPENDENCY_NODE.physical_capacity], rax
+
+    mov qword [r10 + 32 + ASMWEB_CAPACITY_DEPENDENCY_NODE.dependency_rank], 1
+
+    ; Node 2: fixed request-buffer object.
+    mov rax, [r9 + 8 * ASMWEB_MOT_VALIDATION_ENTRY_size +         ASMWEB_MOT_VALIDATION_ENTRY.limit_id]
+    mov [r10 + 64 + ASMWEB_CAPACITY_DEPENDENCY_NODE.capacity_id], rax
+
+    mov rax, [r9 + 8 * ASMWEB_MOT_VALIDATION_ENTRY_size +         ASMWEB_MOT_VALIDATION_ENTRY.configured_capacity]
+    mov [r10 + 64 + ASMWEB_CAPACITY_DEPENDENCY_NODE.configured_capacity], rax
+
+    mov rax, [r9 + 8 * ASMWEB_MOT_VALIDATION_ENTRY_size +         ASMWEB_MOT_VALIDATION_ENTRY.physical_capacity]
+    mov [r10 + 64 + ASMWEB_CAPACITY_DEPENDENCY_NODE.physical_capacity], rax
+
+    mov qword [r10 + 64 + ASMWEB_CAPACITY_DEPENDENCY_NODE.dependency_rank], 2
+
+    ; Edge 0: each listener requires one accepted slot.
+    ; Edge 1: each accepted slot requires one request-buffer slot.
+    lea r11, [rsp + 248]
+
+    mov rax, [r10 + ASMWEB_CAPACITY_DEPENDENCY_NODE.capacity_id]
+    mov [r11 + ASMWEB_CAPACITY_DEPENDENCY_EDGE.parent_capacity_id], rax
+
+    mov rax, [r10 + 32 + ASMWEB_CAPACITY_DEPENDENCY_NODE.capacity_id]
+    mov [r11 + ASMWEB_CAPACITY_DEPENDENCY_EDGE.child_capacity_id], rax
+
+    mov qword [r11 + ASMWEB_CAPACITY_DEPENDENCY_EDGE.units_per_parent], 1
+
+    mov rax, [r10 + 32 + ASMWEB_CAPACITY_DEPENDENCY_NODE.capacity_id]
+    mov [r11 + 24 + ASMWEB_CAPACITY_DEPENDENCY_EDGE.parent_capacity_id], rax
+
+    mov rax, [r10 + 64 + ASMWEB_CAPACITY_DEPENDENCY_NODE.capacity_id]
+    mov [r11 + 24 + ASMWEB_CAPACITY_DEPENDENCY_EDGE.child_capacity_id], rax
+
+    mov qword [r11 + 24 + ASMWEB_CAPACITY_DEPENDENCY_EDGE.units_per_parent], 1
+
+    ; READY is forbidden if these relationships do not fit.
+    mov rdi, r10
+    mov esi, 3
+    mov rdx, r11
+    mov ecx, 2
     lea r8, [rsp + 104]
     call asm_capacity_dependency_validate_diagnose
 
@@ -369,6 +460,7 @@ asm_runtime_main:
     jne .failure
 
 
+    ; -----------------------------------------------------------------------
     ; -----------------------------------------------------------------------
     ; Publish the real production process READY state.
     ;
@@ -393,7 +485,8 @@ asm_runtime_main:
     ; The view is temporary stack-local state. It borrows authoritative
     ; runtime objects and owns none of them.
     ;
-    ; Current production dependency graph remains canonically empty.
+    ; The same production HTTP dependency graph is checked again
+    ; as part of the composed global READY invariant.
     ; -----------------------------------------------------------------------
 
     lea r10, [rsp + 8]
@@ -409,10 +502,15 @@ asm_runtime_main:
     mov rax, [rsp]
     mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.registry_ptr], rax
 
-    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_nodes_ptr], 0
-    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_node_count], 0
-    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_edges_ptr], 0
-    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_edge_count], 0
+    lea rax, [rsp + 152]
+    mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_nodes_ptr], rax
+
+    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_node_count], 3
+
+    lea rax, [rsp + 248]
+    mov [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_edges_ptr], rax
+
+    mov qword [r10 + ASMWEB_RUNTIME_INVARIANT_VIEW.dependency_edge_count], 2
 
     mov rdi, r10
     lea rsi, [rsp + 104]
@@ -495,7 +593,7 @@ asm_runtime_main:
     mov eax, 1
 
 .restore:
-    add rsp, 152
+    add rsp, 296
 
     pop r15
     pop r14
