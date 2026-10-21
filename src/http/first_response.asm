@@ -2,6 +2,8 @@ bits 64
 
 %include "asmweb/abi.inc"
 %include "asmweb/http_first.inc"
+%include "asmweb/registry.inc"
+%include "asmweb/production_registry.inc"
 %include "asmweb/time.inc"
 %include "linux/network.inc"
 
@@ -16,7 +18,8 @@ global asm_http_serve_forever
 extern asm_linux_socket
 extern asm_linux_bind
 extern asm_linux_listen
-extern asm_linux_accept
+extern asm_linux_accept4
+extern asm_production_registry_get
 extern asm_linux_recv
 extern asm_linux_send
 extern asm_linux_close
@@ -217,13 +220,51 @@ asm_http_serve_common:
     ; [rsp+0]  = immutable request start (32 bytes)
     ; [rsp+32] = current time sample (32 bytes)
     ; [rsp+64] = remaining timeval (16 bytes)
-    ; [rsp+80] = reserved (8 bytes)
+    ; [rsp+80] = borrowed accepted-resource RCT entry (8 bytes)
     ; [rsp+88] = immutable response start (32 bytes)
     sub rsp, 120
 
     mov r12, -1
     mov r13, -1
     mov ebp, 1
+    mov qword [rsp + 80], 0
+
+    ; The currently implemented HTTP engine owns exactly one
+    ; listener and processes exactly one accepted client at a
+    ; time. Refuse to run with a conflicting published RCT.
+    call asm_production_registry_get
+    test rax, rax
+    jz .cleanup
+
+    cmp qword [rax + ASMWEB_REGISTRY_VALIDATION_SET.rct_count],         ASMWEB_PRODUCTION_RCT_COUNT
+    jne .cleanup
+
+    mov r10, [rax + ASMWEB_REGISTRY_VALIDATION_SET.rct_ptr]
+    test r10, r10
+    jz .cleanup
+
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.resource_id],         ASMWEB_PROD_RESOURCE_HTTP_LISTENER
+    jne .cleanup
+
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.configured_capacity], 1
+    jne .cleanup
+
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.physical_capacity], 1
+    jne .cleanup
+
+    lea r11, [r10 + ASMWEB_RCT_VALIDATION_ENTRY_size]
+
+    cmp qword [r11 + ASMWEB_RCT_VALIDATION_ENTRY.resource_id],         ASMWEB_PROD_RESOURCE_HTTP_ACCEPTED
+    jne .cleanup
+
+    cmp qword [r11 + ASMWEB_RCT_VALIDATION_ENTRY.configured_capacity], 1
+    jne .cleanup
+
+    cmp qword [r11 + ASMWEB_RCT_VALIDATION_ENTRY.physical_capacity], 1
+    jne .cleanup
+
+    ; Borrow the existing resource entry. No allocation.
+    mov [rsp + 80], r11
 
     ; socket(AF_INET, SOCK_STREAM|CLOEXEC, IPPROTO_TCP)
     mov edi, LINUX_AF_INET
@@ -257,19 +298,37 @@ asm_http_serve_common:
     test rax, rax
     js .cleanup
 
-    ; Listen for one queued connection.
+    ; The kernel backlog is derived from the admitted
+    ; single-listener capacity, not an unrelated constant.
     mov rdi, r12
-    mov esi, 1
+    mov esi, ASMWEB_M1_ACCEPTED_FD_CAPACITY
     call asm_linux_listen
 
     test rax, rax
     js .cleanup
 
 .accept:
+    ; R13 is the live-slot ownership marker:
+    ; -1 = free; nonnegative = exactly one owned descriptor.
+    ; Never acquire a second client while the slot is occupied.
+    cmp r13, -1
+    jne .cleanup
+
+    mov r10, [rsp + 80]
+    test r10, r10
+    jz .cleanup
+
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.configured_capacity], 1
+    jne .cleanup
+
+    cmp qword [r10 + ASMWEB_RCT_VALIDATION_ENTRY.physical_capacity], 1
+    jne .cleanup
+
     mov rdi, r12
     xor esi, esi
     xor edx, edx
-    call asm_linux_accept
+    mov ecx, LINUX_SOCK_CLOEXEC
+    call asm_linux_accept4
 
     cmp rax, -4             ; EINTR
     je .accept
