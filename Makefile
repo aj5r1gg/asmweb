@@ -1293,3 +1293,27 @@ qualify-udp-batch-mutations: \
     $(UDP_BATCH_BOUNDS_TARGET) \
     $(UDP_BATCH_TRANSFER_TARGET)
 	python3 tests/qualification/udp_batch_mutations.py
+
+# ---------------------------------------------------------------------------
+# NET-005 — checked connected-UDP descriptor profile
+# ---------------------------------------------------------------------------
+
+UDP_CHECKED_SOURCE := tests/qualification/udp_checked_descriptors.asm
+UDP_CHECKED_OBJECT := $(BUILD_DIR)/tests/qualification/udp_checked_descriptors.o
+UDP_CHECKED_TARGET := $(BUILD_DIR)/qualification/udp-checked-descriptors
+
+$(UDP_CHECKED_OBJECT): $(UDP_CHECKED_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(UDP_CHECKED_TARGET): \
+		$(BUILD_DIR)/linux/network.o \
+		$(UDP_CHECKED_OBJECT)
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-udp-checked-descriptors
+qualify-udp-checked-descriptors: $(UDP_CHECKED_TARGET)
+	timeout 5s $(UDP_CHECKED_TARGET)
+
+-include $(UDP_CHECKED_OBJECT:.o=.d)

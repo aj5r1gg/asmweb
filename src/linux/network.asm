@@ -16,6 +16,8 @@ global asm_linux_recvmmsg
 global asm_linux_sendmmsg
 global asm_linux_recvmmsg_bounded
 global asm_linux_sendmmsg_bounded
+global asm_linux_recvmmsg_checked
+global asm_linux_sendmmsg_checked
 global asm_linux_close
 global asm_linux_setsockopt
 global asm_linux_getsockname
@@ -213,6 +215,128 @@ asm_linux_sendmmsg_bounded:
 .invalid:
     mov rax, -LINUX_EINVAL
     ret
+
+
+; NET-005: checked connected-UDP descriptor profile.
+;
+; The raw and count-bounded entry points remain unchanged.
+; ABI is the same as their respective raw wrappers.
+;
+; Caller obligations:
+;   - mmsghdr array covers RDX * 64 accessible bytes;
+;   - every nested iovec pointer addresses a valid iovec;
+;   - referenced payload buffers have their declared capacity;
+;   - descriptors remain stable throughout validation/syscall;
+;   - external capacity ownership/accounting remains with caller.
+;
+; These are ordinary in-process trusted-pointer entry points,
+; not validators for hostile or unmapped user-space addresses.
+;
+; Checked profile:
+;   - 1..16 messages
+;   - msg_name == NULL and msg_namelen == 0
+;   - exactly one iovec with a nonnull base
+;   - iov_len <= 65507
+;   - no ancillary control buffer
+;
+; Reject invalid metadata with -EINVAL before syscall dispatch.
+; No allocation, copying, descriptor transfer or implicit retry.
+
+asm_linux_recvmmsg_checked:
+    test rsi, rsi
+    jz .invalid
+    test rdx, rdx
+    jz .invalid
+    cmp rdx, ASMWEB_UDP_BATCH_MAX
+    ja .invalid
+
+    mov r11, rsi
+    mov r9, rdx
+
+.validate:
+    cmp qword [r11], 0
+    jne .invalid
+
+    cmp dword [r11 + 8], 0
+    jne .invalid
+
+    cmp qword [r11 + ASMWEB_LINUX_MSG_IOVLEN_OFFSET],         ASMWEB_UDP_CHECKED_IOV_MAX
+    jne .invalid
+
+    cmp qword [r11 + ASMWEB_LINUX_MSG_CONTROL_OFFSET], 0
+    jne .invalid
+
+    cmp qword [r11 + ASMWEB_LINUX_MSG_CONTROLLEN_OFFSET], 0
+    jne .invalid
+
+    mov rax, [r11 + ASMWEB_LINUX_MSG_IOV_OFFSET]
+    test rax, rax
+    jz .invalid
+
+    cmp qword [rax], 0
+    je .invalid
+
+    cmp qword [rax + 8], ASMWEB_UDP_CHECKED_PAYLOAD_MAX
+    ja .invalid
+
+    add r11, ASMWEB_LINUX_MMSGHDR_BYTES
+    dec r9
+    jnz .validate
+
+    jmp asm_linux_recvmmsg
+
+.invalid:
+    mov rax, -LINUX_EINVAL
+    ret
+
+
+asm_linux_sendmmsg_checked:
+    test rsi, rsi
+    jz .invalid
+    test rdx, rdx
+    jz .invalid
+    cmp rdx, ASMWEB_UDP_BATCH_MAX
+    ja .invalid
+
+    mov r11, rsi
+    mov r9, rdx
+
+.validate:
+    cmp qword [r11], 0
+    jne .invalid
+
+    cmp dword [r11 + 8], 0
+    jne .invalid
+
+    cmp qword [r11 + ASMWEB_LINUX_MSG_IOVLEN_OFFSET],         ASMWEB_UDP_CHECKED_IOV_MAX
+    jne .invalid
+
+    cmp qword [r11 + ASMWEB_LINUX_MSG_CONTROL_OFFSET], 0
+    jne .invalid
+
+    cmp qword [r11 + ASMWEB_LINUX_MSG_CONTROLLEN_OFFSET], 0
+    jne .invalid
+
+    mov rax, [r11 + ASMWEB_LINUX_MSG_IOV_OFFSET]
+    test rax, rax
+    jz .invalid
+
+    cmp qword [rax], 0
+    je .invalid
+
+    cmp qword [rax + 8], ASMWEB_UDP_CHECKED_PAYLOAD_MAX
+    ja .invalid
+
+    add r11, ASMWEB_LINUX_MMSGHDR_BYTES
+    dec r9
+    jnz .validate
+
+    jmp asm_linux_sendmmsg
+
+.invalid:
+    mov rax, -LINUX_EINVAL
+    ret
+
 
 ; getsockname(fd, sockaddr*, socklen_t*)
 ; RDI=descriptor

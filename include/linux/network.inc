@@ -20,6 +20,16 @@
 ; Provisional M1 UDP batch upper bound.
 ; Not yet an approved effective limit.
 %define ASMWEB_UDP_BATCH_MAX 16
+
+; Provisional checked connected-UDP descriptor profile.
+; These are engineering limits, not approved LIM identities.
+%define ASMWEB_UDP_CHECKED_IOV_MAX 1
+%define ASMWEB_UDP_CHECKED_PAYLOAD_MAX 65507
+%define ASMWEB_LINUX_MMSGHDR_BYTES 64
+%define ASMWEB_LINUX_MSG_IOV_OFFSET 16
+%define ASMWEB_LINUX_MSG_IOVLEN_OFFSET 24
+%define ASMWEB_LINUX_MSG_CONTROL_OFFSET 32
+%define ASMWEB_LINUX_MSG_CONTROLLEN_OFFSET 40
 %define LINUX_EINVAL 22
 %define LINUX_SOCK_CLOEXEC 0x80000
 %define LINUX_SOL_SOCKET 1
