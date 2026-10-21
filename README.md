@@ -8,20 +8,25 @@ AsmWeb explores a simple engineering question: how much useful web-serving infra
 
 The purpose is **not** to claim that assembly is inherently faster, more secure, or a better choice than established web servers. It is to construct a narrowly scoped server whose behaviour can be understood, measured, and challenged at the syscall, runtime, and HTTP levels.
 
-**Current status:** Experimental M1 development. The repository contains a functioning loopback-only HTTP server and substantial low-level and integration qualification. **It is not production-ready, and it is not yet protected against slow clients by an enforced absolute request deadline.**
+**Current status:** Experimental M1 development. AsmWeb is a
+working Linux x86-64 assembly web server with a persistent,
+loopback-only HTTP listener, a small multi-page static website,
+bounded request acquisition, and TCP/UDP networking primitives.
+
+AsmWeb is **not yet production-ready** or formally
+milestone-qualified.
 
 ## Quick start
 
 ### Requirements
 
-- Linux on **x86-64** (the assembly and syscalls are Linux-specific)
-- **NASM**
-- GNU **make** and **ld** (typically supplied by binutils)
-- **Python 3** for integration tests
-- `timeout` from GNU coreutils for selected qualification targets
-- **Git** to clone the repository
+- Linux on x86-64
+- NASM
+- GNU make and GNU ld (binutils)
+- Git
+- Python 3 and GNU `timeout` for selected development checks
 
-The primary build uses NASM and GNU `ld`; it does not require a C compiler to link the server.
+AsmWeb builds without requiring a C compiler.
 
 ```bash
 git clone https://github.com/aj5r1gg/asmweb.git
@@ -30,38 +35,73 @@ make -j2 all
 ./build/asmweb
 ```
 
-In another terminal:
+Leave the server running. Open Firefox at:
+
+**http://127.0.0.1:18080/**
+
+Or use another terminal:
 
 ```bash
-curl --http1.1 -i http://127.0.0.1:18080/
+curl --noproxy '*' -i http://127.0.0.1:18080/
+curl --noproxy '*' -i http://127.0.0.1:18080/about.html
 ```
 
-Run the executable **from the repository root**: the current file-backed response opens `www/index.html` relative to the process working directory. Stop the server with Ctrl+C.
+Stop AsmWeb with **Ctrl+C**.
 
-The listener is fixed to **127.0.0.1:18080**; it is not a general network-facing deployment configuration.
+The server currently listens on **127.0.0.1:18080**.
+Run it from the repository root because the website files
+are resolved relative to the working directory.
 
 ## What works today
 
 ### HTTP serving
 
-- A persistent, **sequential** TCP listener on IPv4 loopback.
-- A constrained `GET / HTTP/1.1` request path.
-- A required, single `Host` header with supported localhost values.
-- File-backed responses from `www/index.html` with a fixed **4,096-byte maximum page size**.
-- Connection-closing responses with explicit `Content-Length`.
-- Responses for the implemented success and rejection cases, including **200**, **400**, and **431**; file errors include **404** and **500** handling.
-- Bounded request acquisition using a **1,024-byte header buffer**.
-- Correct handling of headers split across multiple socket reads.
-- Partial-write handling during response transmission.
-- Recovery after incomplete requests, client half-closes, and accepted-client receive timeouts.
+AsmWeb currently implements:
 
-This is a **restricted HTTP/1.1 implementation**, not a complete HTTP/1.1 server. In particular, arbitrary routes, request bodies, keep-alive, pipelining, TLS, and general-purpose virtual hosting are not currently implemented. The application closes connections after a response.
+- A persistent, sequential TCP listener on IPv4 loopback.
+- Restricted HTTP/1.1 `GET` request processing.
+- Bounded request headers, with a 1,024-byte buffer.
+- A three-second absolute request-acquisition deadline.
+- Request-header handling across multiple socket reads.
+- A required single `Host` header.
+- Explicit `Content-Length` responses.
+- Partial-write handling and connection cleanup.
+- Static-file responses with a 4,096-byte per-file capacity.
+- Fixed-path routing and URL query-string handling.
+- HTTP responses including 200, 400, 404, 431 and 500.
+
+The current website contains:
+
+| URL | File | Content type |
+| --- | --- | --- |
+| `/` | `www/index.html` | HTML |
+| `/about.html` | `www/about.html` | HTML |
+| `/style.css` | `www/style.css` | CSS |
+| `/favicon.ico` | `www/favicon.ico` | Icon |
+
+Query parameters are separated from the resource path.
+For example, `/?utm_source=chatgpt.com` resolves to the
+home-page resource.
+
+**Current limitations:** This is not a complete HTTP/1.1
+implementation. Arbitrary filesystem routing, dynamic content,
+request bodies, keep-alive, pipelining, TLS and virtual hosting
+are not implemented.
+
+The route table is deliberately fixed. Unknown paths return 404.
 
 ### Linux networking primitives
 
 The codebase exposes small wrappers for Linux socket operations, including socket creation, bind, listen, accept, `accept4`, receive, send, datagram send/receive, socket options, socket identity queries, and close.
 
 Wrappers follow the project's internal calling convention and expose **raw Linux syscall results** rather than silently retrying operations or translating errors. Newly acquired descriptors are owned by the caller; operations that inspect or use a descriptor borrow it; close consumes it.
+
+The networking layer also provides native `recvmmsg`
+and `sendmmsg` wrappers, together with bounded entry points
+using a provisional maximum of **16 datagrams per batch**.
+
+These are networking primitives, not yet a complete
+application-level UDP transport.
 
 The networking test suite exercises actual sockets and syscalls, including TCP and UDP loopback, stream fragmentation, nonblocking short writes, truncation and error paths, descriptor cleanup, and signal-driven `EINTR`.
 
@@ -71,29 +111,34 @@ AsmWeb has a substantial runtime foundation alongside the HTTP prototype. The re
 
 The existing monotonic-clock routine obtains `CLOCK_MONOTONIC`, validates the sample, and converts it to an overflow-checked unsigned nanosecond representation. A separate **deadline arithmetic** module computes remaining time and a positive Linux `timeval`, with explicit active, expired, and invalid results.
 
-**Important distinction:** Deadline arithmetic has been implemented and locally qualified, but it has **not yet been wired into the HTTP receive loop**. A client sending bytes at intervals shorter than the socket's idle timeout can still occupy the sequential server for more than three seconds.
+The HTTP receive loop now uses monotonic-clock sampling
+and deadline arithmetic to enforce a non-resetting
+three-second request-acquisition budget.
+
+This is implemented functionality. It does not imply
+complete HTTP protocol conformance or production readiness.
 
 ## Explicit limits and current boundaries
 
 | Area | Current boundary |
 | --- | --- |
 | Platform | Linux x86-64 |
-| Binding | IPv4 loopback, `127.0.0.1:18080` |
-| Concurrency | One accepted connection processed at a time |
-| Supported request | Restricted HTTP/1.1 `GET /` |
-| Request header buffer | 1,024 bytes |
-| Served file | `www/index.html` relative to working directory |
-| Served file size | Up to 4,096 bytes |
-| Socket receive/send idle timeout | 3 seconds per blocking operation |
-| Absolute HTTP request-acquisition deadline | **Not yet enforced** |
+| Listener | 127.0.0.1:18080 |
+| Concurrency | One accepted client at a time |
+| HTTP method | Restricted GET |
+| Routes | Four explicitly recognised resources |
+| Request-header capacity | 1,024 bytes |
+| Static-file capacity | 4,096 bytes per resource |
+| Request-acquisition deadline | 3 seconds |
+| Socket send timeout | 3 seconds |
+| UDP batch size | Provisional maximum of 16 |
 | TLS | Not implemented |
-| General routing / dynamic content | Not implemented |
-| HTTP persistent connections / pipelining | Not implemented |
-| Deployment status | Experimental; loopback development use |
+| Dynamic content | Not implemented |
+| Keep-alive and pipelining | Not implemented |
+| Deployment status | Experimental, local development |
 
-A 3-second **idle timeout** is **not** a 3-second **total request deadline**. An accepted client that periodically delivers more data can still prevent the sequential server from servicing another request. This limitation has been reproduced in an integration probe and is a current M1 work item.
-
-Likewise, successful local tests are not a substitute for production hardening, comprehensive protocol conformance, fuzzing, external security review, or deployment-specific performance measurement.
+These are implementation boundaries, not a declaration
+of production readiness or formal milestone closure.
 
 ## Build and qualification
 
@@ -122,6 +167,9 @@ make qualify-network-error-paths
 make qualify-stream-fragments
 make qualify-stream-short-write
 make qualify-network-eintr
+make qualify-udp-batch-transfer
+make qualify-udp-batch-bounds
+make qualify-udp-batch-mutations
 make qualify-http-descriptor-lifecycle
 make qualify-http-descriptor-mutations
 ```
@@ -138,13 +186,6 @@ The HTTP descriptor mutation qualification deliberately changes cleanup behaviou
 
 GitHub Actions runs the project build and registered qualification targets. See [the CI workflow](.github/workflows/ci.yml) for the authoritative current command list.
 
-The latest locally verified revision for this README update is:
-
-```text
-6aab023 feat(time): add qualified deadline arithmetic
-```
-
-The deadline arithmetic changes passed local qualification and GitHub Actions on `main` (commit `6aab023`, workflow run `39399296594`). A successful CI run verifies its executed checks; it does not establish production readiness or formal milestone closure.
 
 ## Milestone and qualification governance
 
@@ -199,7 +240,7 @@ milestone closure.
 | `tests/qualification/` | NASM-level component and invariant qualifications |
 | `tests/integration/` | End-to-end tests using the actual server executable |
 | `qualification/` | Qualification records, checkpoints and reconciliation tooling |
-| `www/index.html` | Current page served by `GET /` |
+| `www/` | HTML pages, CSS and favicon served by AsmWeb |
 | `.github/workflows/ci.yml` | CI build and qualification sequence |
 | `Makefile` | Build and test targets |
 
@@ -221,15 +262,33 @@ The implementation is intentionally explicit. That is part of the exercise, not 
 
 ## Development status and next work
 
-**Current development phase: M1 — networking and HTTP robustness.**
+**Current phase: M1 — networking and HTTP development.**
 
-Completed and locally verified increments include UDP and TCP loopback primitives; `accept4`; endpoint identity wrappers; nonblocking error cases; fragmented streams and partial writes; signal-driven `EINTR`; persistent-listener survival after client I/O failures; and checked deadline arithmetic.
+Implemented engineering checkpoints include:
 
-The next important work is to connect the existing monotonic clock and deadline arithmetic to the HTTP receive loop and prove a **non-resettable request-acquisition deadline**. Acceptance must include a slow client being disconnected at the bounded deadline, the waiting legitimate request subsequently being served, ordinary fragmented requests continuing to work, and descriptor cleanup remaining correct.
+- Linux TCP/UDP networking primitives.
+- Bounded UDP batch send and receive operations.
+- A persistent HTTP listener.
+- An absolute HTTP request-acquisition deadline.
+- Multi-page static website serving.
+- Query-string handling for recognised paths.
 
-Further work includes more complete send-side deadline analysis, explicit protocol limitations, stronger adversarial testing, runtime measurements, and milestone qualification against the project specifications.
+The application has been demonstrated in Firefox and through
+real HTTP requests.
 
-**Do not treat a completed arithmetic primitive as a completed HTTP deadline feature.**
+The next application-oriented objective is **general-purpose,
+bounded static-file serving**, avoiding the need to hardcode
+each website resource into the assembly source.
+
+Development follows a practical cycle:
+
+**Implement → demonstrate → verify sufficiently → commit → advance.**
+
+Tests and specifications support application delivery.
+They are not substitutes for it.
+
+Formal milestone qualification remains separate from
+engineering commits and feature completion.
 
 ## Project intent
 
