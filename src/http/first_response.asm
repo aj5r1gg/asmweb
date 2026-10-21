@@ -222,7 +222,9 @@ asm_http_serve_common:
     ; [rsp+64] = remaining timeval (16 bytes)
     ; [rsp+80] = borrowed accepted-resource RCT entry (8 bytes)
     ; [rsp+88] = immutable response start (32 bytes)
-    sub rsp, 120
+    ; [rsp+120] = Linux x86-64 struct stat (144 bytes)
+    ; Total 264 bytes preserves CALL alignment.
+    sub rsp, 264
 
     mov r12, -1
     mov r13, -1
@@ -729,13 +731,14 @@ asm_http_serve_common:
     je .page_open
     lea r14, [rel page_path_icon]
 
-    ; openat(AT_FDCWD, selected resource,
-    ;        O_RDONLY|O_CLOEXEC|O_NOFOLLOW, 0)
+    ; Open fixed routes without following final symlinks.
+    ; O_NONBLOCK also prevents a FIFO pathname from blocking
+    ; the single-threaded listener during open().
 .page_open:
     mov eax, 257
     mov edi, -100
     mov rsi, r14
-    mov edx, 0xA0000
+    mov edx, 0xA0800
     xor r10d, r10d
     syscall
 
@@ -746,7 +749,28 @@ asm_http_serve_common:
     test rax, rax
     js .page_error
 
-    mov r15, rax                ; File descriptor
+    mov r15, rax                ; Owned file descriptor
+
+    ; Verify the opened object, not merely its pathname.
+    ; Linux x86-64 struct stat: st_mode is at offset 24.
+    ; S_IFMT=0xF000 and S_IFREG=0x8000.
+    ;
+    ; This excludes directories, FIFOs, devices and sockets.
+    ; A failed check consumes the descriptor through the
+    ; existing .page_read_error cleanup path.
+    mov eax, 5                 ; fstat
+    mov rdi, r15
+    lea rsi, [rsp + 120]
+    syscall
+
+    test rax, rax
+    js .page_read_error
+
+    mov eax, [rsp + 120 + 24]
+    and eax, 0xF000
+    cmp eax, 0x8000
+    jne .page_read_error
+
     xor ebx, ebx               ; Accumulated file bytes
 
 .page_read:
@@ -984,7 +1008,7 @@ asm_http_serve_common:
 
 .return:
     mov eax, ebp
-    add rsp, 120
+    add rsp, 264
     pop r15
     pop r14
     pop r13
