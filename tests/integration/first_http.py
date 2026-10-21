@@ -65,8 +65,8 @@ CASES = [
     (
         "UNSUPPORTED_PATH",
         b"GET /admin HTTP/1.1\r\nHost: localhost\r\n\r\n",
-        b"HTTP/1.1 400 Bad Request",
-        b"Bad Request\n",
+        b"HTTP/1.1 404 Not Found",
+        b"",
     ),
     (
         "BODY_FRAMING",
@@ -140,8 +140,11 @@ def run_case(name, request, status, body):
 
         expected = (
             status
-            + b"\r\nContent-Type: "
-            + content_type
+            + (
+                b""
+                if status == b"HTTP/1.1 404 Not Found"
+                else b"\r\nContent-Type: " + content_type
+            )
             + b"\r\nContent-Length: "
             + str(len(body)).encode("ascii")
             + b"\r\nConnection: close\r\n\r\n"

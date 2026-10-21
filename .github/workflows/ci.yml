@@ -57,6 +57,9 @@ jobs:
           make qualify-stream-fragments
           make qualify-stream-short-write
           make qualify-network-eintr
+          make qualify-udp-batch-transfer
+          make qualify-udp-batch-bounds
+          make qualify-udp-batch-mutations
           make qualify-deadline
           make qualify-checkpoint-reconciliation
           make qualify-checkpoint-reconciliation-adversarial
