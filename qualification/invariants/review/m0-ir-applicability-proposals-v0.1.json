@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "document_type": "ASMWEB_IR_APPLICABILITY_PROPOSALS",
+  "status": "NON_AUTHORITATIVE_ENGINEERING_REVIEW",
+  "source_document": "AsmWeb — Invariants & Limits Register v0.3",
+  "proposal_count": 20,
+  "m0_candidate_proposal_count": 10,
+  "later_review_proposal_count": 10,
+  "existing_controlled_assessment_unchanged": true,
+  "entries": [
+    {
+      "invariant_id": "INV-GOV-004",
+      "normative_statement": "This specification SHALL NOT redefine Runtime-owned object layouts, pool mechanics or resource-management algorithms.",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "Specification authority boundaries govern the M0 foundation; verify that IR metadata does not redefine Runtime layouts or mechanics.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-GOV-005",
+      "normative_statement": "This register SHALL NOT invent numerical values merely to eliminate an unresolved decision.",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "The M0 limit derivation must not manufacture numerical constants to conceal unresolved engineering or authority decisions.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-GOV-007",
+      "normative_statement": "UNRESOLVED SHALL mean that a decision remains unresolved; it SHALL NOT mean that runtime behaviour may be unbounded.",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "M0 registry interpretation must distinguish an unresolved decision from an enforceable unbounded runtime allowance.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-GOV-008",
+      "normative_statement": "Capacity, work, rate and deadline limits SHALL NOT be treated as interchangeable controls.",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "The M0 register and effective-limit evaluation must retain distinct semantics for capacity, work, rate and deadline quantities.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-GOV-009",
+      "normative_statement": "An effective limit SHALL NOT exceed an applicable hard protocol, platform, provider, build or dependency constraint.",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "M0 configuration and capacity derivation must not exceed applicable hard build, platform or dependency constraints.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-GOV-APP-002",
+      "normative_statement": "A non-applicable limit SHALL NOT be treated as unresolved.",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "M0 applicability evaluation must distinguish a demonstrably non-applicable limit from an unresolved applicable limit.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-GOV-APP-003",
+      "normative_statement": "The Effective Limit Manifest SHALL include the applicable subset for the identified build/configuration.",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "The M0 Effective Limit Manifest must select applicable entries for the identified binary and configuration, once authoritative.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-GOV-STD-001",
+      "normative_statement": "A standards-derived limit SHALL NOT rely solely on undocumented institutional memory for its origin.",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "Any standards-derived limit asserted by M0 must carry traceable provenance rather than depend on undocumented assumptions.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-CAP-002",
+      "normative_statement": "advertised_capacity ≤ configured_capacity",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "Investigate whether the M0 registry or startup configuration advertises capacities, and if so verify advertised versus configured.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-CAP-003",
+      "normative_statement": "ordinary_usable_capacity + protected_reserves ≤ physical_capacity",
+      "proposed_disposition": "M0_CANDIDATE",
+      "applicability_rationale": "Investigate whether M0 provisioned storage implements protected reserves, and if so reconcile ordinary and reserve capacities.",
+      "first_required_milestone": "M0",
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-RAT-SEM-001",
+      "normative_statement": "A rate value without defined interval/window semantics SHALL NOT constitute a complete enforceable rate limit.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "Rate limiting requires an interval model; first mandatory scope depends on when an enforceable runtime rate limit is introduced.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-GOV-RATIO-001",
+      "normative_statement": "A rational threshold SHALL define exact operands and rounding semantics.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "A rational-threshold evaluator needs exact operand and rounding semantics; inspect M0 registry features before assigning ownership.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-H1-001",
+      "normative_statement": "An accepted H1 request SHALL have one unambiguous framing interpretation.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "Unambiguous HTTP/1 request framing becomes mandatory when HTTP/1 request acceptance is implemented, not merely at bootstrap.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-H2-001",
+      "normative_statement": "Peer-advertised/requested values SHALL NOT force AsmWeb beyond effective provisioned capacity.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "HTTP/2 peer-driven capacity enforcement becomes mandatory with HTTP/2 admission and protocol support.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-HPK-001",
+      "normative_statement": "HPACK dynamic state SHALL remain within its authoritative memory bound.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "HPACK dynamic-table storage applies once the HTTP/2 header compression implementation is present.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-HPK-002",
+      "normative_statement": "HPACK decoding SHALL remain within semantic-output and work limits.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "HPACK decoding output and work bounds apply when HPACK decoding becomes an implemented protocol feature.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-H3-001",
+      "normative_statement": "Unknown but permitted H3 frames SHALL remain resource-accounted.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "Unknown permitted HTTP/3 frame accounting depends on the HTTP/3 frame-processing implementation.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-QPK-001",
+      "normative_statement": "QPACK blocked-stream state SHALL remain bounded.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "QPACK blocked-stream state is relevant when HTTP/3 QPACK blocked-stream processing is introduced.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-QPK-002",
+      "normative_statement": "QPACK table state SHALL remain bounded.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "QPACK table-state bounds are relevant to an implemented HTTP/3 QPACK dynamic table.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    },
+    {
+      "invariant_id": "INV-QPK-003",
+      "normative_statement": "QPACK decoding SHALL remain within semantic-output and work limits.",
+      "proposed_disposition": "LATER_REVIEW",
+      "applicability_rationale": "QPACK decoding work and semantic-output bounds apply when HTTP/3 QPACK decoding becomes available.",
+      "first_required_milestone": null,
+      "semantic_review_status": "PROPOSAL_REQUIRES_REVIEW",
+      "machine_expression": null,
+      "qualification_evidence_refs": [],
+      "normative_approval": false
+    }
+  ]
+}
