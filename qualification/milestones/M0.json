@@ -39,13 +39,15 @@
     "qualification/qrr/qrr-membership-v0.3.json",
     "qualification/qrr/qrr-source-v0.3.json",
     "qualification/tools/qrr_authority.py",
-    "qualification/invariants/ir-normative-source-v0.3.json"
+    "qualification/invariants/ir-normative-source-v0.3.json",
+    "qualification/limits/m0-effective-configuration-v0.1.json"
   ],
   "notes": [
     "Runtime & Memory §78 implementation machinery is substantially present.",
     "This record SHALL NOT be interpreted as M0 qualification or closure.",
     "Formal closure requires all mandatory M0 blockers to receive valid dispositions.",
     "M0-BLOCK-QRR implementation-authority blocker disposition: the canonical 234-rule QRR is populated from six controlled slices; existing QRR authority and qualification-foundation validators passed. Normative rule execution and milestone qualification remain independently subject to their applicable evidence requirements.",
-    "M0-BLOCK-IR progress: the complete inventory of 144 normative INV-* source statements from Invariants & Limits Register v0.3 is now under repository control. The existing 11-entry runtime READY implementation trace is distinct from this normative inventory. Applicability, implementation mappings and qualification dispositions remain to be reconciled before IR authority and M0 closure."
+    "M0-BLOCK-IR progress: the complete inventory of 144 normative INV-* source statements from Invariants & Limits Register v0.3 is now under repository control. The existing 11-entry runtime READY implementation trace is distinct from this normative inventory. Applicability, implementation mappings and qualification dispositions remain to be reconciled before IR authority and M0 closure.",
+    "M0 configuration progress: a deterministic effective configuration identity is derived from the production binary, NASM-resolved nine-entry MOT projection, exact configured capacities and dependency provenance. Its numerical implementation projection is published and independently reproducible. Normative LIM-* mapping, authoritative ELM adoption, applicability and formal qualification remain outstanding."
   ]
 }
