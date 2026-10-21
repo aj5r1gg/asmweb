@@ -1354,3 +1354,9 @@ qualify-m0-lr-evidence:
 .PHONY: qualify-m0-governance-trace
 qualify-m0-governance-trace:
 	python3 -B tests/qualification/m0_governance_trace.py
+
+# M0 fail-closed qualification preflight
+.PHONY: qualify-m0-closure-gate
+qualify-m0-closure-gate:
+	python3 -B qualification/tools/m0_closure_gate.py audit
+	python3 -B tests/qualification/m0_closure_gate.py
