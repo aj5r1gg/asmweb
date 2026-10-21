@@ -30,7 +30,7 @@ extern asm_startup_memory_account_init
 extern asm_startup_memory_account_baseline
 
 extern asm_memory_direct_capacity_from_mot
-extern asm_capacity_dependency_validate
+extern asm_capacity_dependency_validate_diagnose
 extern asm_diagnostic_init
 extern asm_runtime_ready_validate_diagnose
 
@@ -360,7 +360,10 @@ asm_runtime_main:
     xor edx, edx
     xor ecx, ecx
 
-    call asm_capacity_dependency_validate
+    ; Use the existing initialized diagnostic record.
+    ; Preserve the original dependency validation result.
+    lea r8, [rsp + 104]
+    call asm_capacity_dependency_validate_diagnose
 
     cmp eax, ASMWEB_RESOURCE_OK
     jne .failure
