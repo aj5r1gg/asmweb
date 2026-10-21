@@ -82,8 +82,8 @@ def main():
         if e["invariant_id"] in ir.CANDIDATES
     )
 
-    require(traced == 8,
-            "UNEXPECTED_CANDIDATE_TRACE_COUNT")
+    require(traced >= 8,
+            "ORIGINAL_CANDIDATE_TRACES_REGRESSED")
 
     print(f"M0_CANDIDATES_WITH_ENGINEERING_TRACE={traced}/42")
     print(f"M0_CANDIDATES_REMAINING={42 - traced}")

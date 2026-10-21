@@ -154,8 +154,12 @@
       "invariant_id": "INV-GOV-EXPR-001",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "qualification/tools/effective_limit_engine.py"
+      ],
+      "qualification_refs": [
+        "qualify-mot-ceiling-integration"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
@@ -163,8 +167,12 @@
       "invariant_id": "INV-GOV-EXPR-002",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "src/runtime/config_dependency.asm"
+      ],
+      "qualification_refs": [
+        "qualify-config-dependency"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
@@ -217,8 +225,12 @@
       "invariant_id": "INV-CAP-001",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "src/runtime/config_dependency.asm"
+      ],
+      "qualification_refs": [
+        "qualify-config-dependency"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
@@ -329,8 +341,14 @@
       "invariant_id": "INV-CAP-005",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "src/runtime/config_dependency.asm",
+        "src/runtime/arithmetic.asm"
+      ],
+      "qualification_refs": [
+        "qualify-config-dependency",
+        "qualify-arithmetic"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
@@ -437,8 +455,12 @@
       "invariant_id": "INV-ACC-001",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "src/runtime/mapping_capacity.asm"
+      ],
+      "qualification_refs": [
+        "qualify-mapping-capacity"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
@@ -455,8 +477,12 @@
       "invariant_id": "INV-ACC-003",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "src/runtime/mapping_capacity.asm"
+      ],
+      "qualification_refs": [
+        "qualify-mapping-capacity"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
@@ -671,8 +697,14 @@
       "invariant_id": "INV-MEM-010",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "src/runtime/memory_ceiling.asm",
+        "qualification/tools/effective_limit_engine.py"
+      ],
+      "qualification_refs": [
+        "qualify-memory-ceiling",
+        "qualify-mot-ceiling-integration"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
@@ -1252,8 +1284,12 @@
       "invariant_id": "INV-GOV-MANIFEST-002",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "qualification/tools/production_limit_manifest.py"
+      ],
+      "qualification_refs": [
+        "qualify-production-limit-manifest"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
