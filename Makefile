@@ -1349,3 +1349,8 @@ qualify-udp-checked-mutations: $(BUILD_DIR)/linux/network.o $(UDP_CHECKED_OBJECT
 .PHONY: qualify-m0-lr-evidence
 qualify-m0-lr-evidence:
 	python3 -B tests/qualification/m0_lr_evidence.py
+
+# M0 governance invariant engineering trace
+.PHONY: qualify-m0-governance-trace
+qualify-m0-governance-trace:
+	python3 -B tests/qualification/m0_governance_trace.py

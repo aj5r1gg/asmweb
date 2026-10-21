@@ -12,8 +12,14 @@
       "invariant_id": "INV-GOV-001",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "qualification/tools/m0_limit_register.py",
+        "qualification/tools/production_limit_manifest.py"
+      ],
+      "qualification_refs": [
+        "qualify-production-limit-manifest",
+        "qualify-m0-lr-evidence"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
@@ -21,8 +27,13 @@
       "invariant_id": "INV-GOV-002",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "qualification/tools/m0_normative_ir.py",
+        "qualification/invariants/ir-normative-source-v0.3.json"
+      ],
+      "qualification_refs": [
+        "M0_FULL_SCHEMA_IR"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
@@ -57,8 +68,13 @@
       "invariant_id": "INV-GOV-006",
       "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
-      "implementation_refs": [],
-      "qualification_refs": [],
+      "implementation_refs": [
+        "qualification/tools/production_limit_manifest.py",
+        "tests/qualification/production_limit_manifest.py"
+      ],
+      "qualification_refs": [
+        "qualify-production-limit-manifest"
+      ],
       "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
