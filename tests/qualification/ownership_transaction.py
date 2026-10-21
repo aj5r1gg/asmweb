@@ -158,6 +158,63 @@ with tempfile.TemporaryDirectory(
     assert result["decision_count"] == 1
     assert result["effective_approvals"] == 0
     assert result["publication_enabled"] is False
+    assert len(result["evidence"]) == 1
+    assert result["evidence"][0]["decision_id"] == (
+        candidate["decision_id"]
+    )
+
+    import hashlib
+
+    evidence_digests = result["evidence"][0]["sha256"]
+    assert set(evidence_digests) == (
+        transaction.FIELDS - {"decision_id"}
+    )
+
+    for field, filename in entry.items():
+        if field != "decision_id":
+            actual = hashlib.sha256(
+                (evidence / filename).read_bytes()
+            ).hexdigest()
+            assert evidence_digests[field] == actual
+
+    assert result["trusted_root_sha256"] == hashlib.sha256(
+        trusted.read_bytes()
+    ).hexdigest()
+
+    assert result["revocations_sha256"] == hashlib.sha256(
+        revoked.read_bytes()
+    ).hexdigest()
+
+    original_receipt = result["receipt_sha256"]
+
+    # A different, still-valid revocation register must produce a
+    # different receipt, not masquerade as the prior transaction.
+    revoked.write_bytes(authority.canonical({
+        "schema_version": 1,
+        "revoked_designation_ids": [
+            "UNRELATED-INTEGRATION-TEST-002"
+        ],
+    }))
+
+    changed_receipt = check(manifest)
+
+    assert changed_receipt["receipt_sha256"] != original_receipt
+    assert (
+        changed_receipt["revocations_sha256"]
+        != result["revocations_sha256"]
+    )
+
+    revoked.write_bytes(authority.canonical({
+        "schema_version": 1,
+        "revoked_designation_ids": [],
+    }))
+
+    assert check(manifest)["receipt_sha256"] == original_receipt
+
+    print("EVIDENCE_BYTE_IDENTITY=PASS")
+    print("TRUST_AND_REVOCATION_BINDING=PASS")
+    print("REVOCATION_CHANGE_CHANGES_RECEIPT=PASS")
+    print("DETERMINISTIC_RECEIPT=PASS")
     print("SIGNED_FULL_COVERAGE_TRANSACTION=PASS")
 
     duplicate = copy.deepcopy(manifest)

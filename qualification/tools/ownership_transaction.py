@@ -112,8 +112,11 @@ def verify(
     )
 
     evidence_dir = Path(evidence_dir)
-    read_file(Path(trusted_root))
-    read_file(Path(revocations))
+
+    # Authority and revocation bytes are part of the transaction
+    # identity, even if their substantive verification succeeds.
+    trusted_bytes = read_file(Path(trusted_root))
+    revocation_bytes = read_file(Path(revocations))
 
     journal_dir = Path(journal_dir)
     journal.validate_directory(journal_dir)
@@ -133,11 +136,17 @@ def verify(
         fcntl.flock(lock_fd, fcntl.LOCK_SH)
 
         records, _ = journal.inspect_records(journal_dir)
+        original_records = {
+            identity: snapshot.canonical(record)
+            for identity, record in records.items()
+        }
+
         entries = document["decisions"]
         require(type(entries) is list, "decisions must be array")
 
         ids = []
         candidate_hashes = []
+        evidence_hashes = []
 
         for entry in entries:
             require(
@@ -162,6 +171,13 @@ def verify(
                 for field in FIELDS - {"decision_id"}
             }
 
+            # Read every signing input before verification, not
+            # merely its pathname. Reject a change during verification.
+            evidence_before = {
+                field: read_file(path)
+                for field, path in paths.items()
+            }
+
             outcome = signed.verify(
                 journal_dir,
                 identity,
@@ -180,11 +196,29 @@ def verify(
                 "invalid decision verification outcome",
             )
 
+            require(
+                all(
+                    read_file(paths[field]) == data
+                    for field, data in evidence_before.items()
+                ),
+                "signing evidence changed during verification",
+            )
+
             candidate_hashes.append({
                 "decision_id": identity,
                 "candidate_sha256": records[identity][
                     "candidate_sha256"
                 ],
+            })
+
+            evidence_hashes.append({
+                "decision_id": identity,
+                "sha256": {
+                    field: hashlib.sha256(data).hexdigest()
+                    for field, data in sorted(
+                        evidence_before.items()
+                    )
+                },
             })
 
         require(
@@ -200,6 +234,31 @@ def verify(
             "noncanonical decision ordering",
         )
 
+        # Shared-lock protection covers cooperative journal writers.
+        # Independently compare recorded bytes to detect mutation by
+        # a noncooperating writer during the transaction.
+        final_records, _ = journal.inspect_records(journal_dir)
+        require(
+            {
+                identity: snapshot.canonical(record)
+                for identity, record in final_records.items()
+            } == original_records,
+            "journal changed during verification",
+        )
+
+        require(
+            read_file(Path(trusted_root)) == trusted_bytes,
+            "trusted root changed during verification",
+        )
+        require(
+            read_file(Path(revocations)) == revocation_bytes,
+            "revocation state changed during verification",
+        )
+        require(
+            preflight.current_snapshot() == baseline,
+            "baseline changed during verification",
+        )
+
         receipt = {
             "schema_version": 1,
             "result": "VERIFIED_NON_EFFECTIVE_TRANSACTION",
@@ -208,6 +267,21 @@ def verify(
                 manifest
             ).hexdigest(),
             "decisions": candidate_hashes,
+            "evidence": evidence_hashes,
+            "trusted_root_sha256": hashlib.sha256(
+                trusted_bytes
+            ).hexdigest(),
+            "revocations_sha256": hashlib.sha256(
+                revocation_bytes
+            ).hexdigest(),
+            "journal_sha256": hashlib.sha256(
+                snapshot.canonical({
+                    identity: original_records[identity].decode(
+                        "utf-8"
+                    )
+                    for identity in sorted(original_records)
+                })
+            ).hexdigest(),
             "decision_count": len(ids),
             "effective_approvals": 0,
             "publication_enabled": False,
