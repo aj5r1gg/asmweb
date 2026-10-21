@@ -30,6 +30,13 @@ FIELDS = (
     "supersedes superseded_by notes"
 ).split()
 
+# Controlled implementation-evidence artifacts, not normative approval.
+# Each entry is derived from the same NASM-backed production register.
+M0_EVIDENCE_REFS = (
+    "qualification/limits/m0-limit-register-v0.1.json",
+    "qualification/limits/m0-effective-configuration-v0.1.json",
+)
+
 LIST_FIELDS = set((
     "applies_to_profiles applies_to_features standards_refs "
     "dependency_refs reserve_refs pressure_refs capacity_refs "
@@ -126,6 +133,7 @@ def build():
             ],
             "implementation_refs": item["implementation_refs"],
             "qualification_refs": item["qualification_refs"],
+            "evidence_refs": list(M0_EVIDENCE_REFS),
             "first_required_milestone": "M0",
             "resolution_milestone": "M0",
             "qualification_milestone": "M0",
@@ -201,6 +209,22 @@ def verify():
             require(
                 type(item[field]) is list,
                 "invalid LR list field: " + field,
+            )
+
+        require(
+            item["evidence_refs"] == list(M0_EVIDENCE_REFS),
+            "invalid production evidence mapping",
+        )
+
+        for reference in item["evidence_refs"]:
+            target = ROOT / reference
+            require(
+                target.is_file(),
+                "missing evidence artifact: " + reference,
+            )
+            require(
+                target.resolve().is_relative_to(ROOT.resolve()),
+                "evidence escapes repository: " + reference,
             )
 
     print("FULL_SCHEMA_FIELDS=" + str(len(FIELDS)))

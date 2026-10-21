@@ -49,6 +49,7 @@ jobs:
           set -euo pipefail
           make qualify-production-registry
           make qualify-production-limit-manifest
+          make qualify-m0-lr-evidence
           make qualify-mot-ceiling-integration
           make qualify-memory-ceiling
           make qualify-runtime-invariant

@@ -1344,3 +1344,8 @@ qualify-udp-checked-transfer: $(UDP_CHECKED_TRANSFER_TARGET)
 .PHONY: qualify-udp-checked-mutations
 qualify-udp-checked-mutations: $(BUILD_DIR)/linux/network.o $(UDP_CHECKED_OBJECT)
 	python3 tests/qualification/udp_checked_mutations.py
+
+# M0: production Limit Register evidence qualification
+.PHONY: qualify-m0-lr-evidence
+qualify-m0-lr-evidence:
+	python3 -B tests/qualification/m0_lr_evidence.py
