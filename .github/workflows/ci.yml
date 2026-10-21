@@ -69,5 +69,9 @@ jobs:
           make qualify-ready-diagnostic
           make qualify-ready-bootstrap-injection
           make qualify-ready-diagnostic-matrix
+      - name: Verify ownership proposal journal
+        run: |
+          python3 -B qualification/tools/ownership_snapshot.py
+          python3 -B tests/qualification/ownership_proposal_journal.py
       - name: Verify clean incremental build
         run: make all
