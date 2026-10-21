@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "milestone_id": "M1",
+  "implementation_state": "BLOCKED",
+  "closure_status": "BLOCKED",
+  "first_mandatory_requirement_refs": [],
+  "inherited_regression_refs": [],
+  "prerequisite_refs": [
+    "qualification/milestones/M0.json"
+  ],
+  "new_rule_refs": [],
+  "required_verification_refs": [],
+  "result_refs": [
+    "https://github.com/aj5r1gg/asmweb/actions/runs/39546697536"
+  ],
+  "known_failures": [],
+  "blocked_items": [
+    {
+      "blocker_id": "M1-BLOCK-M0",
+      "description": "M0 formal closure remains BLOCKED. Applicable predecessor obligations require authoritative disposition."
+    },
+    {
+      "blocker_id": "M1-BLOCK-OWNERSHIP",
+      "description": "The Requirements Milestone Ownership Decision Register remains DRAFT_UNREVIEWED, with no approved M1 first-mandatory requirement assignments. M1 applicability and ownership have not been authoritatively established."
+    },
+    {
+      "blocker_id": "M1-BLOCK-EVIDENCE",
+      "description": "Passing engineering tests and CI do not establish complete authoritative M1 qualification, requirement traceability, or a valid formal closure decision."
+    }
+  ],
+  "waivers": [],
+  "deferred_items": [],
+  "evidence_refs": [
+    "src/linux/network.asm",
+    "tests/qualification/udp_loopback.asm",
+    "tests/qualification/tcp_accept4.asm",
+    "tests/qualification/network_error_paths.asm",
+    "tests/qualification/stream_fragments.asm",
+    "tests/qualification/stream_short_write.asm",
+    "tests/qualification/network_eintr.asm",
+    "tests/qualification/udp_batch_transfer.asm",
+    "tests/qualification/udp_batch_bounds.asm",
+    "tests/qualification/udp_batch_mutations.py",
+    "tests/qualification/http_descriptor_lifecycle.asm",
+    "tests/qualification/http_descriptor_mutations.py",
+    "qualification/requirements/requirements-milestone-ownership-v0.3.json"
+  ],
+  "notes": [
+    "M1 scope: TCP/UDP and Network I/O Foundations.",
+    "The existing network interface includes TCP/UDP socket operations, endpoint identity, error propagation, descriptor ownership and bounded UDP batch operations.",
+    "Twelve existing M1-relevant qualification targets passed during local engineering verification against commit b736e3c.",
+    "Local passing results are reported here but have not been converted into a complete authoritative qualification evidence set.",
+    "GitHub Actions run 39546697536 succeeded against commit b736e3c.",
+    "The CI workflow does not necessarily execute all twelve locally verified qualification targets.",
+    "M1 engineering progress is substantial; formal implementation acceptance and milestone closure remain blocked pending authoritative disposition.",
+    "This record SHALL NOT be interpreted as formal M1 qualification or closure."
+  ]
+}
