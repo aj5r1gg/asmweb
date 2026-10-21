@@ -409,7 +409,7 @@
     },
     {
       "invariant_id": "INV-WRK-PARSER-001",
-      "normative_statement": "Each externally driven parser step SHALL do at least one of:",
+      "normative_statement": "Each externally driven parser step SHALL do at least one of: consume input; make a valid state transition; complete; reject; explicitly enter an await-more-input state. A parser SHALL NOT spin indefinitely while consuming no input, making no state transition and awaiting no external condition.",
       "source_document": "AsmWeb — Invariants & Limits Register v0.3",
       "source_status": "NORMATIVE_TEXT_EXTRACTED",
       "implementation_trace_status": "UNMAPPED",

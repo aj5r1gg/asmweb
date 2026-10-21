@@ -13,7 +13,7 @@
   "blocked_items": [
     {
       "blocker_id": "M0-BLOCK-IR",
-      "description": "All 144 extracted INV-* identities have a full-schema IR draft with five initial M0 implementation candidates. Authoritative status/applicability, source-text fidelity, machine expressions, required runtime mappings and qualification dispositions remain incomplete."
+      "description": "The complete 144-identity IR representation exists. 42 M0 foundation invariants are identified as engineering applicability candidates under the governing section 34 scope. Remaining work includes verified applicability decisions, implementation mappings, machine expressions, normative dispositions and qualification evidence."
     },
     {
       "blocker_id": "M0-BLOCK-LR",
@@ -58,6 +58,7 @@
     "M0 diagnostics progress: the same fixed-layout, first-failure latch now supports two independent runtime integrity domains, with preserved original validator results and assembly qualification. No milestone closure is claimed.",
     "M0 IR applicability assessment identifies five READY and configuration-related candidate invariants with existing implementation and qualification references. All 144 identities are accounted for; unresolved applicability and formal normative review remain open.",
     "M0 LR representation now supports all fields required by Invariants & Limits Register v0.3 §6 for the nine production MOT capacities. Values and canonical LIM-* mappings derive from existing NASM authority. Semantic completion, applicability across other resource classes and normative adoption remain outstanding.",
-    "M0 IR schema implementation: 144 controlled identities are populated into the complete §5 entry structure. Unapproved status decisions remain null in the draft rather than being falsely assigned ACTIVE or DEFERRED. At least one multiline normative source statement requires extraction repair."
+    "M0 IR schema implementation: 144 controlled identities are populated into the complete §5 entry structure. Unapproved status decisions remain null in the draft rather than being falsely assigned ACTIVE or DEFERRED. At least one multiline normative source statement requires extraction repair.",
+    "The truncated INV-WRK-PARSER-001 extraction was restored from the governing v0.3 specification. M0 candidate assessment now includes registry, memory, ownership, accounting, checked-arithmetic and configuration foundations identified by section 34. Candidates are not approvals."
   ]
 }

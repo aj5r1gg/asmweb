@@ -2,37 +2,37 @@
   "schema_version": 1,
   "document_type": "ASMWEB_M0_IR_APPLICABILITY_ASSESSMENT",
   "status": "ENGINEERING_REVIEW_DRAFT",
-  "source_sha256": "031cd8a76e1c3ff42f08687c4393770bddd47374850f789180590ae401ea2043",
+  "source_sha256": "e8e132a082b84125998c265883a8520cd20110829c826334fee50bef0784d769",
   "source_entry_count": 144,
-  "candidate_applicable_count": 5,
-  "unassessed_count": 139,
+  "candidate_applicable_count": 42,
+  "unassessed_count": 102,
   "normative_ir_complete": false,
   "entries": [
     {
       "invariant_id": "INV-GOV-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-GOV-002",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-GOV-003",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -55,11 +55,11 @@
     },
     {
       "invariant_id": "INV-GOV-006",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -73,11 +73,11 @@
     },
     {
       "invariant_id": "INV-GOV-APP-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -136,38 +136,38 @@
     },
     {
       "invariant_id": "INV-GOV-EXPR-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-GOV-EXPR-002",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-GOV-EXPR-003",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-GOV-UNIT-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -181,11 +181,11 @@
     },
     {
       "invariant_id": "INV-GOV-ALIAS-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -199,11 +199,11 @@
     },
     {
       "invariant_id": "INV-CAP-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -239,92 +239,92 @@
     },
     {
       "invariant_id": "INV-POL-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-OBJ-PARENT-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-OBJ-RELEASE-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-QUE-OWNER-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-BUF-BORROW-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-OBJ-ASYNC-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-OBJ-EVENT-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-ACC-NONNEG-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-CAP-005",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-CAP-006",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -419,11 +419,11 @@
     },
     {
       "invariant_id": "INV-ACC-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -437,11 +437,11 @@
     },
     {
       "invariant_id": "INV-ACC-003",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -554,38 +554,38 @@
     },
     {
       "invariant_id": "INV-MEM-002",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-MEM-003",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-MEM-004",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-MEM-005",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -608,20 +608,20 @@
     },
     {
       "invariant_id": "INV-MEM-008",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-MEM-009",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -635,29 +635,29 @@
     },
     {
       "invariant_id": "INV-MEM-STACK-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-MEM-SCRATCH-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-MEM-010",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -866,11 +866,11 @@
     },
     {
       "invariant_id": "INV-CFG-RECON-002",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -1225,29 +1225,29 @@
     },
     {
       "invariant_id": "INV-GOV-MANIFEST-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-GOV-MANIFEST-002",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
       "invariant_id": "INV-GOV-UNRESOLVED-001",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {
@@ -1306,11 +1306,11 @@
     },
     {
       "invariant_id": "INV-CHG-002",
-      "m0_applicability": "UNASSESSED",
+      "m0_applicability": "CANDIDATE_APPLICABLE",
       "first_required_milestone": null,
       "implementation_refs": [],
       "qualification_refs": [],
-      "engineering_disposition": "NOT_ASSESSED",
+      "engineering_disposition": "IMPLEMENTATION_REVIEW_REQUIRED",
       "normative_approval": false
     },
     {

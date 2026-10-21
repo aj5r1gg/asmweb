@@ -41,18 +41,53 @@ LIST_FIELDS = set((
 ).split())
 
 CANDIDATES = {
+    "INV-ACC-001",
+    "INV-ACC-003",
+    "INV-ACC-NONNEG-001",
+    "INV-BUF-BORROW-001",
+    "INV-CAP-001",
     "INV-CAP-004",
-    "INV-CFG-RECON-001",
-    "INV-CFG-RECON-003",
+    "INV-CAP-005",
+    "INV-CAP-006",
     "INV-CFG-READY-001",
+    "INV-CFG-RECON-001",
+    "INV-CFG-RECON-002",
+    "INV-CFG-RECON-003",
+    "INV-CHG-002",
     "INV-EXT-002",
+    "INV-GOV-001",
+    "INV-GOV-002",
+    "INV-GOV-003",
+    "INV-GOV-006",
+    "INV-GOV-ALIAS-001",
+    "INV-GOV-APP-001",
+    "INV-GOV-EXPR-001",
+    "INV-GOV-EXPR-002",
+    "INV-GOV-EXPR-003",
+    "INV-GOV-MANIFEST-001",
+    "INV-GOV-MANIFEST-002",
+    "INV-GOV-UNIT-001",
+    "INV-GOV-UNRESOLVED-001",
+    "INV-MEM-002",
+    "INV-MEM-003",
+    "INV-MEM-004",
+    "INV-MEM-005",
+    "INV-MEM-008",
+    "INV-MEM-009",
+    "INV-MEM-010",
+    "INV-MEM-SCRATCH-001",
+    "INV-MEM-STACK-001",
+    "INV-OBJ-ASYNC-001",
+    "INV-OBJ-EVENT-001",
+    "INV-OBJ-PARENT-001",
+    "INV-OBJ-RELEASE-001",
+    "INV-POL-001",
+    "INV-QUE-OWNER-001",
 }
 
 # This extraction stops at the introductory clause. Do not present
 # it as a complete normative statement.
-INCOMPLETE_SOURCE_STATEMENTS = {
-    "INV-WRK-PARSER-001",
-}
+INCOMPLETE_SOURCE_STATEMENTS = set()
 
 
 def require(condition, message):
@@ -288,9 +323,9 @@ def verify():
 
     print("IR_SCHEMA_FIELDS=" + str(len(FIELDS)))
     print("NORMATIVE_IDENTITIES=144")
-    print("M0_IMPLEMENTATION_CANDIDATES=5")
-    print("UNASSESSED_APPLICABILITY=139")
-    print("SOURCE_REPAIR_REQUIRED=1")
+    print("M0_IMPLEMENTATION_CANDIDATES=" + str(len(CANDIDATES)))
+    print("UNASSESSED_APPLICABILITY=" + str(document["unassessed_count"]))
+    print("SOURCE_REPAIR_REQUIRED=" + str(len(INCOMPLETE_SOURCE_STATEMENTS)))
     print("AUTHORITATIVE_IR_COMPLETE=False")
     print("M0_FULL_SCHEMA_IR=PASS")
 
