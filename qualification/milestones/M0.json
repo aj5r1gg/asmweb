@@ -17,11 +17,11 @@
     },
     {
       "blocker_id": "M0-BLOCK-LR",
-      "description": "Authoritative Limit Register machinery is not yet established."
+      "description": "The nine production MOT capacities have proposed canonical LIM-* identities and verified runtime mappings. Completion requires full normative LR population, schema, applicability and authority reconciliation."
     },
     {
       "blocker_id": "M0-BLOCK-ELM",
-      "description": "Effective Limit Manifest derivation and deterministic representation are not yet established."
+      "description": "Deterministic numerical limit derivation and effective configuration representation exist. Completion requires authoritative Effective Limit Manifest adoption, full applicable LIM-* coverage and qualification."
     },
     {
       "blocker_id": "M0-BLOCK-DIAGNOSTICS",
@@ -29,7 +29,7 @@
     },
     {
       "blocker_id": "M0-BLOCK-CONFIGURATION",
-      "description": "M0 configuration/provenance authority is incomplete; configured capacities and dependency validation exist but no common published effective-configuration identity exists."
+      "description": "A deterministic build-specific configuration identity exists and is bound to the canonical production limit mappings. Completion requires authoritative configuration adoption, complete dependency/provenance reconciliation and applicable normative qualification."
     }
   ],
   "waivers": [],
@@ -50,6 +50,7 @@
     "M0-BLOCK-QRR implementation-authority blocker disposition: the canonical 234-rule QRR is populated from six controlled slices; existing QRR authority and qualification-foundation validators passed. Normative rule execution and milestone qualification remain independently subject to their applicable evidence requirements.",
     "M0-BLOCK-IR progress: the complete inventory of 144 normative INV-* source statements from Invariants & Limits Register v0.3 is now under repository control. The existing 11-entry runtime READY implementation trace is distinct from this normative inventory. Applicability, implementation mappings and qualification dispositions remain to be reconciled before IR authority and M0 closure.",
     "M0 configuration progress: a deterministic effective configuration identity is derived from the production binary, NASM-resolved nine-entry MOT projection, exact configured capacities and dependency provenance. Its numerical implementation projection is published and independently reproducible. Normative LIM-* mapping, authoritative ELM adoption, applicability and formal qualification remain outstanding.",
-    "M0-BLOCK-LR progress: nine M0 production MOT capacities now have stable proposed canonical LIM-MEM identities, exact NASM-resolved runtime mappings and verified numerical values. Full normative LR schema, applicability and authoritative adoption are still outstanding."
+    "M0-BLOCK-LR progress: nine M0 production MOT capacities now have stable proposed canonical LIM-MEM identities, exact NASM-resolved runtime mappings and verified numerical values. Full normative LR schema, applicability and authoritative adoption are still outstanding.",
+    "M0 production configuration reconciliation: all nine NASM-resolved MOT limits now reference the corresponding provisional canonical LIM-MEM identities without unresolved mapping placeholders. The effective configuration identity commits to the validated Limit Register bytes. These are implementation evidence, not a claim of full normative LR or ELM adoption."
   ]
 }

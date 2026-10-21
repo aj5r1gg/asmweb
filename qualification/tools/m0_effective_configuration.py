@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 import production_limit_manifest as production
+import m0_limit_register as register
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -57,6 +58,24 @@ def build():
     definitions = projection["definitions"]
     entries = projection["mot_entries"]
 
+    # The canonical M0 production LR is the mapping authority.
+    # Require its stored representation to match current NASM
+    # production materialisation before publishing configuration.
+    register_document = register.derive()
+    register_bytes = register.canonical(register_document)
+
+    require(
+        register.OUTPUT.read_bytes() == register_bytes,
+        "production Limit Register is stale or altered",
+    )
+
+    registered_limits = register_document["entries"]
+
+    require(
+        len(registered_limits) == len(entries),
+        "production Limit Register coverage incomplete",
+    )
+
     require(
         len(definitions) == len(entries)
         == projection["production_mot_count"],
@@ -68,7 +87,22 @@ def build():
     total_direct = 0
     total_overhead = 0
 
-    for definition, entry in zip(definitions, entries):
+    for definition, entry, registered in zip(
+        definitions, entries, registered_limits
+    ):
+        require(
+            registered["runtime_limit_id"] == entry["limit_id"]
+            and registered["runtime_object_id"] == entry["object_id"]
+            and registered["runtime_limit_symbol"]
+                == definition["limit_symbol"]
+            and registered["runtime_object_symbol"]
+                == definition["object_symbol"]
+            and registered["configured_value"]
+                == entry["configured_capacity"]
+            and registered["effective_stride_bytes"]
+                == entry["effective_stride_bytes"],
+            "canonical Limit Register and runtime disagree",
+        )
         require(
             definition["limit_id"] == entry["limit_id"]
             and definition["object_id"] == entry["object_id"],
@@ -137,9 +171,9 @@ def build():
             "effective_stride_bytes": stride,
             "direct_capacity_bytes": direct,
             "overhead_bytes": overhead,
-            "normative_lim_id": None,
+            "normative_lim_id": registered["limit_id"],
             "normative_mapping_status":
-                "PENDING_LR_RECONCILIATION",
+                "PROVISIONAL_LR_MAPPING_VERIFIED",
         })
 
     require(
@@ -169,6 +203,8 @@ def build():
             ],
         "derivation_tool_sha256":
             projection["derivation_tool_sha256"],
+        "production_limit_register_sha256":
+            sha(register_bytes),
         "production_mot_count":
             projection["production_mot_count"],
         "production_rct_count":
