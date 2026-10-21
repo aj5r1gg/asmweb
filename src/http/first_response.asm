@@ -11,6 +11,7 @@ global asm_http_serve_forever
 %define ASMWEB_PAGE_MAX 4096
 %define ASMWEB_PAGE_READ_CAP 4097
 %define ASMWEB_HTTP_ACQUISITION_BUDGET_NS 3000000000
+%define ASMWEB_HTTP_RESPONSE_BUDGET_NS 3000000000
 
 extern asm_linux_socket
 extern asm_linux_bind
@@ -212,12 +213,13 @@ asm_http_serve_common:
     push r13
     push r14
     push r15
-    ; Fixed 88-byte frame, preserving 16-byte CALL alignment.
-    ; [rsp+0]  = immutable start sample (32 bytes)
-    ; [rsp+32] = current sample (32 bytes)
+    ; Fixed 120-byte frame, preserving CALL alignment.
+    ; [rsp+0]  = immutable request start (32 bytes)
+    ; [rsp+32] = current time sample (32 bytes)
     ; [rsp+64] = remaining timeval (16 bytes)
     ; [rsp+80] = reserved (8 bytes)
-    sub rsp, 88
+    ; [rsp+88] = immutable response start (32 bytes)
+    sub rsp, 120
 
     mov r12, -1
     mov r13, -1
@@ -779,35 +781,69 @@ asm_http_serve_common:
     mov rbx, rdi
     lea r15, [rel page_response]
     sub rbx, r15
-    jmp .send
+    jmp .send_begin
 
 .page_missing:
     lea r15, [rel response_missing]
     mov ebx, response_missing_end - response_missing
-    jmp .send
+    jmp .send_begin
 
 .page_error:
     lea r15, [rel response_file_error]
     mov ebx, response_file_error_end - response_file_error
-    jmp .send
+    jmp .send_begin
 
 .accepted_legacy:
     lea r15, [rel response_ok]
     mov ebx, response_ok_end - response_ok
-    jmp .send
+    jmp .send_begin
 
 .bad_request:
     lea r15, [rel response_bad]
     mov ebx, response_bad_end - response_bad
-    jmp .send
+    jmp .send_begin
 
 .too_large:
     lea r15, [rel response_large]
     mov ebx, response_large_end - response_large
 
+.send_begin:
+    ; A response has ONE transmission deadline. It is not
+    ; extended by successful partial sends or EINTR.
+    lea rdi, [rsp + 88]
+    call asm_monotonic_now
+    test eax, eax
+    jnz .drop_client
+
 .send:
     test rbx, rbx
     jz .served
+
+    ; Calculate the time remaining from the immutable
+    ; response-start sample, not the previous send attempt.
+    lea rdi, [rsp + 32]
+    call asm_monotonic_now
+    test eax, eax
+    jnz .drop_client
+
+    mov rdi, [rsp + 88 + ASMWEB_MONOTONIC_TIME.total_ns]
+    mov rsi, [rsp + 32 + ASMWEB_MONOTONIC_TIME.total_ns]
+    mov rdx, ASMWEB_HTTP_RESPONSE_BUDGET_NS
+    lea rcx, [rsp + 64]
+    call asm_deadline_remaining
+    test eax, eax
+    jnz .drop_client
+
+    ; Bound this blocking syscall by the remaining total
+    ; response budget. Reapply after every partial write.
+    mov rdi, r13
+    mov esi, LINUX_SOL_SOCKET
+    mov edx, LINUX_SO_SNDTIMEO
+    lea rcx, [rsp + 64]
+    mov r8d, 16
+    call asm_linux_setsockopt
+    test rax, rax
+    js .drop_client
 
     mov rdi, r13
     mov rsi, r15
@@ -821,8 +857,25 @@ asm_http_serve_common:
     test rax, rax
     jle .drop_client
 
-    add r15, rax
-    sub rbx, rax
+    ; Even a successful blocking send may have completed
+    ; after expiry. Check before accepting its progress.
+    mov r14, rax
+
+    lea rdi, [rsp + 32]
+    call asm_monotonic_now
+    test eax, eax
+    jnz .drop_client
+
+    mov rdi, [rsp + 88 + ASMWEB_MONOTONIC_TIME.total_ns]
+    mov rsi, [rsp + 32 + ASMWEB_MONOTONIC_TIME.total_ns]
+    mov rdx, ASMWEB_HTTP_RESPONSE_BUDGET_NS
+    lea rcx, [rsp + 64]
+    call asm_deadline_remaining
+    test eax, eax
+    jnz .drop_client
+
+    add r15, r14
+    sub rbx, r14
     jmp .send
 
 ; A failed client must not terminate the persistent listener.
@@ -872,7 +925,7 @@ asm_http_serve_common:
 
 .return:
     mov eax, ebp
-    add rsp, 88
+    add rsp, 120
     pop r15
     pop r14
     pop r13
