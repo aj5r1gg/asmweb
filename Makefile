@@ -1339,3 +1339,8 @@ qualify-udp-checked-transfer: $(UDP_CHECKED_TRANSFER_TARGET)
 	timeout 5s $(UDP_CHECKED_TRANSFER_TARGET)
 
 -include $(UDP_CHECKED_TRANSFER_OBJECT:.o=.d)
+
+# NET-005 — adversarial checked-descriptor qualification
+.PHONY: qualify-udp-checked-mutations
+qualify-udp-checked-mutations: $(BUILD_DIR)/linux/network.o $(UDP_CHECKED_OBJECT)
+	python3 tests/qualification/udp_checked_mutations.py
