@@ -1376,3 +1376,10 @@ qualify-m0-binary-identity: all
 .PHONY: qualify-m0-explicit-results
 qualify-m0-explicit-results: all
 	python3 -B qualification/tools/m0_explicit_results.py verify
+
+# Controlled M0 IR applicability generation and negative tests
+.PHONY: qualify-m0-ir-dynamic
+qualify-m0-ir-dynamic:
+	python3 -B qualification/tools/m0_normative_ir.py verify
+	python3 -B qualification/tools/m0_ir_semantic_review.py verify
+	python3 -B tests/qualification/m0_ir_assessment_dynamic.py

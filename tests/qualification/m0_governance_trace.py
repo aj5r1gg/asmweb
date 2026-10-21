@@ -75,18 +75,59 @@ def main():
     require(doc["authoritative_ir_complete"] is False,
             "FALSE_IR_COMPLETION")
 
-    traced = sum(
-        bool(e["implementation_refs"]) and
-        bool(e["qualification_refs"])
-        for e in records.values()
-        if e["invariant_id"] in ir.CANDIDATES
+    candidates = {
+        identity
+        for identity, entry in assessed.items()
+        if entry["m0_applicability"] == "CANDIDATE_APPLICABLE"
+    }
+
+    require(
+        len(candidates) == assessment["candidate_applicable_count"],
+        "ASSESSMENT_CANDIDATE_COUNT_MISMATCH",
+    )
+    require(
+        len(candidates) + assessment["unassessed_count"] == 144,
+        "ASSESSMENT_POPULATION_COUNT_MISMATCH",
+    )
+    require(
+        len(candidates) == doc["m0_candidate_count"],
+        "IR_ASSESSMENT_CANDIDATE_DISAGREEMENT",
+    )
+    require(
+        doc["unassessed_count"] == assessment["unassessed_count"],
+        "IR_ASSESSMENT_UNASSESSED_DISAGREEMENT",
     )
 
-    require(traced >= 8,
-            "ORIGINAL_CANDIDATE_TRACES_REGRESSED")
+    traced = sum(
+        bool(records[identity]["implementation_refs"])
+        and bool(records[identity]["qualification_refs"])
+        for identity in candidates
+    )
 
-    print(f"M0_CANDIDATES_WITH_ENGINEERING_TRACE={traced}/42")
-    print(f"M0_CANDIDATES_REMAINING={42 - traced}")
+    # Preserve the established 16-trace baseline, without assuming
+    # all future applicability decisions retain these candidates.
+    baseline = {
+        identity for identity in candidates
+        if assessed[identity]["implementation_refs"]
+        and assessed[identity]["qualification_refs"]
+    }
+
+    require(
+        traced == len(baseline),
+        "ASSESSMENT_IR_TRACE_DISAGREEMENT",
+    )
+    require(
+        len(candidates) == 42 and traced >= 16,
+        "CURRENT_BASELINE_REGRESSED",
+    )
+
+    print(
+        f"M0_CANDIDATES_WITH_ENGINEERING_TRACE="
+        f"{traced}/{len(candidates)}"
+    )
+    print(
+        f"M0_CANDIDATES_REMAINING={len(candidates) - traced}"
+    )
     print("NORMATIVE_IR_ADOPTION=PENDING")
     print("M0_GOVERNANCE_TRACE=PASS")
 

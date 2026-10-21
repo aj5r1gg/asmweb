@@ -55,6 +55,7 @@ jobs:
           make qualify-m0-requirement-identity
           make qualify-m0-binary-identity
           make qualify-m0-explicit-results
+          make qualify-m0-ir-dynamic
           make qualify-mot-ceiling-integration
           make qualify-memory-ceiling
           make qualify-runtime-invariant
