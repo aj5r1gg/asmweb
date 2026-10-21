@@ -12,10 +12,6 @@
   "known_failures": [],
   "blocked_items": [
     {
-      "blocker_id": "M0-BLOCK-QRR",
-      "description": "Authoritative complete Qualification Rule Registry population, exact QUA-* membership validation and authoritative-reference resolution are not yet established."
-    },
-    {
       "blocker_id": "M0-BLOCK-IR",
       "description": "Authoritative Invariant Register machinery is not yet established."
     },
@@ -38,10 +34,16 @@
   ],
   "waivers": [],
   "deferred_items": [],
-  "evidence_refs": [],
+  "evidence_refs": [
+    "qualification/qrr/qrr-v0.3.json",
+    "qualification/qrr/qrr-membership-v0.3.json",
+    "qualification/qrr/qrr-source-v0.3.json",
+    "qualification/tools/qrr_authority.py"
+  ],
   "notes": [
     "Runtime & Memory §78 implementation machinery is substantially present.",
     "This record SHALL NOT be interpreted as M0 qualification or closure.",
-    "Formal closure requires all mandatory M0 blockers to receive valid dispositions."
+    "Formal closure requires all mandatory M0 blockers to receive valid dispositions.",
+    "M0-BLOCK-QRR implementation-authority blocker disposition: the canonical 234-rule QRR is populated from six controlled slices; existing QRR authority and qualification-foundation validators passed. Normative rule execution and milestone qualification remain independently subject to their applicable evidence requirements."
   ]
 }
