@@ -4,7 +4,8 @@
 ; M0-DIAG-001 — fixed-size first-failure diagnostic latch.
 ;
 ; Engineering scope:
-;   M0 READY-state runtime invariant integrity failures only.
+;   M0 READY-state invariant and capacity-dependency
+;   integrity failures.
 ;
 ; This is not an authoritative general diagnostics registry.
 ; It does not own resource accounting or telemetry.
@@ -24,6 +25,11 @@
 %define ASMWEB_DIAG_DOMAIN_RUNTIME_INVARIANT  1
 %define ASMWEB_DIAG_ORIGIN_READY_VALIDATOR    1
 
+; Capacity dependency failures use the same fixed record layout.
+%define ASMWEB_DIAG_DOMAIN_CAPACITY_DEPENDENCY 2
+%define ASMWEB_DIAG_ORIGIN_DEPENDENCY_VALIDATOR 2
+%define ASMWEB_DIAG_DEPENDENCY_INTEGRITY       1
+
 %define ASMWEB_DIAG_MIN_INVARIANT_CODE        1
 %define ASMWEB_DIAG_MAX_INVARIANT_CODE        11
 
@@ -42,6 +48,11 @@ endstruc
 ;
 ; asm_diagnostic_validate
 ;   RDI = pointer to ASMWEB_DIAGNOSTIC
+;   RAX = ASMWEB_RESOURCE_OK or ASMWEB_RESOURCE_INTEGRITY
+;
+; asm_diagnostic_record_dependency
+;   RDI = pointer to initialised ASMWEB_DIAGNOSTIC
+;   Records the capacity-dependency integrity classification.
 ;   RAX = ASMWEB_RESOURCE_OK or ASMWEB_RESOURCE_INTEGRITY
 ;
 ; asm_diagnostic_record_invariant

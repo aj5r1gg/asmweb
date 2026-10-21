@@ -9,6 +9,7 @@ global _start
 extern asm_diagnostic_init
 extern asm_diagnostic_validate
 extern asm_diagnostic_record_invariant
+extern asm_diagnostic_record_dependency
 extern asm_linux_exit
 
 section .bss
@@ -123,6 +124,49 @@ _start:
     cmp eax, ASMWEB_RESOURCE_INTEGRITY
     jne .fail_13
 
+    ; CASE 14: independent capacity diagnostic publication.
+    ; Reinitialise the previously corrupted test record.
+    lea rdi, [rel diagnostic]
+    mov ecx, ASMWEB_DIAGNOSTIC_size / 8
+    xor eax, eax
+    rep stosq
+
+    lea rdi, [rel diagnostic]
+    call asm_diagnostic_init
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_14
+
+    lea rdi, [rel diagnostic]
+    call asm_diagnostic_record_dependency
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_14
+
+    lea rdi, [rel diagnostic]
+    call asm_diagnostic_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_14
+
+    cmp qword [rel diagnostic + ASMWEB_DIAGNOSTIC.domain], \
+        ASMWEB_DIAG_DOMAIN_CAPACITY_DEPENDENCY
+    jne .fail_14
+
+    cmp qword [rel diagnostic + ASMWEB_DIAGNOSTIC.origin], \
+        ASMWEB_DIAG_ORIGIN_DEPENDENCY_VALIDATOR
+    jne .fail_14
+
+    cmp qword [rel diagnostic + ASMWEB_DIAGNOSTIC.local_code], \
+        ASMWEB_DIAG_DEPENDENCY_INTEGRITY
+    jne .fail_14
+
+    ; CASE 15: repeated publication cannot overwrite first failure.
+    lea rdi, [rel diagnostic]
+    call asm_diagnostic_record_dependency
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_15
+
+    cmp qword [rel diagnostic + ASMWEB_DIAGNOSTIC.published], 1
+    jne .fail_15
+
     xor edi, edi
     call asm_linux_exit
     ud2
@@ -147,3 +191,6 @@ FAIL_CASE 10
 FAIL_CASE 11
 FAIL_CASE 12
 FAIL_CASE 13
+
+FAIL_CASE 14
+FAIL_CASE 15

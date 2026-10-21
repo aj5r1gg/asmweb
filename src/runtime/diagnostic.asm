@@ -7,6 +7,7 @@ bits 64
 global asm_diagnostic_init
 global asm_diagnostic_validate
 global asm_diagnostic_record_invariant
+global asm_diagnostic_record_dependency
 
 section .text
 
@@ -57,14 +58,21 @@ asm_diagnostic_validate:
     cmp rax, 1
     jne .fail
 
-    cmp qword [rdi + ASMWEB_DIAGNOSTIC.domain], \
-        ASMWEB_DIAG_DOMAIN_RUNTIME_INVARIANT
-    jne .fail
-
     cmp qword [rdi + ASMWEB_DIAGNOSTIC.classification], \
         ASMWEB_RESOURCE_INTEGRITY
     jne .fail
 
+    mov rax, [rdi + ASMWEB_DIAGNOSTIC.domain]
+
+    cmp rax, ASMWEB_DIAG_DOMAIN_RUNTIME_INVARIANT
+    je .check_invariant
+
+    cmp rax, ASMWEB_DIAG_DOMAIN_CAPACITY_DEPENDENCY
+    je .check_dependency
+
+    jmp .fail
+
+.check_invariant:
     cmp qword [rdi + ASMWEB_DIAGNOSTIC.origin], \
         ASMWEB_DIAG_ORIGIN_READY_VALIDATOR
     jne .fail
@@ -76,6 +84,18 @@ asm_diagnostic_validate:
 
     cmp rax, ASMWEB_DIAG_MAX_INVARIANT_CODE
     ja .fail
+
+    mov eax, ASMWEB_RESOURCE_OK
+    ret
+
+.check_dependency:
+    cmp qword [rdi + ASMWEB_DIAGNOSTIC.origin], \
+        ASMWEB_DIAG_ORIGIN_DEPENDENCY_VALIDATOR
+    jne .fail
+
+    cmp qword [rdi + ASMWEB_DIAGNOSTIC.local_code], \
+        ASMWEB_DIAG_DEPENDENCY_INTEGRITY
+    jne .fail
 
     mov eax, ASMWEB_RESOURCE_OK
     ret
@@ -145,6 +165,58 @@ asm_diagnostic_record_invariant:
         ASMWEB_DIAG_ORIGIN_READY_VALIDATOR
 
     mov [rdi + ASMWEB_DIAGNOSTIC.local_code], rsi
+
+    mov qword [rdi + ASMWEB_DIAGNOSTIC.published], 1
+
+    mov eax, ASMWEB_RESOURCE_OK
+    ret
+
+.fail:
+    mov eax, ASMWEB_RESOURCE_INTEGRITY
+    ret
+
+
+; Record a capacity dependency integrity failure using the
+; existing first-failure diagnostic representation.
+;
+; RDI = initialised diagnostic pointer
+; Returns ASMWEB_RESOURCE_OK or ASMWEB_RESOURCE_INTEGRITY.
+; No mutation occurs on refusal.
+asm_diagnostic_record_dependency:
+    cld
+
+    test rdi, rdi
+    jz .fail
+
+    cmp qword [rdi + ASMWEB_DIAGNOSTIC.ready], 1
+    jne .fail
+
+    cmp qword [rdi + ASMWEB_DIAGNOSTIC.published], 0
+    jne .fail
+
+    cmp qword [rdi + ASMWEB_DIAGNOSTIC.domain], 0
+    jne .fail
+
+    cmp qword [rdi + ASMWEB_DIAGNOSTIC.classification], 0
+    jne .fail
+
+    cmp qword [rdi + ASMWEB_DIAGNOSTIC.origin], 0
+    jne .fail
+
+    cmp qword [rdi + ASMWEB_DIAGNOSTIC.local_code], 0
+    jne .fail
+
+    mov qword [rdi + ASMWEB_DIAGNOSTIC.domain], \
+        ASMWEB_DIAG_DOMAIN_CAPACITY_DEPENDENCY
+
+    mov qword [rdi + ASMWEB_DIAGNOSTIC.classification], \
+        ASMWEB_RESOURCE_INTEGRITY
+
+    mov qword [rdi + ASMWEB_DIAGNOSTIC.origin], \
+        ASMWEB_DIAG_ORIGIN_DEPENDENCY_VALIDATOR
+
+    mov qword [rdi + ASMWEB_DIAGNOSTIC.local_code], \
+        ASMWEB_DIAG_DEPENDENCY_INTEGRITY
 
     mov qword [rdi + ASMWEB_DIAGNOSTIC.published], 1
 

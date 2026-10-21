@@ -25,7 +25,7 @@
     },
     {
       "blocker_id": "M0-BLOCK-DIAGNOSTICS",
-      "description": "Common M0 diagnostics foundation is incomplete; current failure classifications are subsystem-local."
+      "description": "The common first-failure diagnostic representation now supports READY-state invariants and capacity dependency integrity failures. Full M0 diagnostic-domain coverage, taxonomy reconciliation and normative qualification remain outstanding."
     },
     {
       "blocker_id": "M0-BLOCK-CONFIGURATION",
@@ -51,6 +51,7 @@
     "M0-BLOCK-IR progress: the complete inventory of 144 normative INV-* source statements from Invariants & Limits Register v0.3 is now under repository control. The existing 11-entry runtime READY implementation trace is distinct from this normative inventory. Applicability, implementation mappings and qualification dispositions remain to be reconciled before IR authority and M0 closure.",
     "M0 configuration progress: a deterministic effective configuration identity is derived from the production binary, NASM-resolved nine-entry MOT projection, exact configured capacities and dependency provenance. Its numerical implementation projection is published and independently reproducible. Normative LIM-* mapping, authoritative ELM adoption, applicability and formal qualification remain outstanding.",
     "M0-BLOCK-LR progress: nine M0 production MOT capacities now have stable proposed canonical LIM-MEM identities, exact NASM-resolved runtime mappings and verified numerical values. Full normative LR schema, applicability and authoritative adoption are still outstanding.",
-    "M0 production configuration reconciliation: all nine NASM-resolved MOT limits now reference the corresponding provisional canonical LIM-MEM identities without unresolved mapping placeholders. The effective configuration identity commits to the validated Limit Register bytes. These are implementation evidence, not a claim of full normative LR or ELM adoption."
+    "M0 production configuration reconciliation: all nine NASM-resolved MOT limits now reference the corresponding provisional canonical LIM-MEM identities without unresolved mapping placeholders. The effective configuration identity commits to the validated Limit Register bytes. These are implementation evidence, not a claim of full normative LR or ELM adoption.",
+    "M0 diagnostics progress: the same fixed-layout, first-failure latch now supports two independent runtime integrity domains, with preserved original validator results and assembly qualification. No milestone closure is claimed."
   ]
 }
