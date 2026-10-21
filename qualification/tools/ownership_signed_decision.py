@@ -39,6 +39,53 @@ def read(path):
 
 
 def signature_check(payload, signature, signers, principal, namespace):
+    # OpenSSH may accept a valid armored signature followed by
+    # trailing bytes. Qualification evidence must be strictly
+    # framed and must not contain ignored or ambiguous material.
+    encoded_signature = read(signature)
+
+    # Split only on LF, requiring the exact OpenSSH armor.
+    # This deliberately rejects CRLF, leading or trailing data,
+    # additional blank lines, and anything after the footer.
+    lines = encoded_signature.split(bytes([10]))
+
+    require(
+        len(lines) >= 4
+        and lines[0] == b"-----BEGIN SSH SIGNATURE-----"
+        and lines[-2] == b"-----END SSH SIGNATURE-----"
+        and lines[-1] == b"",
+        "malformed signature envelope",
+    )
+
+    encoded_lines = lines[1:-2]
+    alphabet = frozenset(
+        b"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        b"abcdefghijklmnopqrstuvwxyz"
+        b"0123456789+/="
+    )
+
+    require(
+        bool(encoded_lines)
+        and all(
+            bool(line) and all(byte in alphabet for byte in line)
+            for line in encoded_lines
+        ),
+        "invalid armored signature body",
+    )
+
+    body = b"".join(encoded_lines)
+
+    try:
+        decoded = base64.b64decode(body, validate=True)
+    except (ValueError, base64.binascii.Error) as exc:
+        raise DecisionError("malformed signature encoding") from exc
+
+    require(
+        base64.b64encode(decoded) == body
+        and decoded.startswith(b"SSHSIG"),
+        "noncanonical SSH signature",
+    )
+
     result = subprocess.run(
         [
             "ssh-keygen", "-Y", "verify",
