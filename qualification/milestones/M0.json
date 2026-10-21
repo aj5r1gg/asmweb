@@ -13,7 +13,7 @@
   "blocked_items": [
     {
       "blocker_id": "M0-BLOCK-IR",
-      "description": "Authoritative Invariant Register machinery is not yet established."
+      "description": "All 144 extracted INV-* identities have a full-schema IR draft with five initial M0 implementation candidates. Authoritative status/applicability, source-text fidelity, machine expressions, required runtime mappings and qualification dispositions remain incomplete."
     },
     {
       "blocker_id": "M0-BLOCK-LR",
@@ -43,7 +43,8 @@
     "qualification/limits/m0-effective-configuration-v0.1.json",
     "qualification/limits/m0-limit-register-v0.1.json",
     "qualification/invariants/m0-applicability-v0.1.json",
-    "qualification/limits/m0-normative-lr-v0.1.json"
+    "qualification/limits/m0-normative-lr-v0.1.json",
+    "qualification/invariants/m0-normative-ir-v0.1.json"
   ],
   "notes": [
     "Runtime & Memory §78 implementation machinery is substantially present.",
@@ -56,6 +57,7 @@
     "M0 production configuration reconciliation: all nine NASM-resolved MOT limits now reference the corresponding provisional canonical LIM-MEM identities without unresolved mapping placeholders. The effective configuration identity commits to the validated Limit Register bytes. These are implementation evidence, not a claim of full normative LR or ELM adoption.",
     "M0 diagnostics progress: the same fixed-layout, first-failure latch now supports two independent runtime integrity domains, with preserved original validator results and assembly qualification. No milestone closure is claimed.",
     "M0 IR applicability assessment identifies five READY and configuration-related candidate invariants with existing implementation and qualification references. All 144 identities are accounted for; unresolved applicability and formal normative review remain open.",
-    "M0 LR representation now supports all fields required by Invariants & Limits Register v0.3 §6 for the nine production MOT capacities. Values and canonical LIM-* mappings derive from existing NASM authority. Semantic completion, applicability across other resource classes and normative adoption remain outstanding."
+    "M0 LR representation now supports all fields required by Invariants & Limits Register v0.3 §6 for the nine production MOT capacities. Values and canonical LIM-* mappings derive from existing NASM authority. Semantic completion, applicability across other resource classes and normative adoption remain outstanding.",
+    "M0 IR schema implementation: 144 controlled identities are populated into the complete §5 entry structure. Unapproved status decisions remain null in the draft rather than being falsely assigned ACTIVE or DEFERRED. At least one multiline normative source statement requires extraction repair."
   ]
 }

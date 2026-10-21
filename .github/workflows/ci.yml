@@ -35,6 +35,8 @@ jobs:
           git rev-parse HEAD
       - name: Build production executable
         run: make all
+      - name: Verify full-schema Invariant Register
+        run: python3 -B qualification/tools/m0_normative_ir.py verify
       - name: Verify M0 full-schema Limit Register
         run: python3 -B qualification/tools/m0_normative_lr.py verify
       - name: Verify canonical M0 production limits
