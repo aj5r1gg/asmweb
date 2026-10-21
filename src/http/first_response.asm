@@ -48,18 +48,52 @@ request_line:
     db 'GET / HTTP/1.1', 13, 10
 request_line_end:
 
+route_about:
+    db '/about.html'
+route_about_end:
+
+route_style:
+    db '/style.css'
+route_style_end:
+
+route_icon:
+    db '/favicon.ico'
+route_icon_end:
+
+request_version:
+    db ' HTTP/1.1', 13, 10
+request_version_end:
+
 
 ; Local development document root.
 ; Launch AsmWeb from the repository directory.
 
 page_path:
     db 'www/index.html', 0
+page_path_about:
+    db 'www/about.html', 0
+page_path_style:
+    db 'www/style.css', 0
+page_path_icon:
+    db 'www/favicon.ico', 0
 
 page_prefix:
     db 'HTTP/1.1 200 OK', 13, 10
     db 'Content-Type: text/html; charset=utf-8', 13, 10
     db 'Content-Length: '
 page_prefix_end:
+
+page_prefix_style:
+    db 'HTTP/1.1 200 OK', 13, 10
+    db 'Content-Type: text/css; charset=utf-8', 13, 10
+    db 'Content-Length: '
+page_prefix_style_end:
+
+page_prefix_icon:
+    db 'HTTP/1.1 200 OK', 13, 10
+    db 'Content-Type: image/x-icon', 13, 10
+    db 'Content-Length: '
+page_prefix_icon_end:
 
 page_suffix:
     db 13, 10
@@ -123,6 +157,11 @@ request_buffer:
     resb ASMWEB_M1_REQUEST_CAPACITY
 serve_forever_mode:
     resb 1
+selected_route:
+    resb 1
+alignb 8
+selected_path_end:
+    resq 1
 page_buffer:
     resb ASMWEB_PAGE_READ_CAP
 page_response:
@@ -341,18 +380,77 @@ asm_http_serve_common:
     jmp .read
 
 .complete:
-    ; Check supported request line.
-    cmp r14, request_line_end - request_line + 2
+    ; Validate GET and the beginning of an origin-form target.
+    cmp r14, 18
     jb .bad_request
 
     lea rsi, [rel request_buffer]
-    lea rdi, [rel request_line]
-    mov ecx, request_line_end - request_line
+    cmp dword [rsi], 0x20544547       ; "GET "
+    jne .bad_request
+    cmp byte [rsi+4], '/'
+    jne .bad_request
+
+    ; Scan the request path within the received byte count.
+    ; RBX records the end of the path, excluding any query.
+    mov r10d, 4
+
+.path_scan:
+    cmp r10, r14
+    jae .bad_request
+    mov al, [rsi+r10]
+    cmp al, ' '
+    je .path_complete
+    cmp al, '?'
+    je .query_begin
+    cmp al, 33
+    jb .bad_request
+    cmp al, 126
+    ja .bad_request
+    inc r10
+    jmp .path_scan
+
+.query_begin:
+    mov rbx, r10
+    inc r10
+
+.query_scan:
+    cmp r10, r14
+    jae .bad_request
+    mov al, [rsi+r10]
+    cmp al, ' '
+    je .target_complete
+    cmp al, 33
+    jb .bad_request
+    cmp al, 126
+    ja .bad_request
+    inc r10
+    jmp .query_scan
+
+.path_complete:
+    mov rbx, r10
+
+.target_complete:
+    ; Require precisely " HTTP/1.1" and CRLF after the target.
+    lea rax, [r10 + request_version_end - request_version]
+    cmp rax, r14
+    ja .bad_request
+
+    lea rsi, [rel request_buffer]
+    lea rsi, [rsi+r10]
+    lea rdi, [rel request_version]
+    mov ecx, request_version_end - request_version
     repe cmpsb
     jne .bad_request
 
+    ; RSI now points immediately after the validated request line.
+    ; Derive the next-header offset from that position rather than
+    ; retaining the request-target scan index.
+    lea rax, [rel request_buffer]
+    mov r9, rsi
+    sub r9, rax
+
+    mov [rel selected_path_end], rbx
     lea rsi, [rel request_buffer]
-    mov r9d, request_line_end - request_line
     xor r8d, r8d
 
 .header_next:
@@ -507,16 +605,75 @@ asm_http_serve_common:
     jmp .header_next
 
 .accepted:
+    mov rbx, [rel selected_path_end]
+    ; Dispatch against a fixed, traversal-free route table.
+    ; 0=index, 1=about, 2=CSS, 3=icon, 4=missing.
+    mov byte [rel selected_route], 4
+
+    cmp rbx, 5
+    jne .route_about_check
+    mov byte [rel selected_route], 0
+    jmp .route_complete
+
+.route_about_check:
+    cmp rbx, 4 + route_about_end - route_about
+    jne .route_style_check
+    lea rsi, [rel request_buffer+4]
+    lea rdi, [rel route_about]
+    mov ecx, route_about_end - route_about
+    repe cmpsb
+    jne .route_style_check
+    mov byte [rel selected_route], 1
+    jmp .route_complete
+
+.route_style_check:
+    cmp rbx, 4 + route_style_end - route_style
+    jne .route_icon_check
+    lea rsi, [rel request_buffer+4]
+    lea rdi, [rel route_style]
+    mov ecx, route_style_end - route_style
+    repe cmpsb
+    jne .route_icon_check
+    mov byte [rel selected_route], 2
+    jmp .route_complete
+
+.route_icon_check:
+    cmp rbx, 4 + route_icon_end - route_icon
+    jne .route_complete
+    lea rsi, [rel request_buffer+4]
+    lea rdi, [rel route_icon]
+    mov ecx, route_icon_end - route_icon
+    repe cmpsb
+    jne .route_complete
+    mov byte [rel selected_route], 3
+
+.route_complete:
     ; Preserve the existing one-shot response for internal callers.
     cmp byte [rel serve_forever_mode], 0
     je .accepted_legacy
 
-    ; openat(AT_FDCWD, "www/index.html",
+    ; Select a fixed document-root resource.
+    movzx eax, byte [rel selected_route]
+    cmp eax, 4
+    je .page_missing
+
+    lea r14, [rel page_path]
+    cmp eax, 0
+    je .page_open
+    lea r14, [rel page_path_about]
+    cmp eax, 1
+    je .page_open
+    lea r14, [rel page_path_style]
+    cmp eax, 2
+    je .page_open
+    lea r14, [rel page_path_icon]
+
+    ; openat(AT_FDCWD, selected resource,
     ;        O_RDONLY|O_CLOEXEC|O_NOFOLLOW, 0)
 .page_open:
     mov eax, 257
     mov edi, -100
-    lea rsi, [rel page_path]
+    mov rsi, r14
     mov edx, 0xA0000
     xor r10d, r10d
     syscall
@@ -570,8 +727,25 @@ asm_http_serve_common:
 
     ; Construct the entire response in a bounded buffer.
     lea rdi, [rel page_response]
+    cmp byte [rel selected_route], 2
+    je .prefix_style
+    cmp byte [rel selected_route], 3
+    je .prefix_icon
+
     lea rsi, [rel page_prefix]
     mov ecx, page_prefix_end - page_prefix
+    jmp .copy_prefix
+
+.prefix_style:
+    lea rsi, [rel page_prefix_style]
+    mov ecx, page_prefix_style_end - page_prefix_style
+    jmp .copy_prefix
+
+.prefix_icon:
+    lea rsi, [rel page_prefix_icon]
+    mov ecx, page_prefix_icon_end - page_prefix_icon
+
+.copy_prefix:
     rep movsb
 
     ; Convert the actual file length to decimal.

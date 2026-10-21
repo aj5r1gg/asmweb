@@ -1,0 +1,13 @@
+body {
+  max-width: 720px;
+  margin: 12vh auto;
+  padding: 0 24px;
+  font: 18px/1.7 system-ui, sans-serif;
+  background: #101820;
+  color: #f5f5f5;
+}
+h1 { font-size: 3rem; }
+code, a { color: #70e0b3; }
+nav { display: flex; gap: 24px; margin-bottom: 36px; }
+a { text-decoration: none; }
+a:hover { text-decoration: underline; }
