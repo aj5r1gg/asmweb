@@ -19,16 +19,8 @@ MUTATIONS = [
     ),
     (
         "CORRUPTED_DOMAIN",
-        (
-            "    cmp qword [rdi + ASMWEB_DIAGNOSTIC.domain], \\\n"
-            "        ASMWEB_DIAG_DOMAIN_RUNTIME_INVARIANT\n"
-            "    jne .fail\n"
-        ),
-        (
-            "    cmp qword [rdi + ASMWEB_DIAGNOSTIC.domain], \\\n"
-            "        ASMWEB_DIAG_DOMAIN_RUNTIME_INVARIANT\n"
-            "    nop\n"
-        ),
+        '    jmp .fail\n\n.check_invariant:',
+        '    jmp .check_invariant\n\n.check_invariant:',
         10,
     ),
     (
