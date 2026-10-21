@@ -75,5 +75,7 @@ jobs:
           python3 -B tests/qualification/ownership_proposal_journal.py
       - name: Verify signed ownership authority
         run: python3 -B tests/qualification/ownership_authority.py
+      - name: Verify signed ownership decisions
+        run: python3 -B tests/qualification/ownership_signed_decision.py
       - name: Verify clean incremental build
         run: make all
