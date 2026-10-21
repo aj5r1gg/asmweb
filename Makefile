@@ -925,7 +925,11 @@ $(HTTP_FD_QUAL_OBJECT): $(HTTP_FD_QUAL_SOURCE)
 	mkdir -p $(dir $@)
 	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
 
-$(HTTP_FD_QUAL_TARGET): $(BUILD_DIR)/http/first_response.o $(HTTP_FD_QUAL_OBJECT)
+$(HTTP_FD_QUAL_TARGET): \
+		$(BUILD_DIR)/http/first_response.o \
+		$(BUILD_DIR)/platform/time.o \
+		$(BUILD_DIR)/platform/deadline.o \
+		$(HTTP_FD_QUAL_OBJECT)
 	mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -o $@ $^
 
@@ -940,6 +944,28 @@ qualify-http-descriptor-mutations: $(HTTP_FD_QUAL_TARGET)
 
 # Track NASM include-file dependencies for the HTTP lifecycle harness.
 -include $(HTTP_FD_QUAL_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 — Absolute HTTP request-acquisition deadline qualification
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-http-acquisition-deadline
+qualify-http-acquisition-deadline: $(TARGET)
+	timeout 30s python3 tests/integration/http_acquisition_deadline.py
+
+.PHONY: qualify-http-deadline-mutations
+qualify-http-deadline-mutations: $(TARGET)
+	timeout 60s python3 tests/qualification/http_deadline_mutations.py
+
+# Run sequentially: both live tests use the same local HTTP port.
+.PHONY: qualify-http-deadline-security
+qualify-http-deadline-security:
+	$(MAKE) -j1 qualify-time qualify-deadline \
+		qualify-http-descriptor-lifecycle \
+		qualify-http-descriptor-mutations \
+		qualify-http-acquisition-deadline \
+		qualify-http-deadline-mutations
+
 
 # ---------------------------------------------------------------------------
 # CP-LEGACY-M1-5 — Historical reconciliation engineering verification

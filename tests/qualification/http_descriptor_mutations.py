@@ -19,7 +19,7 @@ BASELINE = Path(
 )
 
 CLOSE = "    call asm_linux_close"
-MAX_SCENARIO = 14
+MAX_SCENARIO = 21
 
 
 def run(arguments, *, timeout=10):
@@ -154,6 +154,8 @@ def main():
                 "-z", "noexecstack",
                 "-o", binary,
                 obj,
+                Path("build/platform/time.o"),
+                Path("build/platform/deadline.o"),
                 HARNESS_OBJECT,
             ])
 

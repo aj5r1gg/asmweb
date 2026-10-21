@@ -2,6 +2,7 @@ bits 64
 
 %include "asmweb/abi.inc"
 %include "asmweb/http_first.inc"
+%include "asmweb/time.inc"
 %include "linux/network.inc"
 
 global asm_http_serve_once
@@ -9,6 +10,7 @@ global asm_http_serve_forever
 
 %define ASMWEB_PAGE_MAX 4096
 %define ASMWEB_PAGE_READ_CAP 4097
+%define ASMWEB_HTTP_ACQUISITION_BUDGET_NS 3000000000
 
 extern asm_linux_socket
 extern asm_linux_bind
@@ -18,6 +20,8 @@ extern asm_linux_recv
 extern asm_linux_send
 extern asm_linux_close
 extern asm_linux_setsockopt
+extern asm_monotonic_now
+extern asm_deadline_remaining
 
 section .rodata
 
@@ -169,7 +173,12 @@ asm_http_serve_common:
     push r13
     push r14
     push r15
-    sub rsp, 8
+    ; Fixed 88-byte frame, preserving 16-byte CALL alignment.
+    ; [rsp+0]  = immutable start sample (32 bytes)
+    ; [rsp+32] = current sample (32 bytes)
+    ; [rsp+64] = remaining timeval (16 bytes)
+    ; [rsp+80] = reserved (8 bytes)
+    sub rsp, 88
 
     mov r12, -1
     mov r13, -1
@@ -229,16 +238,12 @@ asm_http_serve_common:
 
     mov r13, rax
 
-    ; Bound idle receive/send blocking on the accepted socket.
-    mov rdi, r13
-    mov esi, LINUX_SOL_SOCKET
-    mov edx, LINUX_SO_RCVTIMEO
-    lea rcx, [rel socket_timeout]
-    mov r8d, 16
-    call asm_linux_setsockopt
-
+    ; Capture the acquisition start exactly once per accepted client.
+    ; This timestamp MUST NOT be refreshed by subsequent fragments.
+    lea rdi, [rsp]
+    call asm_monotonic_now
     test rax, rax
-    js .drop_client
+    jnz .drop_client
 
     mov rdi, r13
     mov esi, LINUX_SOL_SOCKET
@@ -256,6 +261,32 @@ asm_http_serve_common:
     cmp r14, ASMWEB_M1_REQUEST_CAPACITY
     jae .too_large
 
+    ; Recalculate against the immutable acceptance timestamp.
+    ; EINTR and incomplete fragments both return through here.
+    lea rdi, [rsp + 32]
+    call asm_monotonic_now
+    test rax, rax
+    jnz .drop_client
+
+    mov rdi, [rsp + ASMWEB_MONOTONIC_TIME.total_ns]
+    mov rsi, [rsp + 32 + ASMWEB_MONOTONIC_TIME.total_ns]
+    mov rdx, ASMWEB_HTTP_ACQUISITION_BUDGET_NS
+    lea rcx, [rsp + 64]
+    call asm_deadline_remaining
+    test eax, eax
+    jnz .drop_client
+
+    ; SO_RCVTIMEO now represents the remaining absolute budget,
+    ; rounded upwards by the qualified deadline arithmetic.
+    mov rdi, r13
+    mov esi, LINUX_SOL_SOCKET
+    mov edx, LINUX_SO_RCVTIMEO
+    lea rcx, [rsp + 64]
+    mov r8d, 16
+    call asm_linux_setsockopt
+    test rax, rax
+    js .drop_client
+
     mov rdi, r13
     lea rsi, [rel request_buffer]
     add rsi, r14
@@ -272,7 +303,24 @@ asm_http_serve_common:
     test rax, rax
     jz .bad_request
 
-    add r14, rax
+    ; A successful recv is insufficient: it may have returned
+    ; at or after the absolute deadline.
+    mov r15, rax
+
+    lea rdi, [rsp + 32]
+    call asm_monotonic_now
+    test rax, rax
+    jnz .drop_client
+
+    mov rdi, [rsp + ASMWEB_MONOTONIC_TIME.total_ns]
+    mov rsi, [rsp + 32 + ASMWEB_MONOTONIC_TIME.total_ns]
+    mov rdx, ASMWEB_HTTP_ACQUISITION_BUDGET_NS
+    lea rcx, [rsp + 64]
+    call asm_deadline_remaining
+    test eax, eax
+    jnz .drop_client
+
+    add r14, r15
 
     ; Search bounded received bytes for CRLF CRLF.
     cmp r14, 4
@@ -650,7 +698,7 @@ asm_http_serve_common:
 
 .return:
     mov eax, ebp
-    add rsp, 8
+    add rsp, 88
     pop r15
     pop r14
     pop r13

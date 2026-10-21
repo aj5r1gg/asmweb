@@ -53,6 +53,13 @@ bits 64
 ;  11: accept EINTR once, then success
 ;  12: recv EINTR once, then EOF
 ;  13: send EINTR once, then success
+;  14: initial monotonic clock acquisition fails
+;  15: second clock acquisition fails before first recv
+;  16: third clock acquisition fails after one-byte recv
+;  17: exact three-second expiry before first recv
+;  18: one nanosecond remains, then expires after recv
+;  19: repeated recv EINTR does not reset absolute deadline
+;  20: SO_RCVTIMEO configuration fails before first recv
 
 global _start
 
@@ -64,12 +71,13 @@ global asm_linux_recv
 global asm_linux_send
 global asm_linux_close
 global asm_linux_setsockopt
+global asm_linux_clock_gettime
 
 extern asm_http_serve_once
 
 %define FD_LISTENER 40
 %define FD_ACCEPTED 41
-%define SCENARIO_COUNT 14
+%define SCENARIO_COUNT 21
 
 section .rodata
 
@@ -91,6 +99,13 @@ expected:
     dq 0, 2, 2, 2, 21
     dq 0, 2, 2, 2, 21
     dq 0, 2, 2, 2, 21
+    dq 1, 2, 2, 2, 21
+    dq 1, 2, 2, 2, 21
+    dq 1, 2, 2, 2, 21
+    dq 1, 2, 2, 2, 21
+    dq 1, 2, 2, 2, 21
+    dq 1, 2, 2, 2, 21
+    dq 1, 2, 2, 2, 21
 
 section .bss
 align 8
@@ -110,6 +125,12 @@ handler_return: resq 1
 accept_interrupts: resq 1
 recv_interrupts:   resq 1
 send_interrupts:   resq 1
+clock_failures:    resq 1
+clock_calls:       resq 1
+recv_calls:        resq 1
+send_calls:        resq 1
+timeout_checks:    resq 1
+timeout_failures:  resq 1
 state_end:
 
 section .text
@@ -169,6 +190,113 @@ _start:
     cmp qword [rel violations], 0
     jne .fail
 
+    ; Scenarios 14-16 inject exactly one clock failure.
+    xor eax, eax
+    cmp r15, 14
+    je .expect_clock_failure
+    cmp r15, 15
+    je .expect_clock_failure
+    cmp r15, 16
+    jne .clock_failure_checked
+.expect_clock_failure:
+    mov eax, 1
+.clock_failure_checked:
+    cmp [rel clock_failures], rax
+    jne .fail
+
+    ; Scenario 15 must fail at its second clock acquisition,
+    ; before any receive operation is attempted.
+    cmp r15, 15
+    jne .clock_call_checks_done
+
+    cmp qword [rel clock_calls], 2
+    jne .fail
+    cmp qword [rel recv_calls], 0
+    jne .fail
+
+.clock_call_checks_done:
+    ; Scenario 16 must receive a byte, then fail the
+    ; post-receive clock sample before any response is sent.
+    cmp r15, 16
+    jne .post_receive_checks_done
+
+    cmp qword [rel clock_calls], 3
+    jne .fail
+    cmp qword [rel recv_calls], 1
+    jne .fail
+    cmp qword [rel send_calls], 0
+    jne .fail
+
+.post_receive_checks_done:
+    ; Exact equality with the absolute deadline is expired.
+    ; The production handler must refuse to receive or respond.
+    cmp r15, 17
+    jne .equality_checks_done
+
+    cmp qword [rel clock_calls], 2
+    jne .fail
+    cmp qword [rel clock_failures], 0
+    jne .fail
+    cmp qword [rel recv_calls], 0
+    jne .fail
+    cmp qword [rel send_calls], 0
+    jne .fail
+
+.equality_checks_done:
+    ; A remaining nanosecond is active. The socket timeout
+    ; must be rounded up to exactly one microsecond.
+    ; The byte received at deadline equality must be rejected.
+    cmp r15, 18
+    jne .nanosecond_checks_done
+
+    cmp qword [rel clock_calls], 3
+    jne .fail
+    cmp qword [rel clock_failures], 0
+    jne .fail
+    cmp qword [rel recv_calls], 1
+    jne .fail
+    cmp qword [rel send_calls], 0
+    jne .fail
+    cmp qword [rel timeout_checks], 1
+    jne .fail
+
+.nanosecond_checks_done:
+    ; Scenario 19: two EINTR results, both followed by
+    ; re-evaluation against the original acquisition timestamp.
+    ; The clock reaches the deadline before a third recv.
+    cmp r15, 19
+    jne .eintr_deadline_checks_done
+
+    cmp qword [rel clock_calls], 4
+    jne .fail
+    cmp qword [rel clock_failures], 0
+    jne .fail
+    cmp qword [rel recv_calls], 2
+    jne .fail
+    cmp qword [rel send_calls], 0
+    jne .fail
+    cmp qword [rel timeout_checks], 0
+    jne .fail
+
+.eintr_deadline_checks_done:
+    ; Scenario 20: receive-timeout configuration fails.
+    ; There must be no recv or send after the failure.
+    cmp r15, 20
+    jne .timeout_failure_checks_done
+
+    cmp qword [rel clock_calls], 2
+    jne .fail
+    cmp qword [rel clock_failures], 0
+    jne .fail
+    cmp qword [rel recv_calls], 0
+    jne .fail
+    cmp qword [rel send_calls], 0
+    jne .fail
+    cmp qword [rel timeout_failures], 1
+    jne .fail
+
+.timeout_failure_checks_done:
+
     ; Independent bound, derived from production RCT definitions.
     cmp qword [rel high_water], QUAL_HTTP_FD_TOTAL_CAPACITY
     ja .fail
@@ -187,7 +315,13 @@ _start:
 
     xor eax, eax
     cmp r15, 12
+    je .expect_one_recv_interrupt
+    cmp r15, 19
     jne .check_send_interrupts
+    mov eax, 2
+    jmp .check_send_interrupts
+
+.expect_one_recv_interrupt:
     mov eax, 1
 
 .check_send_interrupts:
@@ -221,6 +355,122 @@ _start:
 ; ------------------------------------------------------------------
 ; Simulated Linux network interface
 ; ------------------------------------------------------------------
+
+; Qualification-only deterministic CLOCK_MONOTONIC source.
+; Returns 1 second for every acquisition in the legacy descriptor
+; scenarios. Dedicated deadline scenarios will control advancement.
+;
+; Inputs:
+;   RDI = Linux clock ID (CLOCK_MONOTONIC = 1)
+;   RSI = writable timespec pointer
+;
+; Output:
+;   RAX = 0 on success, negative errno on failure.
+;
+; No allocation, syscall, or callee-saved register modification.
+
+asm_linux_clock_gettime:
+    cmp edi, 1
+    jne .invalid
+    test rsi, rsi
+    jz .invalid
+
+    inc qword [rel clock_calls]
+
+    cmp qword [rel scenario], 14
+    je .injected_clock_failure
+
+    cmp qword [rel scenario], 15
+    je .check_second_clock
+
+    cmp qword [rel scenario], 16
+    jne .clock_success
+
+    cmp qword [rel clock_calls], 3
+    je .injected_clock_failure
+    jmp .clock_success
+
+.check_second_clock:
+    cmp qword [rel clock_calls], 2
+    je .injected_clock_failure
+
+.clock_success:
+    cmp qword [rel scenario], 17
+    jne .ordinary_clock_sample
+
+    cmp qword [rel clock_calls], 2
+    jne .ordinary_clock_sample
+
+    mov qword [rsi], 4
+    mov qword [rsi + 8], 0
+    xor eax, eax
+    ret
+
+.ordinary_clock_sample:
+    cmp qword [rel scenario], 18
+    jne .default_clock_sample
+
+    cmp qword [rel clock_calls], 2
+    je .one_nanosecond_remaining
+
+    cmp qword [rel clock_calls], 3
+    je .deadline_reached
+
+    jmp .default_clock_sample
+
+.one_nanosecond_remaining:
+    mov qword [rsi], 3
+    mov qword [rsi + 8], 999999999
+    xor eax, eax
+    ret
+
+.deadline_reached:
+    mov qword [rsi], 4
+    mov qword [rsi + 8], 0
+    xor eax, eax
+    ret
+
+.default_clock_sample:
+    cmp qword [rel scenario], 19
+    jne .fixed_clock_sample
+
+    cmp qword [rel clock_calls], 3
+    je .second_elapsed
+
+    cmp qword [rel clock_calls], 4
+    je .absolute_expiry
+
+    jmp .fixed_clock_sample
+
+.second_elapsed:
+    mov qword [rsi], 2
+    mov qword [rsi + 8], 0
+    xor eax, eax
+    ret
+
+.absolute_expiry:
+    mov qword [rsi], 4
+    mov qword [rsi + 8], 0
+    xor eax, eax
+    ret
+
+.fixed_clock_sample:
+    mov qword [rsi], 1
+    mov qword [rsi + 8], 0
+
+    xor eax, eax
+    ret
+
+.injected_clock_failure:
+    inc qword [rel clock_failures]
+    mov rax, -5
+    ret
+
+.invalid:
+    inc qword [rel violations]
+    mov rax, -22
+    ret
+
 
 asm_linux_socket:
     cmp qword [rel scenario], 1
@@ -343,6 +593,33 @@ asm_linux_recv:
     cmp qword [rel accepted_owned], 1
     jne .invalid
 
+    inc qword [rel recv_calls]
+
+    cmp qword [rel scenario], 19
+    jne .check_fragment_receive
+
+    inc qword [rel recv_interrupts]
+    mov rax, -4                 ; EINTR
+    ret
+
+.check_fragment_receive:
+    cmp qword [rel scenario], 16
+    je .deliver_one_byte
+
+    cmp qword [rel scenario], 18
+    jne .check_legacy_recv
+
+.deliver_one_byte:
+
+    ; Exactly one byte is delivered in this scenario.
+    test rdx, rdx
+    jz .invalid
+    mov byte [rsi], 'G'
+    mov eax, 1
+    ret
+
+.check_legacy_recv:
+
     cmp qword [rel scenario], 4
     je .refuse
 
@@ -372,6 +649,8 @@ asm_linux_send:
     jne .invalid
     cmp qword [rel accepted_owned], 1
     jne .invalid
+
+    inc qword [rel send_calls]
 
     cmp qword [rel scenario], 10
     je .refuse
@@ -421,11 +700,44 @@ asm_linux_setsockopt:
     cmp qword [rel accepted_owned], 1
     jne .invalid
 
+    cmp qword [rel scenario], 18
+    jne .ordinary_accepted_option
+
+    ; The fixed send timeout is unrelated to this check.
+    cmp edx, 20
+    jne .ordinary_accepted_option
+
+    ; SO_RCVTIMEO must receive a valid 16-byte timeval.
+    cmp r8d, 16
+    jne .invalid
+    test rcx, rcx
+    jz .invalid
+    cmp qword [rcx], 0
+    jne .invalid
+    cmp qword [rcx + 8], 1
+    jne .invalid
+
+    inc qword [rel timeout_checks]
+
+.ordinary_accepted_option:
+
+    ; Scenario 20 rejects only SO_RCVTIMEO on the accepted
+    ; descriptor. Its initial SO_SNDTIMEO must succeed.
+    cmp qword [rel scenario], 20
+    jne .check_legacy_option_failure
+
+    cmp edx, 20
+    je .injected_receive_timeout_failure
+
+.check_legacy_option_failure:
     cmp qword [rel scenario], 9
     je .refuse
 
     xor eax, eax
     ret
+
+.injected_receive_timeout_failure:
+    inc qword [rel timeout_failures]
 
 .refuse:
     mov rax, -5
