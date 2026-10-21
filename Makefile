@@ -1371,3 +1371,8 @@ qualify-m0-requirement-identity:
 .PHONY: qualify-m0-binary-identity
 qualify-m0-binary-identity: all
 	python3 -B tests/qualification/m0_binary_identity.py
+
+# M0 requirement-level engineering result reconciliation
+.PHONY: qualify-m0-explicit-results
+qualify-m0-explicit-results: all
+	python3 -B qualification/tools/m0_explicit_results.py verify
