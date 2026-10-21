@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "document_type": "ASMWEB_M0_OWNERSHIP_PROPOSALS",
+  "status": "ENGINEERING_DRAFT",
+  "authoritative": false,
+  "proposal_count": 5,
+  "entries": [
+    {
+      "requirement_id": "REQ-M0-001",
+      "normative_statement": "M0 SHALL NOT be required to implement later HTTP protocol functionality.",
+      "proposed_first_mandatory_milestone": "M0",
+      "decision_rationale": "This explicitly constrains M0 scope; HTTP protocol implementation is not an M0 exit prerequisite.",
+      "engineering_evidence_candidates": [],
+      "review_status": "PROPOSED_NOT_APPROVED",
+      "approval_evidence_ref": null,
+      "authority_designation_ref": null
+    },
+    {
+      "requirement_id": "REQ-M0-002",
+      "normative_statement": "M0 SHALL avoid decisions that make mandatory later requirements impossible without unjustified redesign.",
+      "proposed_first_mandatory_milestone": "M0",
+      "decision_rationale": "This is an M0 architecture-compatibility obligation; a controlled architecture review is still needed.",
+      "engineering_evidence_candidates": [],
+      "review_status": "PROPOSED_NOT_APPROVED",
+      "approval_evidence_ref": null,
+      "authority_designation_ref": null
+    },
+    {
+      "requirement_id": "REQ-M0-003",
+      "normative_statement": "M0 exit SHALL identify every M0-owned requirement and its qualification status.",
+      "proposed_first_mandatory_milestone": "M0",
+      "decision_rationale": "This explicitly requires a complete M0-owned requirement set with individual qualification results at M0 exit.",
+      "engineering_evidence_candidates": [
+        "qualification/tools/m0_closure_gate.py"
+      ],
+      "review_status": "PROPOSED_NOT_APPROVED",
+      "approval_evidence_ref": null,
+      "authority_designation_ref": null
+    },
+    {
+      "requirement_id": "REQ-M0-004",
+      "normative_statement": "M0 SHALL establish automated detection of duplicate or unknown requirement identifiers.",
+      "proposed_first_mandatory_milestone": "M0",
+      "decision_rationale": "This explicitly requires automated identifier rejection at M0; positive and adversarial identity tests are present.",
+      "engineering_evidence_candidates": [
+        "tests/qualification/m0_requirement_identity.py"
+      ],
+      "review_status": "PROPOSED_NOT_APPROVED",
+      "approval_evidence_ref": null,
+      "authority_designation_ref": null
+    },
+    {
+      "requirement_id": "REQ-M0-005",
+      "normative_statement": "M0 SHALL establish a reproducible mechanism for identifying the binary under qualification.",
+      "proposed_first_mandatory_milestone": "M0",
+      "decision_rationale": "This explicitly requires reproducible binary identification at M0; the configuration verifier supplies build-specific binary identity evidence.",
+      "engineering_evidence_candidates": [
+        "qualification/tools/m0_effective_configuration.py"
+      ],
+      "review_status": "PROPOSED_NOT_APPROVED",
+      "approval_evidence_ref": null,
+      "authority_designation_ref": null
+    }
+  ]
+}

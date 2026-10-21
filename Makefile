@@ -1360,3 +1360,9 @@ qualify-m0-governance-trace:
 qualify-m0-closure-gate:
 	python3 -B qualification/tools/m0_closure_gate.py audit
 	python3 -B tests/qualification/m0_closure_gate.py
+
+# REQ-M0-004: controlled requirement identity qualification
+.PHONY: qualify-m0-requirement-identity
+qualify-m0-requirement-identity:
+	python3 -B qualification/tools/m0_ownership_review.py verify
+	python3 -B tests/qualification/m0_requirement_identity.py
