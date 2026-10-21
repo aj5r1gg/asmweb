@@ -14,6 +14,13 @@
 %define LINUX_SYS_getsockname 51
 %define LINUX_SYS_getpeername 52
 %define LINUX_SYS_setsockopt 54
+%define LINUX_SYS_recvmmsg 299
+%define LINUX_SYS_sendmmsg 307
+
+; Provisional M1 UDP batch upper bound.
+; Not yet an approved effective limit.
+%define ASMWEB_UDP_BATCH_MAX 16
+%define LINUX_EINVAL 22
 %define LINUX_SOCK_CLOEXEC 0x80000
 %define LINUX_SOL_SOCKET 1
 %define LINUX_SO_REUSEADDR 2

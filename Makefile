@@ -1239,3 +1239,57 @@ qualify-deadline: $(DEADLINE_QUAL_TARGET)
 	timeout 5s $(DEADLINE_QUAL_TARGET)
 
 -include $(DEADLINE_QUAL_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 — Real Batched UDP Datagram Qualification
+# ---------------------------------------------------------------------------
+
+UDP_BATCH_TRANSFER_SOURCE := tests/qualification/udp_batch_transfer.asm
+UDP_BATCH_TRANSFER_OBJECT := $(BUILD_DIR)/tests/qualification/udp_batch_transfer.o
+UDP_BATCH_TRANSFER_TARGET := $(BUILD_DIR)/qualification/udp-batch-transfer
+
+$(UDP_BATCH_TRANSFER_OBJECT): $(UDP_BATCH_TRANSFER_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(UDP_BATCH_TRANSFER_TARGET): $(UDP_BATCH_TRANSFER_OBJECT) $(BUILD_DIR)/linux/network.o
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-udp-batch-transfer
+qualify-udp-batch-transfer: $(UDP_BATCH_TRANSFER_TARGET)
+	timeout 5s $(UDP_BATCH_TRANSFER_TARGET)
+
+-include $(UDP_BATCH_TRANSFER_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 — UDP bounded batch argument qualification
+# ---------------------------------------------------------------------------
+
+UDP_BATCH_BOUNDS_SOURCE := tests/qualification/udp_batch_bounds.asm
+UDP_BATCH_BOUNDS_OBJECT := $(BUILD_DIR)/tests/qualification/udp_batch_bounds.o
+UDP_BATCH_BOUNDS_TARGET := $(BUILD_DIR)/qualification/udp-batch-bounds
+
+$(UDP_BATCH_BOUNDS_OBJECT): $(UDP_BATCH_BOUNDS_SOURCE)
+	mkdir -p $(dir $@)
+	$(NASM) $(NASMFLAGS) -MD $(@:.o=.d) -o $@ $<
+
+$(UDP_BATCH_BOUNDS_TARGET): $(UDP_BATCH_BOUNDS_OBJECT) $(BUILD_DIR)/linux/network.o
+	mkdir -p $(dir $@)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+.PHONY: qualify-udp-batch-bounds
+qualify-udp-batch-bounds: $(UDP_BATCH_BOUNDS_TARGET)
+	timeout 5s $(UDP_BATCH_BOUNDS_TARGET)
+
+-include $(UDP_BATCH_BOUNDS_OBJECT:.o=.d)
+
+# ---------------------------------------------------------------------------
+# M1 — UDP batch adversarial mutation qualification
+# ---------------------------------------------------------------------------
+
+.PHONY: qualify-udp-batch-mutations
+qualify-udp-batch-mutations: \
+    $(UDP_BATCH_BOUNDS_TARGET) \
+    $(UDP_BATCH_TRANSFER_TARGET)
+	python3 tests/qualification/udp_batch_mutations.py

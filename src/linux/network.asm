@@ -12,6 +12,10 @@ global asm_linux_recv
 global asm_linux_send
 global asm_linux_recvfrom
 global asm_linux_sendto
+global asm_linux_recvmmsg
+global asm_linux_sendmmsg
+global asm_linux_recvmmsg_bounded
+global asm_linux_sendmmsg_bounded
 global asm_linux_close
 global asm_linux_setsockopt
 global asm_linux_getsockname
@@ -130,6 +134,84 @@ asm_linux_sendto:
     or r10d, LINUX_MSG_NOSIGNAL
     mov eax, LINUX_SYS_sendto
     syscall
+    ret
+
+; recvmmsg(fd, mmsghdr*, vlen, flags, timeout*)
+; RDI=borrowed descriptor
+; RSI=caller-owned mmsghdr array
+; RDX=number of entries
+; RCX=flags
+; R8=timespec pointer or NULL
+;
+; Raw Linux syscall boundary: no allocation, validation,
+; retry, timeout guarantee, or implicit result conversion.
+; A positive RAX counts completed datagrams, not bytes.
+; A zero result is not a stream EOF indication.
+; Each completed entry has its own msg_len and metadata.
+; Higher layers SHALL enforce finite batch capacity.
+asm_linux_recvmmsg:
+    mov r10, rcx
+    mov eax, LINUX_SYS_recvmmsg
+    syscall
+    ret
+
+; sendmmsg(fd, mmsghdr*, vlen, flags)
+; RDI=borrowed descriptor
+; RSI=caller-owned mmsghdr array
+; RDX=number of entries
+; RCX=flags
+;
+; MSG_NOSIGNAL is forced, matching asm_linux_sendto.
+; RAX is the number of completed datagrams or negative errno.
+; A positive short count does not expose a later errno.
+; Successful entries expose their byte counts in msg_len.
+; No allocation, validation, or implicit retry.
+asm_linux_sendmmsg:
+    mov r10, rcx
+    or r10d, LINUX_MSG_NOSIGNAL
+    mov eax, LINUX_SYS_sendmmsg
+    syscall
+    ret
+
+; Bounded UDP batch entry points — provisional M1 boundary.
+;
+; Both functions retain their corresponding raw wrapper ABI.
+; RDX must be in [1, ASMWEB_UDP_BATCH_MAX].
+; RSI must reference a non-null caller-owned message array.
+;
+; Rejected arguments return -EINVAL without a syscall.
+; Valid arguments delegate directly to the raw wrapper.
+; Nested message/iovec memory is not validated here.
+; No allocation, retry, socket ownership transfer or
+; result conversion occurs.
+;
+; This is an initial finite-count boundary, NOT complete
+; datagram descriptor qualification.
+
+asm_linux_recvmmsg_bounded:
+    test rsi, rsi
+    jz .invalid
+    test rdx, rdx
+    jz .invalid
+    cmp rdx, ASMWEB_UDP_BATCH_MAX
+    ja .invalid
+    jmp asm_linux_recvmmsg
+
+.invalid:
+    mov rax, -LINUX_EINVAL
+    ret
+
+asm_linux_sendmmsg_bounded:
+    test rsi, rsi
+    jz .invalid
+    test rdx, rdx
+    jz .invalid
+    cmp rdx, ASMWEB_UDP_BATCH_MAX
+    ja .invalid
+    jmp asm_linux_sendmmsg
+
+.invalid:
+    mov rax, -LINUX_EINVAL
     ret
 
 ; getsockname(fd, sockaddr*, socklen_t*)
