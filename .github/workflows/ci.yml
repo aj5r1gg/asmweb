@@ -37,6 +37,8 @@ jobs:
         run: make all
       - name: Verify canonical M0 production limits
         run: python3 -B qualification/tools/m0_limit_register.py verify
+      - name: Verify effective production configuration
+        run: python3 -B qualification/tools/m0_effective_configuration.py verify
       - name: Verify M0 engineering baseline
         shell: bash
         run: |
