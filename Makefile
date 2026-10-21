@@ -1366,3 +1366,8 @@ qualify-m0-closure-gate:
 qualify-m0-requirement-identity:
 	python3 -B qualification/tools/m0_ownership_review.py verify
 	python3 -B tests/qualification/m0_requirement_identity.py
+
+# REQ-M0-005: reproducible production binary identity
+.PHONY: qualify-m0-binary-identity
+qualify-m0-binary-identity: all
+	python3 -B tests/qualification/m0_binary_identity.py

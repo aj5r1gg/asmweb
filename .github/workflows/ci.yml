@@ -53,6 +53,7 @@ jobs:
           make qualify-m0-governance-trace
           make qualify-m0-closure-gate
           make qualify-m0-requirement-identity
+          make qualify-m0-binary-identity
           make qualify-mot-ceiling-integration
           make qualify-memory-ceiling
           make qualify-runtime-invariant
