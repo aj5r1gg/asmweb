@@ -259,7 +259,7 @@ def evaluate(docs):
             absolute = (ROOT / candidate).resolve()
             if not absolute.is_relative_to(ROOT / "qualification"):
                 return False
-            if not absolute.is_file() or absolute.is_symlink():
+            if not absolute.is_file() or (ROOT / candidate).is_symlink():
                 return False
         return True
 
