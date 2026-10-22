@@ -62,6 +62,12 @@ def main():
         "M0-DIAGNOSTICS-ACCEPTANCE" in no_diag_ids,
         "FAILING_DIAGNOSTIC_QUALIFICATION_ACCEPTED",
     )
+    dimension_error = copy.deepcopy(original)
+    dimension_error["lr"]["entries"][0]["unit"] = "BYTES"
+    invalid_ids = {identity for identity, _ in gate.evaluate(dimension_error)}
+    require("M0-LR-DIMENSION" in invalid_ids, "INVALID_M0_LIMIT_DIMENSION_ACCEPTED")
+    print("INVALID_M0_LIMIT_DIMENSION=REJECTED")
+
     print("FAILED_DIAGNOSTIC_QUALIFICATION=REJECTED")
 
     print("FINAL_APPROVAL_SEPARATE_FROM_ELIGIBILITY=PASS")
