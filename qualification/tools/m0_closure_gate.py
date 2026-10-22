@@ -119,19 +119,34 @@ def evaluate(docs):
     if unapproved:
         fail("M0-IR-APPROVAL", str(unapproved) + " not approved")
 
-    incomplete = sum(
-        not (
-            e.get("status")
-            and e.get("machine_expression")
-            and e.get("first_required_milestone")
-            and e.get("evidence_refs")
-            and e.get("qualification_refs")
+    # Validate M0-applicable invariants locally. Later milestone
+    # protocol semantics must not be forced into the M0 exit predicate.
+    assessed_by_id = {e.get("invariant_id"): e for e in assessment}
+    ir_by_id = {e.get("invariant_id"): e for e in ir_entries}
+    if len(assessed_by_id) != len(assessment) or len(ir_by_id) != len(ir_entries):
+        fail("M0-IR-IDENTITY", "Duplicate invariant identity")
+    elif set(assessed_by_id) != set(ir_by_id):
+        fail("M0-IR-IDENTITY", "Assessment/IR identity mismatch")
+    else:
+        m0_ids = {
+            identity for identity, entry in assessed_by_id.items()
+            if entry.get("m0_applicability") == "CANDIDATE_APPLICABLE"
+        }
+        incomplete = sum(
+            not (
+                ir_by_id[identity].get("status") == "ACTIVE"
+                and ir_by_id[identity].get("first_required_milestone") == "M0"
+                and ir_by_id[identity].get("evidence_refs")
+                and ir_by_id[identity].get("qualification_refs")
+                and (
+                    ir_by_id[identity].get("machine_expression")
+                    or ir_by_id[identity].get("detection_method")
+                )
+            )
+            for identity in m0_ids
         )
-        for e in ir_entries
-    )
-
-    if incomplete:
-        fail("M0-IR-CONTENT", str(incomplete) + " incomplete")
+        if incomplete:
+            fail("M0-IR-CONTENT", str(incomplete) + " M0 candidates incomplete")
 
     if ir.get("authoritative_ir_complete") is not True:
         fail("M0-IR-AUTHORITY", "IR is not authoritative")
