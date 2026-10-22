@@ -194,13 +194,56 @@ def evaluate(docs):
     if not cfg.get("effective_configuration_sha256"):
         fail("M0-CONFIG-IDENTITY", "Configuration identity absent")
 
-    # A published engineering configuration is NOT, by itself,
-    # evidence that an authoritative ELM exists.
-    fail(
-        "M0-ELM-ACCEPTANCE",
-        "No independently verified authoritative ELM "
-        "acceptance record supplied to this gate"
-    )
+    # ELM is derived from adopted LR; never treat the projection as an
+    # independent numerical authority. Verify the actual reconciliation.
+    import hashlib
+    projection = cfg.get("configuration")
+    reconciled_elm = False
+    if isinstance(projection, dict):
+        limits = projection.get("limits")
+        lr_by_id = {
+            e.get("limit_id"): e for e in lr_entries if isinstance(e, dict)
+        }
+        if (
+            isinstance(limits, list) and bool(limits)
+            and len(limits) == len(lr_entries) == len(lr_by_id)
+            and all(isinstance(item, dict) for item in limits)
+        ):
+            ids = [item.get("normative_lim_id") for item in limits]
+            canonical = (json.dumps(
+                projection, sort_keys=True, separators=(",", ":"),
+                ensure_ascii=False, allow_nan=False,
+            ) + "\n").encode("utf-8")
+            reconciled_elm = (
+                len(set(ids)) == len(ids)
+                and set(ids) == set(lr_by_id)
+                and all(
+                    lr_by_id[item["normative_lim_id"]].get("status") == "ACTIVE"
+                    and lr_by_id[item["normative_lim_id"]].get("configured_value")
+                        == item.get("configured_capacity")
+                    and lr_by_id[item["normative_lim_id"]].get("effective_value")
+                        == item.get("effective_count")
+                    and lr_by_id[item["normative_lim_id"]].get("provenance", {}).get("runtime_limit_id")
+                        == item.get("runtime_limit_id")
+                    for item in limits
+                )
+                and cfg.get("effective_configuration_sha256")
+                    == hashlib.sha256(canonical).hexdigest()
+                and projection.get("total_projected_bytes")
+                    == projection.get("total_direct_capacity_bytes", -1)
+                    + projection.get("total_overhead_bytes", -1)
+            )
+
+    if not (
+        cfg.get("authoritative_elm_adopted") is True
+        and cfg.get("normative_lr_complete") is True
+        and lr.get("authoritative_lr_complete") is True
+        and reconciled_elm
+    ):
+        fail(
+            "M0-ELM-ACCEPTANCE",
+            "ELM adoption or production LR/ELM reconciliation incomplete",
+        )
 
     if len(owned) != 1001:
         fail("M0-OWNERSHIP-POPULATION", "Expected 1001 requirements")
