@@ -242,14 +242,35 @@ def evaluate(docs):
     if auth.get("approval_enabled") is not True:
         fail("M0-APPROVAL", "Approval publication disabled")
 
-    if not m.get("required_verification_refs"):
+    def valid_evidence_refs(refs):
+        """Reject placeholders, traversal, missing and duplicate artifacts."""
+        if not isinstance(refs, list) or not refs:
+            return False
+        if any(not isinstance(ref, str) or not ref for ref in refs):
+            return False
+        if len(refs) != len(set(refs)):
+            return False
+        for ref in refs:
+            candidate = Path(ref)
+            if candidate.is_absolute() or ".." in candidate.parts:
+                return False
+            if not candidate.parts or candidate.parts[0] != "qualification":
+                return False
+            absolute = (ROOT / candidate).resolve()
+            if not absolute.is_relative_to(ROOT / "qualification"):
+                return False
+            if not absolute.is_file() or absolute.is_symlink():
+                return False
+        return True
+
+    if not valid_evidence_refs(m.get("required_verification_refs")):
         fail(
             "M0-VERIFICATION-RECORD",
-            "Required verification references absent"
+            "Verification artifacts absent or invalid",
         )
 
-    if not m.get("result_refs"):
-        fail("M0-RESULTS", "Milestone result references absent")
+    if not valid_evidence_refs(m.get("result_refs")):
+        fail("M0-RESULTS", "Result artifacts absent or invalid")
 
     # Diagnostic-domain acceptance cannot be inferred from
     # incidental passing tests; no such signed result is supplied.
