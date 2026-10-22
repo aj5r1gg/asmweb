@@ -33,7 +33,6 @@ def main():
         "M0-AUTHORITY",
         "M0-ELM-ACCEPTANCE",
         "M0-DIAGNOSTICS-ACCEPTANCE",
-        "M0-FINAL-ATTESTATION",
     }
 
     require(required <= baseline_ids, "BASELINE_BLOCKER_MISSING")
@@ -51,6 +50,13 @@ def main():
     print("PARTIAL_M0_SCOPE=REJECTED")
 
     print("FUTURE_IR_SCOPE=NOT_A_M0_BLOCKER")
+
+    # Final approval is deliberately after eligibility, not inside it.
+    require(
+        "M0-FINAL-ATTESTATION" not in baseline_ids,
+        "CIRCULAR_CLOSURE_APPROVAL_BLOCKER",
+    )
+    print("FINAL_APPROVAL_SEPARATE_FROM_ELIGIBILITY=PASS")
 
     print("UNRESOLVED_BASELINE=REJECTED")
 
@@ -79,7 +85,7 @@ def main():
         print(name + "=REJECTED")
 
     # The all-green-looking fixture must still reject an
-    # unsupported ELM, diagnostic and authority attestation.
+    # unsupported ELM and diagnostic acceptance.
     changed = copy.deepcopy(original)
 
     changed["milestone"]["blocked_items"] = []
@@ -118,8 +124,7 @@ def main():
 
     require(
         {"M0-ELM-ACCEPTANCE",
-         "M0-DIAGNOSTICS-ACCEPTANCE",
-         "M0-FINAL-ATTESTATION"} <= remaining,
+         "M0-DIAGNOSTICS-ACCEPTANCE"} <= remaining,
         "UNSUPPORTED_ATTESTATION_WAS_ACCEPTED"
     )
 
