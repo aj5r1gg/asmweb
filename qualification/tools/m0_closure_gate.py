@@ -178,14 +178,36 @@ def evaluate(docs):
     if len(owned) != 1001:
         fail("M0-OWNERSHIP-POPULATION", "Expected 1001 requirements")
 
-    pending = sum(
-        e.get("review_status") != "APPROVED" or
-        not e.get("approved_first_mandatory_milestone")
-        for e in owned
-    )
-
-    if pending:
-        fail("M0-OWNERSHIP", str(pending) + " unresolved decisions")
+    # Milestone Specification v0.3 MIL-OWN-001..003:
+    # M0 local closure does not depend on M1-M16 allocation completion.
+    # All explicitly M0-owned requirements must be verified locally.
+    m0_refs = m.get("first_mandatory_requirement_refs", [])
+    if not m0_refs:
+        fail("M0-OWNERSHIP", "M0 local ownership population not established")
+    elif len(m0_refs) != len(set(m0_refs)):
+        fail("M0-OWNERSHIP", "Duplicate M0 requirement references")
+    else:
+        by_id = {e.get("requirement_id"): e for e in owned}
+        if len(by_id) != len(owned):
+            fail("M0-OWNERSHIP", "Duplicate requirement ownership identities")
+        else:
+            missing = [key for key in m0_refs if key not in by_id]
+            pending = [
+                key for key in m0_refs if key in by_id and (
+                    by_id[key].get("review_status") != "APPROVED"
+                    or by_id[key].get(
+                        "approved_first_mandatory_milestone"
+                    ) != "M0"
+                )
+            ]
+            if missing or pending:
+                fail(
+                    "M0-OWNERSHIP",
+                    "M0 local missing="
+                    + str(len(missing))
+                    + " unapproved="
+                    + str(len(pending)),
+                )
 
     if auth.get("authority_status") != "ESTABLISHED":
         fail("M0-AUTHORITY", "Approval authority not established")
