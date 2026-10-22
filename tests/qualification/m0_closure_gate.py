@@ -134,6 +134,22 @@ def main():
             "UNRESOLVED_EVIDENCE_REFERENCE_ACCEPTED",
         )
     print("MISSING_OR_UNSAFE_EVIDENCE=REJECTED")
+    accepted = copy.deepcopy(original)
+    accepted["milestone"]["required_verification_refs"] = [
+        "tests/qualification/m0_requirement_identity.py"
+    ]
+    accepted["milestone"]["result_refs"] = [
+        "qualification/requirements/review/m0-explicit-results-v0.1.json"
+    ]
+    accepted_ids = {identity for identity, _ in gate.evaluate(accepted)}
+    require(
+        "M0-VERIFICATION-RECORD" not in accepted_ids
+        and "M0-RESULTS" not in accepted_ids,
+        "REAL_QUALIFICATION_EVIDENCE_REF_REJECTED",
+    )
+    print("EXISTING_QUALIFICATION_EVIDENCE_PATHS=ACCEPTED")
+
+
 
     print("UNSUPPORTED_AUTHORITY_ATTESTATIONS=REJECTED")
     print("M0_CLOSURE_GATE_ADVERSARIAL=PASS")
