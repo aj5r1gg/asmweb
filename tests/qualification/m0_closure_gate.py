@@ -42,6 +42,14 @@ def main():
         "M0-IR-APPLICABILITY" not in baseline_ids,
         "FUTURE_IR_INCORRECTLY_BLOCKS_M0",
     )
+    # Explicit M0 membership may not be replaced by a convenient
+    # single approved requirement to evade local closure obligations.
+    partial = copy.deepcopy(original)
+    partial["milestone"]["first_mandatory_requirement_refs"] = ["REQ-M0-004"]
+    partial_ids = {identity for identity, _ in gate.evaluate(partial)}
+    require("M0-OWNERSHIP" in partial_ids, "PARTIAL_M0_SCOPE_ACCEPTED")
+    print("PARTIAL_M0_SCOPE=REJECTED")
+
     print("FUTURE_IR_SCOPE=NOT_A_M0_BLOCKER")
 
     print("UNRESOLVED_BASELINE=REJECTED")
