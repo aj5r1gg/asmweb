@@ -188,6 +188,15 @@ def evaluate(docs):
     if not lr_entries:
         fail("M0-LR-POPULATION", "No limit entries")
 
+    # The M0 limit acceptance path must enforce the same dimensional
+    # contract as the normative LR validator, not just ACTIVE flags.
+    from m0_normative_lr import validate_m0_dimensions
+    for entry in lr_entries:
+        try:
+            validate_m0_dimensions(entry)
+        except (ValueError, AttributeError, TypeError) as exc:
+            fail("M0-LR-DIMENSION", str(exc))
+
     provisional = sum(
         e.get("status") != "ACTIVE"
         for e in lr_entries
