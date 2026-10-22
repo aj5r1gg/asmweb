@@ -24,7 +24,6 @@ def main():
 
     required = {
         "M0-BLOCKERS",
-        "M0-IR-APPLICABILITY",
         "M0-IR-APPROVAL",
         "M0-IR-CONTENT",
         "M0-IR-AUTHORITY",
@@ -38,6 +37,13 @@ def main():
     }
 
     require(required <= baseline_ids, "BASELINE_BLOCKER_MISSING")
+    # Unresolved future invariants must not themselves block M0 (§34).
+    require(
+        "M0-IR-APPLICABILITY" not in baseline_ids,
+        "FUTURE_IR_INCORRECTLY_BLOCKS_M0",
+    )
+    print("FUTURE_IR_SCOPE=NOT_A_M0_BLOCKER")
+
     print("UNRESOLVED_BASELINE=REJECTED")
 
     mutations = (
