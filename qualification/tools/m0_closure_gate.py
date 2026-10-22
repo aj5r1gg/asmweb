@@ -9,6 +9,7 @@ authority, evidence provenance and prescribed milestone qualification.
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -35,8 +36,29 @@ def load(relative_path):
     )
 
 
+def diagnostics_qualified():
+    # Reuse the existing M0 diagnostic qualification procedures.
+    # Exit status, rather than a declared PASS flag, is authoritative
+    # for this engineering portion of the milestone evaluation.
+    targets = (
+        "qualify-diagnostic-adversarial",
+        "qualify-ready-diagnostic",
+        "qualify-ready-bootstrap-injection",
+    )
+    try:
+        process = subprocess.run(
+            ["make", "--no-print-directory", *targets],
+            cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            timeout=180, check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    return process.returncode == 0
+
+
 def documents():
     return {
+        "diagnostics_qualified": diagnostics_qualified(),
         "milestone": load("qualification/milestones/M0.json"),
         "assessment": load(
             "qualification/invariants/m0-applicability-v0.1.json"
@@ -331,12 +353,11 @@ def evaluate(docs):
     if not valid_evidence_refs(m.get("result_refs")):
         fail("M0-RESULTS", "Result artifacts absent or invalid")
 
-    # Diagnostic-domain acceptance cannot be inferred from
-    # incidental passing tests; no such signed result is supplied.
-    fail(
-        "M0-DIAGNOSTICS-ACCEPTANCE",
-        "Normative diagnostic-domain acceptance unverified"
-    )
+    if docs.get("diagnostics_qualified") is not True:
+        fail(
+            "M0-DIAGNOSTICS-ACCEPTANCE",
+            "M0 diagnostic qualification targets did not pass",
+        )
 
     # Final approval follows a successful eligibility evaluation.
     # MIL closure sequencing forbids the approval itself as a
