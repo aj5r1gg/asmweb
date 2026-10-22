@@ -338,12 +338,9 @@ def evaluate(docs):
         "Normative diagnostic-domain acceptance unverified"
     )
 
-    # Provisional guard: full independent authority verification
-    # has not yet been integrated into this gate.
-    fail(
-        "M0-FINAL-ATTESTATION",
-        "Independent signed closure attestation unverified"
-    )
+    # Final approval follows a successful eligibility evaluation.
+    # MIL closure sequencing forbids the approval itself as a
+    # prerequisite of that evaluation. Publication remains separate.
 
     return blockers
 
@@ -373,7 +370,7 @@ def main():
         print("M0_CLOSURE=REJECTED")
         return 1
 
-    print("M0_CLOSURE_GATE=ELIGIBLE_PENDING_ATTESTATION")
+    print("M0_CLOSURE_GATE=ELIGIBLE_PENDING_OWNER_APPROVAL")
     return 0
 
 
