@@ -112,12 +112,13 @@ def evaluate(docs):
         fail("M0-IR-APPLICABILITY", str(unresolved) + " unassessed")
 
     unapproved = sum(
-        e.get("normative_approval") is not True
+        e.get("m0_applicability") == "CANDIDATE_APPLICABLE"
+        and e.get("normative_approval") is not True
         for e in assessment
     )
 
     if unapproved:
-        fail("M0-IR-APPROVAL", str(unapproved) + " not approved")
+        fail("M0-IR-APPROVAL", str(unapproved) + " M0 candidates not approved")
 
     # Validate M0-applicable invariants locally. Later milestone
     # protocol semantics must not be forced into the M0 exit predicate.
