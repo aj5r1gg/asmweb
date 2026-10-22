@@ -69,6 +69,42 @@ def sha(value):
     return hashlib.sha256(value).hexdigest()
 
 
+def validate_m0_dimensions(entry):
+    """M0 production MOT instance capacities are COUNT, in OBJECTS.
+
+    Do not accept a different unit/dimension by coincidence merely
+    because the numerical capacities happen to match.
+    """
+    require(
+        (
+            entry.get("limit_kind"),
+            entry.get("quantity"),
+            entry.get("unit"),
+            entry.get("dimension"),
+        ) == (
+            "CAPACITY", "CONCURRENT_OBJECT_INSTANCES", "OBJECTS", "COUNT"
+        ),
+        "invalid dimensional or quantity semantics",
+    )
+    require(
+        entry.get("rounding_semantics") == "EXACT_INTEGER"
+        and entry.get("expression") is None,
+        "unsupported rounded or derived M0 capacity expression",
+    )
+    for name in ("configured_value", "effective_value", "maximum_permitted"):
+        value = entry.get(name)
+        require(
+            type(value) is int and 0 <= value <= (1 << 64) - 1,
+            "invalid integer capacity: " + name,
+        )
+    require(
+        0 < entry["configured_value"]
+        == entry["effective_value"]
+        <= entry["maximum_permitted"],
+        "inconsistent M0 capacity bounds",
+    )
+
+
 def build():
     # This file remains the one numerical authority for the M0
     # production subset, itself derived from NASM.
@@ -152,6 +188,7 @@ def build():
             "required LR schema incomplete",
         )
 
+        validate_m0_dimensions(record)
         entries.append(record)
 
     require(
@@ -191,6 +228,7 @@ def verify():
 
     for item in doc["entries"]:
         require(set(item) == set(FIELDS), "LR field mismatch")
+        validate_m0_dimensions(item)
         require(item["status"] == "PROVISIONAL", "false status")
         require(
             item["limit_kind"] == "CAPACITY",
