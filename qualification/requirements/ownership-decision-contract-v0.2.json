@@ -51,7 +51,7 @@
   },
   "authority_model": {
     "designation_required": true,
-    "designated_authority": null,
+    "designated_authority": "aj5r1gg",
     "designation_record_ref": null,
     "verification_method": null,
     "trusted_verifier_ref": null,
