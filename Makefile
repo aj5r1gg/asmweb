@@ -1383,3 +1383,8 @@ qualify-m0-ir-dynamic:
 	python3 -B qualification/tools/m0_normative_ir.py verify
 	python3 -B qualification/tools/m0_ir_semantic_review.py verify
 	python3 -B tests/qualification/m0_ir_assessment_dynamic.py
+
+# REQ-M0-001: M0 foundation must not depend on HTTP implementation
+.PHONY: qualify-m0-scope-boundary
+qualify-m0-scope-boundary:
+	python3 -B tests/qualification/m0_scope_boundary.py
