@@ -115,6 +115,18 @@ def main():
         "UNSUPPORTED_ATTESTATION_WAS_ACCEPTED"
     )
 
+    # Evidence references must resolve to real qualification artifacts.
+    for bad_ref in ("fixture", "../outside", "/tmp/fake", "qualification/missing.json"):
+        altered = copy.deepcopy(original)
+        altered["milestone"]["required_verification_refs"] = [bad_ref]
+        altered["milestone"]["result_refs"] = [bad_ref]
+        found = {identity for identity, _ in gate.evaluate(altered)}
+        require(
+            {"M0-VERIFICATION-RECORD", "M0-RESULTS"} <= found,
+            "UNRESOLVED_EVIDENCE_REFERENCE_ACCEPTED",
+        )
+    print("MISSING_OR_UNSAFE_EVIDENCE=REJECTED")
+
     print("UNSUPPORTED_AUTHORITY_ATTESTATIONS=REJECTED")
     print("M0_CLOSURE_GATE_ADVERSARIAL=PASS")
 
