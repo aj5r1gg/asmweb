@@ -32,7 +32,6 @@ def main():
         "M0-OWNERSHIP",
         "M0-AUTHORITY",
         "M0-ELM-ACCEPTANCE",
-        "M0-DIAGNOSTICS-ACCEPTANCE",
     }
 
     require(required <= baseline_ids, "BASELINE_BLOCKER_MISSING")
@@ -56,6 +55,15 @@ def main():
         "M0-FINAL-ATTESTATION" not in baseline_ids,
         "CIRCULAR_CLOSURE_APPROVAL_BLOCKER",
     )
+    no_diagnostics = copy.deepcopy(original)
+    no_diagnostics["diagnostics_qualified"] = False
+    no_diag_ids = {identity for identity, _ in gate.evaluate(no_diagnostics)}
+    require(
+        "M0-DIAGNOSTICS-ACCEPTANCE" in no_diag_ids,
+        "FAILING_DIAGNOSTIC_QUALIFICATION_ACCEPTED",
+    )
+    print("FAILED_DIAGNOSTIC_QUALIFICATION=REJECTED")
+
     print("FINAL_APPROVAL_SEPARATE_FROM_ELIGIBILITY=PASS")
 
     print("UNRESOLVED_BASELINE=REJECTED")
@@ -85,7 +93,7 @@ def main():
         print(name + "=REJECTED")
 
     # The all-green-looking fixture must still reject an
-    # unsupported ELM and diagnostic acceptance.
+    # unsupported ELM. Diagnostic testing is evaluated independently.
     changed = copy.deepcopy(original)
 
     changed["milestone"]["blocked_items"] = []
@@ -123,8 +131,7 @@ def main():
     remaining = {key for key, _ in gate.evaluate(changed)}
 
     require(
-        {"M0-ELM-ACCEPTANCE",
-         "M0-DIAGNOSTICS-ACCEPTANCE"} <= remaining,
+        "M0-ELM-ACCEPTANCE" in remaining,
         "UNSUPPORTED_ATTESTATION_WAS_ACCEPTED"
     )
 
