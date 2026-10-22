@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Verify M0 production LR engineering evidence; never assert approval."""
 
+import copy
 import json
 import sys
 from pathlib import Path
@@ -65,6 +66,29 @@ def main():
         bool(configuration.get("effective_configuration_sha256")),
         "CONFIGURATION_IDENTITY_MISSING",
     )
+
+    # Dimensional mismatches and malformed numerical bounds must fail.
+    sample = entries[0]
+    for changes in (
+        {"unit": "BYTES"},
+        {"dimension": "TIME"},
+        {"quantity": "DURATION"},
+        {"expression": "configured_value / 2"},
+        {"rounding_semantics": "NEAREST"},
+        {"maximum_permitted": -1},
+        {"configured_value": True},
+        {"configured_value": 2},
+    ):
+        altered = copy.deepcopy(sample)
+        altered.update(changes)
+        try:
+            lr.validate_m0_dimensions(altered)
+        except ValueError:
+            pass
+        else:
+            raise RuntimeError("INVALID_M0_DIMENSION_ACCEPTED=" + str(changes))
+
+    print("M0_DIMENSION_AND_BOUND_MUTATIONS=REJECTED")
 
     print("CANONICAL_LIMIT_IDENTITIES=9/9")
     print("CONTROLLED_EVIDENCE_MAPPINGS=9/9")
