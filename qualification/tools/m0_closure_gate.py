@@ -209,8 +209,20 @@ def evaluate(docs):
     # M0 local closure does not depend on M1-M16 allocation completion.
     # All explicitly M0-owned requirements must be verified locally.
     m0_refs = m.get("first_mandatory_requirement_refs", [])
+    # All explicitly M0-named normative requirements are mandatory M0
+    # members; selecting a convenient subset must never allow closure.
+    mandatory_m0 = {
+        "REQ-M0-001", "REQ-M0-002", "REQ-M0-003",
+        "REQ-M0-004", "REQ-M0-005",
+    }
     if not m0_refs:
         fail("M0-OWNERSHIP", "M0 local ownership population not established")
+    elif not mandatory_m0.issubset(set(m0_refs)):
+        fail(
+            "M0-OWNERSHIP",
+            "Explicit M0 requirements missing from closure population: "
+            + ",".join(sorted(mandatory_m0 - set(m0_refs))),
+        )
     elif len(m0_refs) != len(set(m0_refs)):
         fail("M0-OWNERSHIP", "Duplicate M0 requirement references")
     else:
