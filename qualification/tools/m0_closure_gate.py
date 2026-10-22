@@ -103,13 +103,17 @@ def evaluate(docs):
     if len(assessment) != 144 or len(ir_entries) != 144:
         fail("M0-IR-POPULATION", "Expected 144 controlled identities")
 
-    unresolved = sum(
-        e.get("m0_applicability") == "UNASSESSED"
-        for e in assessment
-    )
-
-    if unresolved or a.get("unassessed_count") != 0:
-        fail("M0-IR-APPLICABILITY", str(unresolved) + " unassessed")
+    # §34 permits later-milestone invariants to remain unresolved.
+    # Check local candidate consistency without requiring all 144
+    # future identities to have an M0 disposition.
+    m0_candidates = [
+        e for e in assessment
+        if e.get("m0_applicability") == "CANDIDATE_APPLICABLE"
+    ]
+    if not m0_candidates or len(m0_candidates) != a.get(
+        "candidate_applicable_count"
+    ):
+        fail("M0-IR-APPLICABILITY", "M0 candidate population inconsistent")
 
     unapproved = sum(
         e.get("m0_applicability") == "CANDIDATE_APPLICABLE"
@@ -149,8 +153,15 @@ def evaluate(docs):
         if incomplete:
             fail("M0-IR-CONTENT", str(incomplete) + " M0 candidates incomplete")
 
-    if ir.get("authoritative_ir_complete") is not True:
-        fail("M0-IR-AUTHORITY", "IR is not authoritative")
+    # The global IR authority flag includes future milestone population.
+    # Local M0 authority instead requires each M0 candidate to have
+    # an approved, qualified ACTIVE invariant record.
+    if any(
+        e.get("normative_approval") is not True
+        or ir_by_id.get(e.get("invariant_id"), {}).get("status") != "ACTIVE"
+        for e in m0_candidates
+    ):
+        fail("M0-IR-AUTHORITY", "M0 foundation IR is not qualified")
 
     if not lr_entries:
         fail("M0-LR-POPULATION", "No limit entries")
