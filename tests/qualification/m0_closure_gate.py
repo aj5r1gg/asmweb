@@ -151,6 +151,16 @@ def main():
 
 
 
+    # A forged adoption flag without reconciled LR data cannot pass ELM.
+    tampered = copy.deepcopy(changed)
+    tampered["configuration"]["authoritative_elm_adopted"] = True
+    tampered["configuration"]["configuration"]["limits"][0][
+        "configured_capacity"
+    ] += 1
+    remaining = {key for key, _ in gate.evaluate(tampered)}
+    require("M0-ELM-ACCEPTANCE" in remaining, "TAMPERED_ELM_ACCEPTED")
+    print("TAMPERED_ELM=REJECTED")
+
     print("UNSUPPORTED_AUTHORITY_ATTESTATIONS=REJECTED")
     print("M0_CLOSURE_GATE_ADVERSARIAL=PASS")
 
