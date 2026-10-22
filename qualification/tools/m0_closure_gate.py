@@ -266,10 +266,14 @@ def evaluate(docs):
             candidate = Path(ref)
             if candidate.is_absolute() or ".." in candidate.parts:
                 return False
-            if not candidate.parts or candidate.parts[0] != "qualification":
+            allowed = (ROOT / "qualification", ROOT / "tests/qualification")
+            if not candidate.parts or (
+                candidate.parts[0] != "qualification"
+                and candidate.parts[:2] != ("tests", "qualification")
+            ):
                 return False
             absolute = (ROOT / candidate).resolve()
-            if not absolute.is_relative_to(ROOT / "qualification"):
+            if not any(absolute.is_relative_to(base) for base in allowed):
                 return False
             if not absolute.is_file() or (ROOT / candidate).is_symlink():
                 return False
