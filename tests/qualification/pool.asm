@@ -94,6 +94,7 @@ section .text
 ;   23 ABI/DF preservation failed
 ;   24 invalid ownership scope mutated destination
 ;   25 invalid partitioning model mutated destination
+;   26–36 corrupted accounting, authority, and slot-state accepted
 ; ===========================================================================
 
 _start:
@@ -618,6 +619,146 @@ _start:
 
 
     ; =======================================================================
+    ; CASE 20A — corrupt accounting and authority must be rejected.
+    ;
+    ; Each mutation is applied to a quiescent, valid pool, checked through
+    ; the production validator, restored, and checked again. No invalid
+    ; descriptor reaches acquire/release or escapes this test.
+    ; =======================================================================
+
+    ; Mutation 26: release count greater than acquisition count.
+    mov qword [rel pool + ASMWEB_TYPED_POOL.release_count], 4
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_26
+    mov qword [rel pool + ASMWEB_TYPED_POOL.release_count], 3
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_26
+
+    ; Mutation 27: high-water above ordinary capacity.
+    mov qword [rel pool + ASMWEB_TYPED_POOL.high_water], 3
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_27
+    mov qword [rel pool + ASMWEB_TYPED_POOL.high_water], 2
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_27
+
+    ; Mutation 28: historical acquisition mismatch.
+    mov qword [rel pool + ASMWEB_TYPED_POOL.acquisition_count], 4
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_28
+    mov qword [rel pool + ASMWEB_TYPED_POOL.acquisition_count], 3
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_28
+
+    ; Mutation 29: reserved capacity greater than configured.
+    mov qword [rel pool + ASMWEB_TYPED_POOL.reserved_capacity], 4
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_29
+    mov qword [rel pool + ASMWEB_TYPED_POOL.reserved_capacity], 1
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_29
+
+    ; Mutation 30: ordinary capacity contradicts configured minus reserve.
+    mov qword [rel pool + ASMWEB_TYPED_POOL.ordinary_capacity], 3
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_30
+    mov qword [rel pool + ASMWEB_TYPED_POOL.ordinary_capacity], 2
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_30
+
+    ; Mutation 31: zero object-class identity.
+    mov qword [rel pool + ASMWEB_TYPED_POOL.object_class_id], 0
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_31
+    mov qword [rel pool + ASMWEB_TYPED_POOL.object_class_id], 0x30000001
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_31
+
+    ; Mutation 32: zero ownership scope.
+    mov qword [rel pool + ASMWEB_TYPED_POOL.ownership_scope], 0
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_32
+    mov qword [rel pool + ASMWEB_TYPED_POOL.ownership_scope], 0x40000001
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_32
+
+    ; Mutation 33: unsupported partitioning model.
+    mov qword [rel pool + ASMWEB_TYPED_POOL.partitioning_model], 99
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_33
+    mov qword [rel pool + ASMWEB_TYPED_POOL.partitioning_model], ASMWEB_POOL_PARTITION_GLOBAL
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_33
+
+    ; Mutation 34: reserve slot must never become owned.
+    mov byte [rel slot_state + 2], ASMWEB_POOL_SLOT_OWNED
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_34
+    mov byte [rel slot_state + 2], ASMWEB_POOL_SLOT_FREE
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_34
+
+    ; Mutation 35: unconfigured slot must never become owned.
+    mov byte [rel slot_state + 3], ASMWEB_POOL_SLOT_OWNED
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_35
+    mov byte [rel slot_state + 3], ASMWEB_POOL_SLOT_FREE
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_35
+
+    ; Mutation 36: invalid slot-state value must be rejected.
+    mov byte [rel slot_state + 0], 2
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_36
+    mov byte [rel slot_state + 0], ASMWEB_POOL_SLOT_FREE
+    lea rdi, [rel pool]
+    call asm_typed_pool_validate
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_36
+
+    ; =======================================================================
     ; CASE 21 — acquire preserves Internal ABI callee-saved state and clears DF
     ; =======================================================================
 
@@ -880,5 +1021,60 @@ _start:
 
 .fail_25:
     mov edi, 25
+    call asm_linux_exit
+    ud2
+
+.fail_26:
+    mov edi, 26
+    call asm_linux_exit
+    ud2
+
+.fail_27:
+    mov edi, 27
+    call asm_linux_exit
+    ud2
+
+.fail_28:
+    mov edi, 28
+    call asm_linux_exit
+    ud2
+
+.fail_29:
+    mov edi, 29
+    call asm_linux_exit
+    ud2
+
+.fail_30:
+    mov edi, 30
+    call asm_linux_exit
+    ud2
+
+.fail_31:
+    mov edi, 31
+    call asm_linux_exit
+    ud2
+
+.fail_32:
+    mov edi, 32
+    call asm_linux_exit
+    ud2
+
+.fail_33:
+    mov edi, 33
+    call asm_linux_exit
+    ud2
+
+.fail_34:
+    mov edi, 34
+    call asm_linux_exit
+    ud2
+
+.fail_35:
+    mov edi, 35
+    call asm_linux_exit
+    ud2
+
+.fail_36:
+    mov edi, 36
     call asm_linux_exit
     ud2
