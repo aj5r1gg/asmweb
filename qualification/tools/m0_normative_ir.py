@@ -4,6 +4,8 @@
 import argparse
 import hashlib
 import json
+import subprocess
+import tempfile
 import sys
 from pathlib import Path
 
@@ -46,6 +48,33 @@ LIST_FIELDS = set((
 # This extraction stops at the introductory clause. Do not present
 # it as a complete normative statement.
 INCOMPLETE_SOURCE_STATEMENTS = set()
+
+# A signed assessment authorises recorded normative approvals, not merely
+# milestone scope. An unsigned edit can never create an ACTIVE invariant.
+APPROVAL_SIGNATURE = ASSESSMENT.with_suffix(ASSESSMENT.suffix + ".sig")
+TRUSTED_KEY = Path.home() / ".config/asmweb/owner-public.pem"
+
+
+def verify_approval_signature(assessment_bytes):
+    require(APPROVAL_SIGNATURE.is_file() and not APPROVAL_SIGNATURE.is_symlink(),
+            "normative approval signature missing or unsafe")
+    require(TRUSTED_KEY.is_file() and not TRUSTED_KEY.is_symlink(),
+            "independent owner trust anchor unavailable")
+    with tempfile.TemporaryDirectory(prefix="asmweb-ir-") as directory:
+        payload = Path(directory) / "assessment.json"
+        payload.write_bytes(assessment_bytes)
+        try:
+            result = subprocess.run(
+                ["openssl", "pkeyutl", "-verify", "-pubin", "-inkey",
+                 str(TRUSTED_KEY), "-rawin", "-in", str(payload),
+                 "-sigfile", str(APPROVAL_SIGNATURE)],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                timeout=10, check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            raise ValueError("normative signature verifier unavailable") from exc
+        require(result.returncode == 0, "normative approval signature invalid")
+
 
 
 def require(condition, message):
@@ -112,6 +141,32 @@ def build():
     require(assessment_bytes == SCOPE_ASSESSMENT.read_bytes(),
             "IR input differs from authenticated scope assessment")
     scope_rows = {row["invariant_id"]: row for row in scope_doc["entries"]}
+
+    if any(row.get("normative_approval") is True
+           for row in assessment["entries"]):
+        verify_approval_signature(assessment_bytes)
+
+    # An owner signature is necessary but insufficient: all associated
+    # executable qualification targets must pass for any ACTIVE record.
+    approved_targets = sorted({target
+        for row in assessment["entries"] if row.get("normative_approval") is True
+        for target in row.get("qualification_refs", [])})
+    if approved_targets:
+        makefile = (ROOT / "Makefile").read_text()
+        import re
+        declared = set(re.findall(r"^([A-Za-z][A-Za-z0-9_-]*):", makefile, re.M))
+        require(set(approved_targets) <= declared,
+                "unknown invariant qualification target")
+        try:
+            result = subprocess.run(
+                ["make", "--no-print-directory", *approved_targets], cwd=ROOT,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                timeout=180, check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            raise ValueError("invariant qualification execution unavailable") from exc
+        require(result.returncode == 0,
+                "approved invariant qualification execution failed")
 
     statements = source["entries"]
     assessed = assessment["entries"]
@@ -184,10 +239,12 @@ def build():
             "invalid applicability",
         )
 
-        require(
-            assessment_entry["normative_approval"] is False,
-            "unexpected normative approval",
-        )
+        require(type(assessment_entry["normative_approval"]) is bool,
+                "invalid normative approval type")
+        if assessment_entry["normative_approval"]:
+            require(candidate and scope_rows[identity]["decision"] == "M0_REQUIRED",
+                    "approval outside authenticated M0 scope")
+
 
         record = {field: None for field in FIELDS}
 
@@ -196,6 +253,11 @@ def build():
 
         implementation = assessment_entry["implementation_refs"]
         qualification = assessment_entry["qualification_refs"]
+        if assessment_entry["normative_approval"]:
+            require(bool(implementation) and bool(qualification),
+                    "approved invariant missing executable mapping: " + identity)
+            require(all(ref.startswith("qualify-") for ref in qualification),
+                    "approved invariant has non-executable target: " + identity)
 
         for reference in implementation:
             require(
@@ -206,9 +268,8 @@ def build():
         record.update({
             "invariant_id": identity,
             "title": identity,
-            # No authoritative status decision has yet been made.
-            # Null is a draft-only placeholder, not an IR status.
-            "status": None,
+            # Approval is accepted only from the signed assessment.
+            "status": "ACTIVE" if assessment_entry["normative_approval"] else None,
             "normative_statement":
                 statement["normative_statement"],
             "machine_expression": None,
@@ -229,9 +290,17 @@ def build():
             "notes": [
                 "Applicability assessment: "
                 + assessment_entry["m0_applicability"],
-                "Normative status and qualification not approved.",
+                "Normative approval signed." if assessment_entry["normative_approval"]
+                else "Normative status and qualification not approved.",
             ],
         })
+
+        if assessment_entry["normative_approval"]:
+            record["qualification_milestone"] = "M0"
+            record["detection_method"] = "Executable qualification targets: " + ", ".join(qualification)
+            record["evidence_refs"] = [ref for ref in implementation if ref.startswith(("tests/qualification/", "qualification/"))]
+            require(bool(record["evidence_refs"]),
+                    "approved invariant has no evidence artifact: " + identity)
 
         if candidate:
             decision = scope_rows[identity]
@@ -246,9 +315,10 @@ def build():
                 record["first_required_milestone"] = (
                     decision["first_mandatory_milestone"]
                 )
-                record["evidence_refs"] = list(
-                    decision["qualified_evidence_refs"]
-                )
+                if not assessment_entry["normative_approval"]:
+                    record["evidence_refs"] = list(
+                        decision["qualified_evidence_refs"]
+                    )
                 record["notes"].append(
                     "Owner-signed scope decision: " + decision["decision"]
                 )
@@ -322,10 +392,8 @@ def verify():
             set(record) == set(FIELDS),
             "IR schema mismatch",
         )
-        require(
-            record["status"] is None,
-            "unapproved normative status",
-        )
+        require(record["status"] in (None, "ACTIVE"),
+                "invalid normative status")
         for name in LIST_FIELDS:
             require(
                 type(record[name]) is list,
@@ -338,7 +406,10 @@ def verify():
           + str(document["m0_candidate_count"]))
     print("UNASSESSED_APPLICABILITY=" + str(document["unassessed_count"]))
     print("SOURCE_REPAIR_REQUIRED=" + str(len(INCOMPLETE_SOURCE_STATEMENTS)))
-    print("AUTHORITATIVE_IR_COMPLETE=False")
+    print("M0_APPROVED_IR_RECORDS=" + str(sum(
+        record["status"] == "ACTIVE" for record in document["entries"])))
+    print("AUTHORITATIVE_IR_COMPLETE=" +
+          str(document["authoritative_ir_complete"]))
     print("M0_FULL_SCHEMA_IR=PASS")
 
 
