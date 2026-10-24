@@ -5,7 +5,7 @@
   "source_membership_ref": "qualification/requirements/requirements-membership-v0.3.json",
   "source_text_ref": "qualification/requirements/requirements-source-v0.3.json",
   "requirements_registry_ref": "qualification/requirements/requirements-registry-v0.3.json",
-  "authoring_status": "DRAFT_UNREVIEWED",
+  "authoring_status": "M0_LOCAL_FIVE_OWNER_APPROVED",
   "decision_model": {
     "review_statuses": [
       "UNREVIEWED",
@@ -10920,68 +10920,88 @@
     },
     {
       "requirement_id": "REQ-M0-001",
-      "review_status": "UNREVIEWED",
+      "review_status": "APPROVED",
       "discovery_hints": [
         "EXPLICIT_M0_NAMED_REQUIREMENT"
       ],
-      "proposed_first_mandatory_milestone": null,
-      "approved_first_mandatory_milestone": null,
-      "decision_rationale": null,
-      "decision_authority_refs": [],
-      "review_evidence_refs": [],
-      "review_notes": null
+      "proposed_first_mandatory_milestone": "M0",
+      "approved_first_mandatory_milestone": "M0",
+      "decision_rationale": "Owner adopts explicit M0 obligation: M0 SHALL NOT be required to implement later HTTP protocol functionality.",
+      "decision_authority_refs": [
+        "qualification/requirements/m0-ownership-adoption-v0.1.sig"
+      ],
+      "review_evidence_refs": [
+        "qualification/requirements/requirements-source-v0.3.json"
+      ],
+      "review_notes": "Owner-signed explicit M0 first-mandatory assignment; other requirement decisions unchanged."
     },
     {
       "requirement_id": "REQ-M0-002",
-      "review_status": "UNREVIEWED",
+      "review_status": "APPROVED",
       "discovery_hints": [
         "EXPLICIT_M0_NAMED_REQUIREMENT"
       ],
-      "proposed_first_mandatory_milestone": null,
-      "approved_first_mandatory_milestone": null,
-      "decision_rationale": null,
-      "decision_authority_refs": [],
-      "review_evidence_refs": [],
-      "review_notes": null
+      "proposed_first_mandatory_milestone": "M0",
+      "approved_first_mandatory_milestone": "M0",
+      "decision_rationale": "Owner adopts explicit M0 obligation: M0 SHALL avoid decisions that make mandatory later requirements impossible without unjustified redesign.",
+      "decision_authority_refs": [
+        "qualification/requirements/m0-ownership-adoption-v0.1.sig"
+      ],
+      "review_evidence_refs": [
+        "qualification/requirements/requirements-source-v0.3.json"
+      ],
+      "review_notes": "Owner-signed explicit M0 first-mandatory assignment; other requirement decisions unchanged."
     },
     {
       "requirement_id": "REQ-M0-003",
-      "review_status": "UNREVIEWED",
+      "review_status": "APPROVED",
       "discovery_hints": [
         "EXPLICIT_M0_NAMED_REQUIREMENT"
       ],
-      "proposed_first_mandatory_milestone": null,
-      "approved_first_mandatory_milestone": null,
-      "decision_rationale": null,
-      "decision_authority_refs": [],
-      "review_evidence_refs": [],
-      "review_notes": null
+      "proposed_first_mandatory_milestone": "M0",
+      "approved_first_mandatory_milestone": "M0",
+      "decision_rationale": "Owner adopts explicit M0 obligation: M0 exit SHALL identify every M0-owned requirement and its qualification status.",
+      "decision_authority_refs": [
+        "qualification/requirements/m0-ownership-adoption-v0.1.sig"
+      ],
+      "review_evidence_refs": [
+        "qualification/requirements/requirements-source-v0.3.json"
+      ],
+      "review_notes": "Owner-signed explicit M0 first-mandatory assignment; other requirement decisions unchanged."
     },
     {
       "requirement_id": "REQ-M0-004",
-      "review_status": "UNREVIEWED",
+      "review_status": "APPROVED",
       "discovery_hints": [
         "EXPLICIT_M0_NAMED_REQUIREMENT"
       ],
-      "proposed_first_mandatory_milestone": null,
-      "approved_first_mandatory_milestone": null,
-      "decision_rationale": null,
-      "decision_authority_refs": [],
-      "review_evidence_refs": [],
-      "review_notes": null
+      "proposed_first_mandatory_milestone": "M0",
+      "approved_first_mandatory_milestone": "M0",
+      "decision_rationale": "Owner adopts explicit M0 obligation: M0 SHALL establish automated detection of duplicate or unknown requirement identifiers.",
+      "decision_authority_refs": [
+        "qualification/requirements/m0-ownership-adoption-v0.1.sig"
+      ],
+      "review_evidence_refs": [
+        "qualification/requirements/requirements-source-v0.3.json"
+      ],
+      "review_notes": "Owner-signed explicit M0 first-mandatory assignment; other requirement decisions unchanged."
     },
     {
       "requirement_id": "REQ-M0-005",
-      "review_status": "UNREVIEWED",
+      "review_status": "APPROVED",
       "discovery_hints": [
         "EXPLICIT_M0_NAMED_REQUIREMENT"
       ],
-      "proposed_first_mandatory_milestone": null,
-      "approved_first_mandatory_milestone": null,
-      "decision_rationale": null,
-      "decision_authority_refs": [],
-      "review_evidence_refs": [],
-      "review_notes": null
+      "proposed_first_mandatory_milestone": "M0",
+      "approved_first_mandatory_milestone": "M0",
+      "decision_rationale": "Owner adopts explicit M0 obligation: M0 SHALL establish a reproducible mechanism for identifying the binary under qualification.",
+      "decision_authority_refs": [
+        "qualification/requirements/m0-ownership-adoption-v0.1.sig"
+      ],
+      "review_evidence_refs": [
+        "qualification/requirements/requirements-source-v0.3.json"
+      ],
+      "review_notes": "Owner-signed explicit M0 first-mandatory assignment; other requirement decisions unchanged."
     },
     {
       "requirement_id": "REQ-TRC-001",

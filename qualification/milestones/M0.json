@@ -3,7 +3,13 @@
   "milestone_id": "M0",
   "implementation_state": "BLOCKED",
   "closure_status": "BLOCKED",
-  "first_mandatory_requirement_refs": [],
+  "first_mandatory_requirement_refs": [
+    "REQ-M0-001",
+    "REQ-M0-002",
+    "REQ-M0-003",
+    "REQ-M0-004",
+    "REQ-M0-005"
+  ],
   "inherited_regression_refs": [],
   "prerequisite_refs": [],
   "new_rule_refs": [],

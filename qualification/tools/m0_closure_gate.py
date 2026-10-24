@@ -372,6 +372,46 @@ def evaluate(docs):
                     + str(len(pending)),
                 )
 
+    # M0_OWNER_SIGNED_ADOPTION_V1
+    # Verify owner authority and publication against an independently trusted key.
+    try:
+        import hashlib as _m0hash
+        import tempfile as _m0temp
+        from m0_invariant_scope import TRUSTED_KEY as _owner_key
+        _adoption_path = ROOT / "qualification/requirements/m0-ownership-adoption-v0.1.json"
+        _sig_path = ROOT / "qualification/requirements/m0-ownership-adoption-v0.1.sig"
+        if _adoption_path.is_symlink() or _sig_path.is_symlink() or _owner_key.is_symlink():
+            raise ValueError("unsafe ownership attestation path")
+        _payload = _adoption_path.read_bytes()
+        _adoption = json.loads(_payload)
+        _canonical = (json.dumps(_adoption, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False) + "\n").encode()
+        if _payload != _canonical or _adoption.get("schema_version") != 1:
+            raise ValueError("noncanonical ownership attestation")
+        for _name, _data in (("ownership", own), ("contract", auth), ("milestone", m)):
+            _raw = (json.dumps(_data, ensure_ascii=False, indent=2) + "\n").encode()
+            if _adoption["document_sha256"][_name] != _m0hash.sha256(_raw).hexdigest():
+                raise ValueError("changed M0 ownership authority or milestone")
+        with _m0temp.TemporaryDirectory() as _dir:
+            _message = Path(_dir) / "ownership.json"
+            _message.write_bytes(_canonical)
+            _verified = subprocess.run(
+                ["openssl", "pkeyutl", "-verify", "-pubin", "-inkey", str(_owner_key),
+                 "-rawin", "-in", str(_message), "-sigfile", str(_sig_path)],
+                capture_output=True, timeout=10, check=False,
+            ).returncode == 0
+        if not _verified or set(_adoption["approved_requirement_ids"]) != {
+            "REQ-M0-001", "REQ-M0-002", "REQ-M0-003", "REQ-M0-004", "REQ-M0-005"
+        }:
+            raise ValueError("invalid owner signature or M0 membership")
+        if any(ownrow.get("review_status") != "APPROVED"
+               or ownrow.get("approved_first_mandatory_milestone") != "M0"
+               for ownrow in own.get("entries", [])
+               if ownrow.get("requirement_id") in _adoption["approved_requirement_ids"]):
+            raise ValueError("ownership register differs from signed decision")
+    except (OSError, ValueError, KeyError, TypeError, subprocess.TimeoutExpired) as _error:
+        fail("M0-AUTHORITY", "Owner-signed ownership evidence invalid: " + str(_error))
+        fail("M0-APPROVAL", "Owner-signed publication not verified")
+
     if auth.get("authority_status") != "ESTABLISHED":
         fail("M0-AUTHORITY", "Approval authority not established")
 

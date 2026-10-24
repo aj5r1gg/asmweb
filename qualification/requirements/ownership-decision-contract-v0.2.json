@@ -4,10 +4,10 @@
   "contract_version": "0.2",
   "replaces_version": "0.1",
   "replaces_sha256": "398d9a6bd3f2a6197809f01af52bb68e82a9991ffa5217062581fbc94b4b4ecc",
-  "status": "DRAFT_PENDING_ADVERSARIAL_QUALIFICATION",
-  "authority_status": "NOT_ESTABLISHED",
-  "approval_enabled": false,
-  "effective_publication_enabled": false,
+  "status": "M0_LOCAL_AUTHORITY_ESTABLISHED",
+  "authority_status": "ESTABLISHED",
+  "approval_enabled": true,
+  "effective_publication_enabled": true,
   "governing_sources": [
     {
       "document": "AsmWeb-Requirements-n-ScopeSpecification-v0.3.odt",
@@ -46,15 +46,15 @@
     "individual_review_required": true,
     "discovery_hints_are_approvals": false,
     "explicit_m0_proposals_exhaustive": false,
-    "effective_approvals": 0,
-    "unreviewed_requirements": 1001
+    "effective_approvals": 5,
+    "unreviewed_requirements": 996
   },
   "authority_model": {
     "designation_required": true,
     "designated_authority": "aj5r1gg",
-    "designation_record_ref": null,
-    "verification_method": null,
-    "trusted_verifier_ref": null,
+    "designation_record_ref": "qualification/requirements/m0-ownership-adoption-v0.1.json",
+    "verification_method": "OpenSSL Ed25519 detached signature, external owner-public.pem trust anchor",
+    "trusted_verifier_ref": "~/.config/asmweb/owner-public.pem",
     "authentication_and_authorisation_required": true,
     "authority_scope_must_include_requirement_and_milestone": true,
     "authority_revocation_checked_at_decision": true,
