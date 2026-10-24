@@ -17,6 +17,11 @@ BASE = ROOT / "qualification/requirements"
 OUTPUT = BASE / "review/m0-explicit-results-v0.1.json"
 
 TESTS = {
+    "REQ-M0-001": (
+        "qualify-m0-scope-boundary",
+        "REQ_M0_001_ENGINEERING_QUALIFICATION=PASS",
+        "tests/qualification/m0_scope_boundary.py",
+    ),
     "REQ-M0-004": (
         "qualify-m0-requirement-identity",
         "REQ_M0_004_ENGINEERING_QUALIFICATION=PASS",
@@ -30,8 +35,6 @@ TESTS = {
 }
 
 OUTSTANDING = {
-    "REQ-M0-001":
-        "M0 scope-boundary review has not been accepted",
     "REQ-M0-002":
         "Architecture-compatibility review has not been accepted",
     "REQ-M0-003":
@@ -212,9 +215,9 @@ def verify():
     require(OUTPUT.read_bytes() == canonical(expected),
             "controlled results differ from current qualification")
     require(expected["entry_count"] == 5, "entry population")
-    require(expected["engineering_pass_count"] == 2,
+    require(expected["engineering_pass_count"] == 3,
             "engineering pass count")
-    require(expected["blocked_count"] == 3,
+    require(expected["blocked_count"] == 2,
             "blocked count")
     require(expected["approved_ownership_count"] == 0,
             "false authority")
@@ -227,8 +230,8 @@ def verify():
         "false formal qualification",
     )
     print("EXPLICIT_M0_REQUIREMENTS=5")
-    print("ENGINEERING_PASS=2")
-    print("BLOCKED=3")
+    print("ENGINEERING_PASS=3")
+    print("BLOCKED=2")
     print("OWNERSHIP_APPROVED=0")
     print("FORMAL_M0_QUALIFICATION=NOT_ESTABLISHED")
     print("M0_EXPLICIT_RESULT_QUALIFICATION=PASS")
