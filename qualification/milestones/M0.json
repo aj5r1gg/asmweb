@@ -28,12 +28,7 @@
     "qualification/limits/m0-effective-configuration-v0.1.json"
   ],
   "known_failures": [],
-  "blocked_items": [
-    {
-      "blocker_id": "M0-BLOCK-IR",
-      "description": "The complete 144-identity IR representation exists. 42 M0 foundation invariants are identified as engineering applicability candidates under the governing section 34 scope. Remaining work includes verified applicability decisions, implementation mappings, machine expressions, normative dispositions and qualification evidence."
-    }
-  ],
+  "blocked_items": [],
   "waivers": [],
   "deferred_items": [],
   "evidence_refs": [
