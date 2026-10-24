@@ -284,6 +284,13 @@ qual_build_valid_fixture:
 ;   13 memory reconciliation corruption classification failed
 ;   14 startup peak relationship corruption classification failed
 ;   15 ABI/DF preservation failed
+    ;   16 missing startup_info_ptr not rejected
+    ;   17 missing entropy_ptr not rejected
+    ;   18 missing cpu_ptr not rejected
+    ;   19 missing time_ptr not rejected
+    ;   20 missing process_runtime_ptr not rejected
+    ;   21 missing startup_memory_ptr not rejected
+    ;   22 missing registry_ptr not rejected
 ; ===========================================================================
 
 _start:
@@ -555,6 +562,111 @@ _start:
 
 
     ; =======================================================================
+    ; CASE 16 — mandatory startup_info_ptr missing from READY validation view
+    ; =======================================================================
+
+    call qual_build_valid_fixture
+    mov qword [rel view + ASMWEB_RUNTIME_INVARIANT_VIEW.startup_info_ptr], 0
+
+    lea rdi, [rel view]
+    call asm_runtime_invariant_validate_ready
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_16
+    cmp edx, ASMWEB_RUNTIME_INVARIANT_FAIL_INPUT
+    jne .fail_16
+
+    ; =======================================================================
+    ; CASE 17 — mandatory entropy_ptr missing from READY validation view
+    ; =======================================================================
+
+    call qual_build_valid_fixture
+    mov qword [rel view + ASMWEB_RUNTIME_INVARIANT_VIEW.entropy_ptr], 0
+
+    lea rdi, [rel view]
+    call asm_runtime_invariant_validate_ready
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_17
+    cmp edx, ASMWEB_RUNTIME_INVARIANT_FAIL_INPUT
+    jne .fail_17
+
+    ; =======================================================================
+    ; CASE 18 — mandatory cpu_ptr missing from READY validation view
+    ; =======================================================================
+
+    call qual_build_valid_fixture
+    mov qword [rel view + ASMWEB_RUNTIME_INVARIANT_VIEW.cpu_ptr], 0
+
+    lea rdi, [rel view]
+    call asm_runtime_invariant_validate_ready
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_18
+    cmp edx, ASMWEB_RUNTIME_INVARIANT_FAIL_INPUT
+    jne .fail_18
+
+    ; =======================================================================
+    ; CASE 19 — mandatory time_ptr missing from READY validation view
+    ; =======================================================================
+
+    call qual_build_valid_fixture
+    mov qword [rel view + ASMWEB_RUNTIME_INVARIANT_VIEW.time_ptr], 0
+
+    lea rdi, [rel view]
+    call asm_runtime_invariant_validate_ready
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_19
+    cmp edx, ASMWEB_RUNTIME_INVARIANT_FAIL_INPUT
+    jne .fail_19
+
+    ; =======================================================================
+    ; CASE 20 — mandatory process_runtime_ptr missing from READY validation view
+    ; =======================================================================
+
+    call qual_build_valid_fixture
+    mov qword [rel view + ASMWEB_RUNTIME_INVARIANT_VIEW.process_runtime_ptr], 0
+
+    lea rdi, [rel view]
+    call asm_runtime_invariant_validate_ready
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_20
+    cmp edx, ASMWEB_RUNTIME_INVARIANT_FAIL_INPUT
+    jne .fail_20
+
+    ; =======================================================================
+    ; CASE 21 — mandatory startup_memory_ptr missing from READY validation view
+    ; =======================================================================
+
+    call qual_build_valid_fixture
+    mov qword [rel view + ASMWEB_RUNTIME_INVARIANT_VIEW.startup_memory_ptr], 0
+
+    lea rdi, [rel view]
+    call asm_runtime_invariant_validate_ready
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_21
+    cmp edx, ASMWEB_RUNTIME_INVARIANT_FAIL_INPUT
+    jne .fail_21
+
+    ; =======================================================================
+    ; CASE 22 — mandatory registry_ptr missing from READY validation view
+    ; =======================================================================
+
+    call qual_build_valid_fixture
+    mov qword [rel view + ASMWEB_RUNTIME_INVARIANT_VIEW.registry_ptr], 0
+
+    lea rdi, [rel view]
+    call asm_runtime_invariant_validate_ready
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_22
+    cmp edx, ASMWEB_RUNTIME_INVARIANT_FAIL_INPUT
+    jne .fail_22
+
+    ; =======================================================================
     ; CASE 15 — ABI callee-saved state + DF clear
     ; =======================================================================
 
@@ -685,5 +797,40 @@ _start:
 
 .fail_15:
     mov edi, 15
+    call asm_linux_exit
+    ud2
+
+.fail_16:
+    mov edi, 16
+    call asm_linux_exit
+    ud2
+
+.fail_17:
+    mov edi, 17
+    call asm_linux_exit
+    ud2
+
+.fail_18:
+    mov edi, 18
+    call asm_linux_exit
+    ud2
+
+.fail_19:
+    mov edi, 19
+    call asm_linux_exit
+    ud2
+
+.fail_20:
+    mov edi, 20
+    call asm_linux_exit
+    ud2
+
+.fail_21:
+    mov edi, 21
+    call asm_linux_exit
+    ud2
+
+.fail_22:
+    mov edi, 22
     call asm_linux_exit
     ud2
