@@ -13,6 +13,7 @@ from pathlib import Path
 
 import production_limit_manifest as production
 import m0_limit_register as register
+import m0_normative_lr as normative
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -82,6 +83,17 @@ def build():
         "production entry count mismatch",
     )
 
+    normative_document = normative.build()
+    require(
+        normative.OUTPUT.read_bytes() == normative.canonical(normative_document),
+        "full-schema LR stale or inconsistent with adoption",
+    )
+    adopted = normative_document["authoritative_lr_complete"]
+    normative_by_id = {
+        item["limit_id"]: item for item in normative_document["entries"]
+    }
+    require(len(normative_by_id) == len(entries), "normative LR population mismatch")
+
     limits = []
     seen = set()
     total_direct = 0
@@ -109,6 +121,15 @@ def build():
             "definition and MOT disagree",
         )
 
+        normative_entry = normative_by_id.get(registered["limit_id"])
+        require(
+            normative_entry is not None
+            and normative_entry["configured_value"] == entry["configured_capacity"]
+            and normative_entry["effective_value"] == entry["configured_capacity"]
+            and normative_entry["provenance"]["runtime_limit_id"] == entry["limit_id"]
+            and normative_entry["status"] == ("ACTIVE" if adopted else "PROVISIONAL"),
+            "normative LR does not reconcile with live production MOT",
+        )
         identity = entry["limit_id"]
         require(
             type(identity) is int
@@ -173,7 +194,10 @@ def build():
             "overhead_bytes": overhead,
             "normative_lim_id": registered["limit_id"],
             "normative_mapping_status":
-                "PROVISIONAL_LR_MAPPING_VERIFIED",
+                (
+                    "ADOPTED_LR_MAPPING_VERIFIED" if adopted
+                    else "PROVISIONAL_LR_MAPPING_VERIFIED"
+                ),
         })
 
     require(
@@ -205,6 +229,8 @@ def build():
             projection["derivation_tool_sha256"],
         "production_limit_register_sha256":
             sha(register_bytes),
+        "normative_limit_register_sha256":
+            sha(normative.canonical(normative_document)),
         "production_mot_count":
             projection["production_mot_count"],
         "production_rct_count":
@@ -227,8 +253,8 @@ def build():
         "effective_configuration_sha256":
             sha(canonical(configuration)),
         "normative_ir_complete": False,
-        "normative_lr_complete": False,
-        "authoritative_elm_adopted": False,
+        "normative_lr_complete": adopted,
+        "authoritative_elm_adopted": adopted,
         "formal_m0_qualification": False,
     }
 
@@ -238,12 +264,26 @@ def build():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "action", choices=("publish", "verify")
+        "action", choices=("publish", "verify", "reconcile")
     )
     args = parser.parse_args()
 
     try:
         expected = canonical(build())
+
+        if args.action == "reconcile":
+            require(
+                json.loads(expected)["normative_lr_complete"] is True,
+                "cannot reconcile unadopted LR",
+            )
+            import os
+            temporary = OUTPUT.with_suffix(".json.tmp")
+            require(not temporary.exists(), "stale temporary configuration")
+            with temporary.open("xb") as stream:
+                stream.write(expected)
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, OUTPUT)
 
         if args.action == "publish":
             require(
@@ -289,7 +329,7 @@ def main():
             )
         )
         print("CONFIGURATION_PUBLICATION=VERIFIED")
-        print("NORMATIVE_LR_COMPLETE=False")
+        print("NORMATIVE_LR_COMPLETE=" + str(document["normative_lr_complete"]))
         return 0
 
     except (

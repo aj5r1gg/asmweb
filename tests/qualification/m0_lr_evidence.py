@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify M0 production LR engineering evidence; never assert approval."""
+"""Verify production LR evidence and independently reject forged adoption."""
 
 import copy
 import json
@@ -47,8 +47,11 @@ def main():
             "INCOMPLETE_EVIDENCE=" + entry["limit_id"],
         )
         require(
-            entry["status"] == "PROVISIONAL",
-            "UNAUTHORISED_LIMIT_STATUS",
+            entry["status"] == (
+                "ACTIVE" if register["authoritative_lr_complete"]
+                else "PROVISIONAL"
+            ),
+            "INCONSISTENT_LIMIT_STATUS",
         )
         for ref in entry["evidence_refs"]:
             target = (ROOT / ref).resolve()
@@ -59,9 +62,82 @@ def main():
             require(target.is_file(), "MISSING_ARTIFACT=" + ref)
 
     require(
-        register["authoritative_lr_complete"] is False,
-        "FALSE_NORMATIVE_COMPLETION",
+        register["authoritative_lr_complete"] is True,
+        "M0_LR_ADOPTION_NOT_ESTABLISHED",
     )
+    require(
+        configuration["normative_lr_complete"] is True
+        and configuration["authoritative_elm_adopted"] is True,
+        "M0_ELM_ADOPTION_NOT_ESTABLISHED",
+    )
+
+    # Verify that neither an ACTIVE flag nor a complete flag can
+    # override the NASM-derived canonical register and adoption record.
+    # Never mutate the live normative Limit Register.
+    # Redirect the existing verifier to an isolated temporary file.
+    import tempfile
+
+    original_path = lr.OUTPUT
+    original = original_path.read_bytes()
+
+    with tempfile.TemporaryDirectory(prefix="asmweb-m0-lr-test-") as tmp:
+        temporary_path = Path(tmp) / "normative-lr.json"
+
+        try:
+            lr.OUTPUT = temporary_path
+
+            def reject_tampering(change, label):
+                forged = json.loads(original)
+                change(forged)
+                forged_bytes = lr.canonical(forged)
+
+                require(
+                    forged_bytes != original,
+                    "INEFFECTIVE_MUTATION=" + label,
+                )
+
+                temporary_path.write_bytes(forged_bytes)
+
+                try:
+                    lr.verify()
+                except (ValueError, AssertionError):
+                    pass
+                else:
+                    raise RuntimeError(
+                        "FORGED_ADOPTION_ACCEPTED=" + label
+                    )
+
+            reject_tampering(
+                lambda d: d.update(
+                    authoritative_lr_complete=False
+                ),
+                "FALSE_COMPLETION",
+            )
+
+            reject_tampering(
+                lambda d: d["entries"][0].update(
+                    status="PROVISIONAL"
+                ),
+                "STATUS_DOWNGRADE",
+            )
+
+            reject_tampering(
+                lambda d: d["entries"][0].update(
+                    configured_value=2
+                ),
+                "CAPACITY_MUTATION",
+            )
+
+        finally:
+            lr.OUTPUT = original_path
+
+    require(
+        original_path.read_bytes() == original,
+        "LIVE_REGISTER_MODIFIED",
+    )
+
+    lr.verify()
+    print("FORGED_LR_ADOPTION_MUTATIONS=REJECTED")
     require(
         bool(configuration.get("effective_configuration_sha256")),
         "CONFIGURATION_IDENTITY_MISSING",

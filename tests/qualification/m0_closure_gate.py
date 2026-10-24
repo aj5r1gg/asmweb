@@ -27,14 +27,22 @@ def main():
         "M0-IR-APPROVAL",
         "M0-IR-CONTENT",
         "M0-IR-AUTHORITY",
-        "M0-LR-STATUS",
-        "M0-LR-AUTHORITY",
         "M0-OWNERSHIP",
         "M0-AUTHORITY",
-        "M0-ELM-ACCEPTANCE",
+        "M0-APPROVAL",
     }
 
     require(required <= baseline_ids, "BASELINE_BLOCKER_MISSING")
+    resolved = {
+        "M0-LR-STATUS",
+        "M0-LR-AUTHORITY",
+        "M0-CONFIG-NORMATIVE-LR",
+        "M0-ELM-ACCEPTANCE",
+    }
+    require(
+        not (resolved & baseline_ids),
+        "ADOPTED_LR_ELM_STILL_BLOCKED",
+    )
     # Unresolved future invariants must not themselves block M0 (§34).
     require(
         "M0-IR-APPLICABILITY" not in baseline_ids,
@@ -80,7 +88,7 @@ def main():
         ("false_ir_authority", "ir",
          lambda d: d.update(authoritative_ir_complete=True)),
         ("false_lr_authority", "lr",
-         lambda d: d.update(authoritative_lr_complete=True)),
+         lambda d: d.update(authoritative_lr_complete=False)),
         ("false_approval_enablement", "authority",
          lambda d: d.update(approval_enabled=True)),
         ("false_ownership_approval", "ownership",
@@ -96,6 +104,13 @@ def main():
         result = gate.evaluate(changed)
 
         require(bool(result), name + ":FALSE_CLOSURE")
+        if name == "false_lr_authority":
+            require(
+                "M0-LR-AUTHORITY" in {
+                    identity for identity, _ in result
+                },
+                "LR_AUTHORITY_DOWNGRADE_ACCEPTED",
+            )
         print(name + "=REJECTED")
 
     # The all-green-looking fixture must still reject an
@@ -126,6 +141,9 @@ def main():
 
     changed["lr"]["authoritative_lr_complete"] = True
     changed["configuration"]["normative_lr_complete"] = True
+    # Simulate unsupported ELM adoption independently of the
+    # successfully adopted production baseline.
+    changed["configuration"]["authoritative_elm_adopted"] = False
 
     for entry in changed["ownership"]["entries"]:
         entry["review_status"] = "APPROVED"

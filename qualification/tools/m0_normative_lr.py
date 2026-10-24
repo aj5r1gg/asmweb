@@ -4,6 +4,7 @@
 import argparse
 import hashlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -11,6 +12,27 @@ import m0_limit_register as production_lr
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "qualification/limits/m0-normative-lr-v0.1.json"
+ADOPTION = ROOT / "qualification/limits/m0-lr-adoption-v0.1.json"
+
+
+def adoption_for(source_sha, limit_ids):
+    """A local, explicit M0 owner decision bound to NASM-derived evidence."""
+    if not ADOPTION.exists():
+        return False
+    document = json.loads(ADOPTION.read_text(encoding="utf-8"))
+    require(document == {
+        "schema_version": 1,
+        "decision": "ADOPT_M0_PRODUCTION_MOT_LIMITS",
+        "source_register_sha256": source_sha,
+        "limit_ids": sorted(limit_ids),
+        "qualification_targets": [
+            "qualify-production-registry",
+            "qualify-production-limit-manifest",
+            "qualify-mot-ceiling-integration",
+        ],
+    }, "M0 LR adoption record does not match current production authority")
+    return True
+
 
 FIELDS = (
     "limit_id title status limit_kind deadline_kind rate_semantics "
@@ -116,6 +138,9 @@ def build():
         "production Limit Register is stale",
     )
 
+    adopting = adoption_for(
+        sha(source_bytes), [item["limit_id"] for item in existing["entries"]]
+    )
     entries = []
 
     for item in existing["entries"]:
@@ -127,7 +152,7 @@ def build():
         record.update({
             "limit_id": item["limit_id"],
             "title": item["title"],
-            "status": "PROVISIONAL",
+            "status": "ACTIVE" if adopting else "PROVISIONAL",
             "limit_kind": "CAPACITY",
             "deadline_kind": None,
             "rate_semantics": None,
@@ -138,12 +163,15 @@ def build():
             "resource_class": "PRODUCTION_MOT_OBJECT",
             "applies_to_profiles": ["M0_PRODUCTION"],
             "applies_to_features": [],
-            "value_class": "NASM_RESOLVED_PROVISIONAL",
+            "value_class": (
+                "NASM_RESOLVED_M0_ADOPTED" if adopting
+                else "NASM_RESOLVED_PROVISIONAL"
+            ),
             "configured_value": item["configured_value"],
             "effective_value": item["effective_value"],
-            "minimum_permitted": None,
+            "minimum_permitted": 1 if adopting else None,
             "maximum_permitted": item["maximum_permitted"],
-            "default_value": None,
+            "default_value": item["configured_value"] if adopting else None,
             "expression": None,
             "rounding_semantics": "EXACT_INTEGER",
             "alias_of": None,
@@ -176,8 +204,12 @@ def build():
             "notes": [
                 "Numerical capacity derives from the current "
                 "NASM-resolved production MOT.",
-                "Normative adoption and applicability beyond "
-                "M0_PRODUCTION are not established.",
+                (
+                    "Adopted for M0_PRODUCTION only; other profiles remain out of scope."
+                    if adopting else
+                    "Normative adoption and applicability beyond M0_PRODUCTION "
+                    "are not established."
+                ),
                 "An exact production capacity is not evidence "
                 "that all governing limits are complete.",
             ],
@@ -207,10 +239,13 @@ def build():
         "source_specification":
             "AsmWeb — Invariants & Limits Register v0.3 §6",
         "source_register_sha256": sha(source_bytes),
-        "status": "PROVISIONAL_PENDING_NORMATIVE_ADOPTION",
+        "status": (
+            "M0_PRODUCTION_MOT_ADOPTED" if adopting
+            else "PROVISIONAL_PENDING_NORMATIVE_ADOPTION"
+        ),
         "scope": "M0_PRODUCTION_MOT_SUBSET",
         "entry_count": len(entries),
-        "authoritative_lr_complete": False,
+        "authoritative_lr_complete": adopting,
         "entries": entries,
     }
 
@@ -229,7 +264,11 @@ def verify():
     for item in doc["entries"]:
         require(set(item) == set(FIELDS), "LR field mismatch")
         validate_m0_dimensions(item)
-        require(item["status"] == "PROVISIONAL", "false status")
+        require(
+            item["status"] == (
+                "ACTIVE" if doc["authoritative_lr_complete"] else "PROVISIONAL"
+            ), "false status"
+        )
         require(
             item["limit_kind"] == "CAPACITY",
             "incorrect limit kind",
@@ -268,16 +307,50 @@ def verify():
     print("FULL_SCHEMA_FIELDS=" + str(len(FIELDS)))
     print("M0_LIMITS=9")
     print("CANONICAL_NASM_MAPPING=VERIFIED")
-    print("NORMATIVE_LR_ADOPTION=PENDING")
+    print("NORMATIVE_LR_ADOPTION=" + (
+        "M0_PRODUCTION_MOT_ADOPTED"
+        if doc["authoritative_lr_complete"] else "PENDING"
+    ))
     print("M0_FULL_SCHEMA_LR=PASS")
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=("publish", "verify"))
+    parser.add_argument("action", choices=("publish", "verify", "adopt"))
     args = parser.parse_args()
 
     try:
+        if args.action == "adopt":
+            require(not ADOPTION.exists(), "M0 LR already adopted")
+            # Qualification precedes the explicit adoption decision.
+            targets = [
+                "qualify-production-registry",
+                "qualify-production-limit-manifest",
+                "qualify-mot-ceiling-integration",
+            ]
+            result = subprocess.run(
+                ["make", "--no-print-directory", *targets],
+                cwd=ROOT, check=False,
+            )
+            require(result.returncode == 0, "production limit qualification failed")
+            source = production_lr.derive()
+            require(
+                production_lr.OUTPUT.read_bytes() == production_lr.canonical(source),
+                "production source changed or stale",
+            )
+            decision = {
+                "schema_version": 1,
+                "decision": "ADOPT_M0_PRODUCTION_MOT_LIMITS",
+                "source_register_sha256": sha(production_lr.canonical(source)),
+                "limit_ids": sorted(x["limit_id"] for x in source["entries"]),
+                "qualification_targets": targets,
+            }
+            ADOPTION.write_bytes(canonical(decision))
+            OUTPUT.write_bytes(canonical(build()))
+            verify()
+            print("M0_LR_OWNER_DECISION=RECORDED")
+            return 0
+
         if args.action == "publish":
             require(
                 not OUTPUT.exists() and not OUTPUT.is_symlink(),

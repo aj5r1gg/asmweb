@@ -260,6 +260,11 @@ def evaluate(docs):
                 )
                 and cfg.get("effective_configuration_sha256")
                     == hashlib.sha256(canonical).hexdigest()
+                 and projection.get("normative_limit_register_sha256")
+                     == hashlib.sha256((json.dumps(
+                         lr, sort_keys=True, separators=(",", ":"),
+                         ensure_ascii=False, allow_nan=False,
+                     ) + "\n").encode("utf-8")).hexdigest()
                 and projection.get("total_projected_bytes")
                     == projection.get("total_direct_capacity_bytes", -1)
                     + projection.get("total_overhead_bytes", -1)
