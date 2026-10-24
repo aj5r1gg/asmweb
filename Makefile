@@ -1388,3 +1388,8 @@ qualify-m0-ir-dynamic:
 .PHONY: qualify-m0-scope-boundary
 qualify-m0-scope-boundary:
 	python3 -B tests/qualification/m0_scope_boundary.py
+
+# REQ-M0-002 — existing downstream foundation compatibility
+.PHONY: qualify-m0-architecture-compatibility
+qualify-m0-architecture-compatibility:
+	python3 -B tests/qualification/m0_architecture_compatibility.py
