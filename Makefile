@@ -1419,7 +1419,7 @@ qualify-m1-network-abi:
 
 .PHONY: qualify-m1-network-callee-saved
 qualify-m1-network-callee-saved:
-	nasm -f elf64 -Wall -Werror -Wno-error=reloc-rel-dword -Iinclude/ -o build/tests/qualification/m1_network_callee_saved.o tests/qualification/m1_network_callee_saved.asm
+	nasm -f elf64 -Wall -Werror -w-reloc-rel-dword -Iinclude/ -o build/tests/qualification/m1_network_callee_saved.o tests/qualification/m1_network_callee_saved.asm
 	$(MAKE) build/linux/network.o
 	ld -z noexecstack -o build/qualification/m1-network-callee-saved build/tests/qualification/m1_network_callee_saved.o build/linux/network.o
 	timeout 5s build/qualification/m1-network-callee-saved
