@@ -161,8 +161,15 @@ def evaluate(docs):
     ):
         fail("M0-IR-APPLICABILITY", "M0 candidate population inconsistent")
 
+    # Only a cryptographically verified deferral removes an invariant
+    # from the M0 qualification obligation. Pending decisions remain
+    # mandatory for gate purposes, never implicit deferrals.
+    candidate_ids = {
+        e.get("invariant_id") for e in m0_candidates
+    }
+    effective_m0_ids = candidate_ids - deferred_ids
     unapproved = sum(
-        e.get("m0_applicability") == "CANDIDATE_APPLICABLE"
+        e.get("invariant_id") in effective_m0_ids
         and e.get("normative_approval") is not True
         for e in assessment
     )
@@ -179,10 +186,24 @@ def evaluate(docs):
     elif set(assessed_by_id) != set(ir_by_id):
         fail("M0-IR-IDENTITY", "Assessment/IR identity mismatch")
     else:
-        m0_ids = {
-            identity for identity, entry in assessed_by_id.items()
-            if entry.get("m0_applicability") == "CANDIDATE_APPLICABLE"
+        m0_ids = effective_m0_ids
+        # A legitimate deferral must be projected in the IR and must
+        # preserve the signed destination milestone; an inactive M0
+        # record alone cannot satisfy this obligation.
+        scope_rows = {
+            row["invariant_id"]: row for row in scope_doc["entries"]
         }
+        bad_deferrals = [
+            identity for identity in deferred_ids
+            if (
+                identity not in ir_by_id
+                or ir_by_id[identity].get("scope") != "DEFERRED_FROM_M0"
+                or ir_by_id[identity].get("first_required_milestone")
+                   != scope_rows[identity]["first_mandatory_milestone"]
+            )
+        ]
+        if bad_deferrals:
+            fail("M0-IR-DEFERRAL-PROJECTION", ",".join(sorted(bad_deferrals)))
         incomplete = sum(
             not (
                 ir_by_id[identity].get("status") == "ACTIVE"
@@ -203,9 +224,9 @@ def evaluate(docs):
     # Local M0 authority instead requires each M0 candidate to have
     # an approved, qualified ACTIVE invariant record.
     if any(
-        e.get("normative_approval") is not True
-        or ir_by_id.get(e.get("invariant_id"), {}).get("status") != "ACTIVE"
-        for e in m0_candidates
+        assessed_by_id.get(identity, {}).get("normative_approval") is not True
+        or ir_by_id.get(identity, {}).get("status") != "ACTIVE"
+        for identity in effective_m0_ids
     ):
         fail("M0-IR-AUTHORITY", "M0 foundation IR is not qualified")
 
