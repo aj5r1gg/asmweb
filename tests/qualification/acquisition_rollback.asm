@@ -699,6 +699,12 @@ qual_transaction_release:
 ;   18 NULL semantics failed
 ;   19 ABI/DF preservation failed
 ;   20 final quiescence failed
+;   21 dirty resource A publication accepted or mutated state
+;   22 dirty resource B publication accepted or mutated state
+;   23 dirty event count accepted or mutated state
+;   24 dirty event payload accepted or mutated state
+;   25 NULL publication accepted or mutated state
+;   26 NULL event log accepted or mutated state
 ; ===========================================================================
 
 _start:
@@ -1154,6 +1160,135 @@ _start:
 
 
     ; =======================================================================
+    ; CASE 9A — dirty resource A publication rejected without acquisition
+    ; =======================================================================
+
+    mov qword [rel transaction_bad + QUAL_TRANSACTION.ready], 0
+    mov qword [rel transaction_bad + QUAL_TRANSACTION.resource_a], 0x1234
+
+    lea rdi, [rel pool_a]
+    lea rsi, [rel pool_b]
+    lea rdx, [rel transaction_bad]
+    mov ecx, QUAL_FAULT_NONE
+    lea r8, [rel event_log_bad]
+    call qual_transaction_acquire
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_21
+    cmp qword [rel transaction_bad + QUAL_TRANSACTION.resource_a], 0x1234
+    jne .fail_21
+    cmp qword [rel pool_a + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_21
+    cmp qword [rel pool_b + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_21
+    mov qword [rel transaction_bad + QUAL_TRANSACTION.resource_a], 0
+
+    ; =======================================================================
+    ; CASE 9B — dirty resource B publication rejected without acquisition
+    ; =======================================================================
+
+    mov qword [rel transaction_bad + QUAL_TRANSACTION.resource_b], 0x5678
+
+    lea rdi, [rel pool_a]
+    lea rsi, [rel pool_b]
+    lea rdx, [rel transaction_bad]
+    mov ecx, QUAL_FAULT_NONE
+    lea r8, [rel event_log_bad]
+    call qual_transaction_acquire
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_22
+    cmp qword [rel transaction_bad + QUAL_TRANSACTION.resource_b], 0x5678
+    jne .fail_22
+    cmp qword [rel pool_a + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_22
+    cmp qword [rel pool_b + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_22
+    mov qword [rel transaction_bad + QUAL_TRANSACTION.resource_b], 0
+
+    ; =======================================================================
+    ; CASE 9C — dirty event count rejected without acquisition
+    ; =======================================================================
+
+    mov qword [rel event_log_bad + QUAL_EVENT_LOG.count], 1
+
+    lea rdi, [rel pool_a]
+    lea rsi, [rel pool_b]
+    lea rdx, [rel transaction_bad]
+    mov ecx, QUAL_FAULT_NONE
+    lea r8, [rel event_log_bad]
+    call qual_transaction_acquire
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_23
+    cmp qword [rel event_log_bad + QUAL_EVENT_LOG.count], 1
+    jne .fail_23
+    cmp qword [rel pool_a + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_23
+    cmp qword [rel pool_b + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_23
+    mov qword [rel event_log_bad + QUAL_EVENT_LOG.count], 0
+
+    ; =======================================================================
+    ; CASE 9D — dirty event payload rejected without acquisition
+    ; =======================================================================
+
+    mov qword [rel event_log_bad + QUAL_EVENT_LOG.event_0], QUAL_EVENT_RELEASE_B
+
+    lea rdi, [rel pool_a]
+    lea rsi, [rel pool_b]
+    lea rdx, [rel transaction_bad]
+    mov ecx, QUAL_FAULT_NONE
+    lea r8, [rel event_log_bad]
+    call qual_transaction_acquire
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_24
+    cmp qword [rel event_log_bad + QUAL_EVENT_LOG.event_0], QUAL_EVENT_RELEASE_B
+    jne .fail_24
+    cmp qword [rel pool_a + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_24
+    cmp qword [rel pool_b + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_24
+    mov qword [rel event_log_bad + QUAL_EVENT_LOG.event_0], 0
+
+    ; =======================================================================
+    ; CASE 9E — NULL publication rejected without acquisition
+    ; =======================================================================
+
+    lea rdi, [rel pool_a]
+    lea rsi, [rel pool_b]
+    xor edx, edx
+    mov ecx, QUAL_FAULT_NONE
+    lea r8, [rel event_log_bad]
+    call qual_transaction_acquire
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_25
+    cmp qword [rel pool_a + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_25
+    cmp qword [rel pool_b + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_25
+
+    ; =======================================================================
+    ; CASE 9F — NULL event log rejected without acquisition
+    ; =======================================================================
+
+    lea rdi, [rel pool_a]
+    lea rsi, [rel pool_b]
+    lea rdx, [rel transaction_bad]
+    mov ecx, QUAL_FAULT_NONE
+    xor r8d, r8d
+    call qual_transaction_acquire
+
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_26
+    cmp qword [rel pool_a + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_26
+    cmp qword [rel pool_b + ASMWEB_TYPED_POOL.current_occupancy], 0
+    jne .fail_26
+
+    ; =======================================================================
     ; CASE 10 — NULL semantics
     ; =======================================================================
 
@@ -1360,5 +1495,35 @@ _start:
 
 .fail_20:
     mov edi, 20
+    call asm_linux_exit
+    ud2
+
+.fail_21:
+    mov edi, 21
+    call asm_linux_exit
+    ud2
+
+.fail_22:
+    mov edi, 22
+    call asm_linux_exit
+    ud2
+
+.fail_23:
+    mov edi, 23
+    call asm_linux_exit
+    ud2
+
+.fail_24:
+    mov edi, 24
+    call asm_linux_exit
+    ud2
+
+.fail_25:
+    mov edi, 25
+    call asm_linux_exit
+    ud2
+
+.fail_26:
+    mov edi, 26
     call asm_linux_exit
     ud2
