@@ -1393,3 +1393,8 @@ qualify-m0-scope-boundary:
 .PHONY: qualify-m0-architecture-compatibility
 qualify-m0-architecture-compatibility:
 	python3 -B tests/qualification/m0_architecture_compatibility.py
+
+# M0 production-scope invariant engineering evidence
+.PHONY: qualify-m0-foundation-governance
+qualify-m0-foundation-governance:
+	python3 -B tests/qualification/m0_foundation_governance.py
