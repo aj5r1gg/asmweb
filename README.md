@@ -14,6 +14,17 @@ M0 has passed its closure eligibility audit with **zero outstanding blockers**. 
 
 AsmWeb is already a functioning **experimental**, loopback-only HTTP/1.1 server, with a small multi-page static website and tested TCP/UDP primitives. **M0 completion does not make M1 or the server production-ready.**
 
+### Milestone status
+
+| Milestone | Status | Interpretation |
+| --- | --- | --- |
+| **M0 — Foundation** | **Owner-approved (24 October 2026)** | Zero closure blockers; all 36 M0-required invariants adopted. See closure-publication distinction below. |
+| **M1 — Networking and I/O** | **In progress** | Networking qualifications pass; full M1 acceptance and closure are not asserted. |
+| **Later milestones** | **Planned / not qualified here** | Their scope and acceptance are governed by the milestone specifications, not this README. |
+
+**Closure-publication distinction:** On 24 October 2026 the owner explicitly approved M0 after the gate returned `M0_BLOCKING_CATEGORIES=0` and `M0_CLOSURE_ELIGIBLE=True`. The most recently observed repository `close` output was `M0_CLOSURE_GATE=ELIGIBLE_PENDING_OWNER_APPROVAL`, recorded *before* that explicit owner decision. This README documents the decision but does **not** assert that a subsequent machine-readable final-closure publication was executed or committed. When it is, cite the exact closure commit here; do not infer it from the README.
+
+
 ## Quick start
 
 ### Requirements
@@ -23,6 +34,8 @@ AsmWeb is already a functioning **experimental**, loopback-only HTTP/1.1 server,
 - GNU make and GNU ld (binutils)
 - Git
 - Python 3 and GNU `timeout` for selected development checks
+
+**Supported development platform:** Linux **x86-64** only. The code depends on the Linux syscall ABI and NASM x86-64 assembly. Windows, macOS, ARM/AArch64, other operating systems and other CPU architectures are **not supported or qualified** by the current implementation.
 
 AsmWeb builds without requiring a C compiler.
 
@@ -154,23 +167,28 @@ python3 tests/integration/socket_failures.py
 python3 tests/integration/http_idle_survival.py
 ```
 
-Run the targeted assembly and behavioural qualifications:
+Run the current time, deadline and **complete 14-target M1 networking qualification sequence**:
 
 ```bash
-make qualify-time
-make qualify-deadline
-make qualify-udp-loopback
-make qualify-tcp-accept4
-make qualify-network-error-paths
-make qualify-stream-fragments
-make qualify-stream-short-write
-make qualify-network-eintr
-make qualify-udp-batch-transfer
-make qualify-udp-batch-bounds
-make qualify-udp-batch-mutations
-make qualify-http-descriptor-lifecycle
-make qualify-http-descriptor-mutations
+make qualify-time qualify-deadline
+make \
+  qualify-udp-loopback \
+  qualify-tcp-accept4 \
+  qualify-network-error-paths \
+  qualify-stream-fragments \
+  qualify-stream-short-write \
+  qualify-network-eintr \
+  qualify-udp-batch-transfer \
+  qualify-udp-batch-bounds \
+  qualify-udp-batch-mutations \
+  qualify-udp-checked-descriptors \
+  qualify-udp-checked-transfer \
+  qualify-udp-checked-mutations \
+  qualify-http-descriptor-lifecycle \
+  qualify-http-descriptor-mutations
 ```
+
+The 14 M1 targets above passed in the recorded local run on 24 October 2026. A passing development run does not imply formal M1 closure.
 
 `make qualify-deadline` currently tests **15 arithmetic boundary cases**, including exact expiry, overflow, backward time samples, sub-microsecond positive intervals, register preservation, and buffer guards. The deadline qualification was also repeated successfully across 20 local executions before publication.
 
@@ -234,25 +252,7 @@ M0 owner approval does not establish full production security assurance, an exte
 
 M1 work concentrates on TCP/UDP and stream-I/O foundations alongside the experimental HTTP serving path. Verified local qualifications include loopback TCP/UDP, `accept4`, network error propagation, stream fragmentation and short writes, signal interruption, bounded and checked UDP batch operations, and HTTP descriptor lifecycle and mutation checks. These passing tests are **engineering evidence**, not a declaration that M1 is closed.
 
-For the M1 networking qualification exercised on 24 October 2026:
-
-```bash
-make \
-  qualify-udp-loopback \
-  qualify-tcp-accept4 \
-  qualify-network-error-paths \
-  qualify-stream-fragments \
-  qualify-stream-short-write \
-  qualify-network-eintr \
-  qualify-udp-batch-transfer \
-  qualify-udp-batch-bounds \
-  qualify-udp-batch-mutations \
-  qualify-udp-checked-descriptors \
-  qualify-udp-checked-transfer \
-  qualify-udp-checked-mutations \
-  qualify-http-descriptor-lifecycle \
-  qualify-http-descriptor-mutations
-```
+The full 14-target M1 command is maintained once under [Build and qualification](#build-and-qualification), avoiding divergent test lists.
 
 These targets passed in the recorded local run. NASM emitted nonfatal relative-relocation warnings for some fixtures; those warnings should not be mistaken for compilation failures or ignored as an unconditional portability guarantee.
 
@@ -338,6 +338,22 @@ They are not substitutes for it.
 
 M1 milestone qualification remains separate from
 engineering commits and feature completion.
+
+## Performance benchmarking — baseline not yet established
+
+AsmWeb's performance against established servers, including Nginx, is an **open measurement question**. There is currently **no verified comparative benchmark baseline** in this README and no claim that AsmWeb is faster, smaller in total deployed footprint, or more efficient under equivalent production workloads.
+
+Future comparisons should publish the tested AsmWeb and comparator versions, hardware, operating system, toolchain, network topology, request/response sizes, connection concurrency, measurement commands, raw samples and repeatability conditions. At minimum measure:
+
+| Metric | Required reporting |
+| --- | --- |
+| Throughput | Requests/second and bytes/second at matched workloads |
+| Latency | Median, p95 and p99 response latency, including under concurrency |
+| Memory | Idle and peak resident set size (RSS), with workload and observation method |
+| Executable size | On-disk binary bytes, separate from RSS and total deployment size |
+| CPU usage | CPU time and utilisation at matched delivered throughput |
+
+Do not compare AsmWeb's current loopback-only, sequential, fixed-route HTTP prototype with a differently configured, feature-complete server as if the results represented equivalent products. Report any disabled features, workload limitations and measurement uncertainty.
 
 ## Project intent
 
