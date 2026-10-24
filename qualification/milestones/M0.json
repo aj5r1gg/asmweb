@@ -7,8 +7,26 @@
   "inherited_regression_refs": [],
   "prerequisite_refs": [],
   "new_rule_refs": [],
-  "required_verification_refs": [],
-  "result_refs": [],
+  "required_verification_refs": [
+    "tests/qualification/process_entry.asm",
+    "tests/qualification/cpu.asm",
+    "tests/qualification/time.asm",
+    "tests/qualification/entropy.asm",
+    "tests/qualification/memory.asm",
+    "tests/qualification/stack.asm",
+    "tests/qualification/config_dependency.asm",
+    "tests/qualification/production_registry.asm",
+    "tests/qualification/diagnostic.asm",
+    "tests/qualification/diagnostic_mutations.py",
+    "tests/qualification/ready_diagnostic.asm",
+    "tests/qualification/ready_bootstrap_injection.py",
+    "tests/qualification/m0_requirement_identity.py",
+    "tests/qualification/m0_binary_identity.py"
+  ],
+  "result_refs": [
+    "qualification/requirements/review/m0-explicit-results-v0.1.json",
+    "qualification/limits/m0-effective-configuration-v0.1.json"
+  ],
   "known_failures": [],
   "blocked_items": [
     {
