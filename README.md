@@ -8,13 +8,11 @@ AsmWeb explores a simple engineering question: how much useful web-serving infra
 
 The purpose is **not** to claim that assembly is inherently faster, more secure, or a better choice than established web servers. It is to construct a narrowly scoped server whose behaviour can be understood, measured, and challenged at the syscall, runtime, and HTTP levels.
 
-**Current status:** Experimental M1 development. AsmWeb is a
-working Linux x86-64 assembly web server with a persistent,
-loopback-only HTTP listener, a small multi-page static website,
-bounded request acquisition, and TCP/UDP networking primitives.
+**Current status (24 October 2026): M0 foundation owner-approved; M1 development under way.**
 
-AsmWeb is **not yet production-ready** or formally
-milestone-qualified.
+M0 has passed its closure eligibility audit with **zero outstanding blockers**. Its 36 mandatory invariant records have verified owner-signed normative adoption; six additional foundation candidates are deferred under signed scope decisions. The five explicitly identified M0 requirements have owner-signed ownership adoption. The project owner has explicitly approved moving beyond M0. The last observed repository `close` command reported `ELIGIBLE_PENDING_OWNER_APPROVAL`; this README records the subsequent owner decision, **not** an independently verified final publication flag.
+
+AsmWeb is already a functioning **experimental**, loopback-only HTTP/1.1 server, with a small multi-page static website and tested TCP/UDP primitives. **M0 completion does not make M1 or the server production-ready.**
 
 ## Quick start
 
@@ -187,25 +185,76 @@ The HTTP descriptor mutation qualification deliberately changes cleanup behaviou
 GitHub Actions runs the project build and registered qualification targets. See [the CI workflow](.github/workflows/ci.yml) for the authoritative current command list.
 
 
-## Milestone and qualification governance
+## M0 foundation — completed owner decision
 
-AsmWeb follows a controlled **M0–M16 milestone baseline**.
+**M0 scope:** the native Linux x86-64 entry and runtime foundation, resource-accounting and capacity machinery, bounded memory classes, canonical production limits and configuration, diagnostic and invariant enforcement, and their controlled qualification evidence. M0 is *not* a claim of full HTTP protocol implementation, operational hardening, or benchmark superiority.
 
-The M0 engineering implementation includes process entry, runtime
-bootstrap, startup memory accounting, capacity validation and runtime
-invariant work. **Formal M0 qualification has not been declared
-complete.**
+### Verified M0 results
 
-The original engineering record identifies outstanding authoritative
-qualification obligations involving the Qualification Rule Register,
-Invariant Register, Limit Register, Effective Limit Manifest, common
-diagnostics, and effective configuration/provenance identity. Their
-current closure status must be established from the relevant
-qualification evidence, not inferred from passing tests.
+| Obligation | Result |
+| --- | --- |
+| M0 closure eligibility | `M0_BLOCKING_CATEGORIES=0`, `M0_CLOSURE_ELIGIBLE=True` |
+| Closure-gate command | `M0_CLOSURE_GATE=ELIGIBLE_PENDING_OWNER_APPROVAL` before final owner decision |
+| Owner decision | **Approved**, 24 October 2026 |
+| M0 normative invariants | **36/36** owner-signed, signature-verified and mapped to executable qualification targets |
+| Scope decisions | 42 assessed candidates: 36 mandatory, six deferred under signed decisions |
+| Normative register inventory | 144 controlled invariant identities; 102 outside the assessed M0 candidate set |
+| M0 explicit requirement ownership | Five `REQ-M0-001`–`REQ-M0-005` owner-signed assignments |
+| Approval authority and publication | Verified by the final zero-blocker closure audit |
+| Production limit configuration | Nine canonical M0 production memory/capacity entries and effective configuration evidence |
 
-Functional M1 HTTP development can proceed while earlier formal
-qualification obligations remain open. **Implemented, locally tested,
-CI-passing and formally milestone-qualified are distinct statuses.**
+**Important scope qualification:** `AUTHORITATIVE_IR_COMPLETE=False` refers to the complete 144-invariant cross-milestone register, not the signed set of 36 M0-required invariants. It must not be presented as a claim that all 144 statements are approved. The M0 closure gate nevertheless reported zero M0 blockers.
+
+The final M0 engineering commits include:
+
+- `1615f03` — 36/36 executable invariant evidence links.
+- `e7dd3a5` — owner-signed normative adoption of all 36 M0-required invariants.
+- `62ae1b2` — retirement of the resolved M0 IR blocker.
+- `9e25329` — signed M0 requirement ownership, authority and approval; zero blocker audit.
+
+Those identities describe a recorded engineering checkpoint, not an assertion that later source changes automatically inherit the same qualification. Re-run the relevant qualifications after changes to foundation code or its controlled evidence.
+
+Verify the M0 foundation on a development host:
+
+```bash
+make -j2 all
+make qualify-m0-invariant-scope
+python3 -B qualification/tools/m0_normative_ir.py verify
+python3 -B qualification/tools/m0_closure_gate.py audit
+python3 -B qualification/tools/m0_closure_gate.py close
+```
+
+The final `close` command may report an owner-approval publication state separately from its zero-blocker eligibility calculation. The owner decision is documented here; the underlying signed records and gate output remain the authority for machine-readable status.
+
+### What M0 does *not* imply
+
+M0 owner approval does not establish full production security assurance, an externally audited release, full HTTP/1.1 compliance, HTTP/2, HTTP/3, TLS, concurrent connection handling or general-purpose hosting. Those capabilities require separate implementation and qualification.
+
+## M1 — current development milestone
+
+M1 work concentrates on TCP/UDP and stream-I/O foundations alongside the experimental HTTP serving path. Verified local qualifications include loopback TCP/UDP, `accept4`, network error propagation, stream fragmentation and short writes, signal interruption, bounded and checked UDP batch operations, and HTTP descriptor lifecycle and mutation checks. These passing tests are **engineering evidence**, not a declaration that M1 is closed.
+
+For the M1 networking qualification exercised on 24 October 2026:
+
+```bash
+make \
+  qualify-udp-loopback \
+  qualify-tcp-accept4 \
+  qualify-network-error-paths \
+  qualify-stream-fragments \
+  qualify-stream-short-write \
+  qualify-network-eintr \
+  qualify-udp-batch-transfer \
+  qualify-udp-batch-bounds \
+  qualify-udp-batch-mutations \
+  qualify-udp-checked-descriptors \
+  qualify-udp-checked-transfer \
+  qualify-udp-checked-mutations \
+  qualify-http-descriptor-lifecycle \
+  qualify-http-descriptor-mutations
+```
+
+These targets passed in the recorded local run. NASM emitted nonfatal relative-relocation warnings for some fixtures; those warnings should not be mistaken for compilation failures or ignored as an unconditional portability guarantee.
 
 ### Historical M1.5 reconciliation
 
@@ -262,7 +311,7 @@ The implementation is intentionally explicit. That is part of the exercise, not 
 
 ## Development status and next work
 
-**Current phase: M1 — networking and HTTP development.**
+**Current phase: M1 — networking and HTTP development. M0 owner-approved.**
 
 Implemented engineering checkpoints include:
 
@@ -287,7 +336,7 @@ Development follows a practical cycle:
 Tests and specifications support application delivery.
 They are not substitutes for it.
 
-Formal milestone qualification remains separate from
+M1 milestone qualification remains separate from
 engineering commits and feature completion.
 
 ## Project intent
