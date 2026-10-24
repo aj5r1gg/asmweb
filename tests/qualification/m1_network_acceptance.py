@@ -8,6 +8,7 @@ import subprocess
 import sys
 
 TARGETS = (
+    'qualify-m1-network-abi',
     'qualify-udp-loopback',
     'qualify-tcp-accept4',
     'qualify-network-error-paths',
