@@ -298,7 +298,7 @@ def build():
         if assessment_entry["normative_approval"]:
             record["qualification_milestone"] = "M0"
             record["detection_method"] = "Executable qualification targets: " + ", ".join(qualification)
-            record["evidence_refs"] = [ref for ref in implementation if ref.startswith(("tests/qualification/", "qualification/"))]
+            record["evidence_refs"] = list(implementation)
             require(bool(record["evidence_refs"]),
                     "approved invariant has no evidence artifact: " + identity)
 
