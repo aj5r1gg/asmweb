@@ -70,14 +70,7 @@ def main():
         changed["candidate_applicable_count"] = 41
         changed["unassessed_count"] = 103
 
-        result = derive(changed)
-        require(result["m0_candidate_count"] == 41, "REMOVAL_IGNORED")
-        require(result["unassessed_count"] == 103, "REMOVAL_COUNT")
-        require(
-            result["authoritative_ir_complete"] is False,
-            "REMOVAL_FALSE_AUTHORITY",
-        )
-        print("CANDIDATE_REMOVAL=PASS")
+        rejected("UNAUTHORISED_CANDIDATE_REMOVAL", changed)
 
         changed = copy.deepcopy(assessment)
         changed["entries"][unassessed][
@@ -85,15 +78,7 @@ def main():
         ] = "CANDIDATE_APPLICABLE"
         changed["candidate_applicable_count"] = 43
         changed["unassessed_count"] = 101
-
-        result = derive(changed)
-        require(result["m0_candidate_count"] == 43, "ADDITION_IGNORED")
-        require(result["unassessed_count"] == 101, "ADDITION_COUNT")
-        require(
-            result["authoritative_ir_complete"] is False,
-            "ADDITION_FALSE_AUTHORITY",
-        )
-        print("CANDIDATE_ADDITION=PASS")
+        rejected("UNREVIEWED_CANDIDATE_ADDITION", changed)
 
         changed = copy.deepcopy(assessment)
         changed["entries"][candidate]["m0_applicability"] = "APPROVED"

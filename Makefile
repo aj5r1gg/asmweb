@@ -1398,3 +1398,9 @@ qualify-m0-architecture-compatibility:
 .PHONY: qualify-m0-foundation-governance
 qualify-m0-foundation-governance:
 	python3 -B tests/qualification/m0_foundation_governance.py
+
+.PHONY: qualify-m0-invariant-scope
+qualify-m0-invariant-scope:
+	python3 -B qualification/tools/m0_invariant_scope.py verify
+	python3 -B tests/qualification/m0_invariant_scope.py
+	python3 -B tests/qualification/m0_ir_assessment_dynamic.py

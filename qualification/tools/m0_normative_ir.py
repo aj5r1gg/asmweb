@@ -102,6 +102,12 @@ def build():
         "applicability assessment uses different source",
     )
 
+    # Source-bound scope ledger is mandatory: changing a candidate's
+    # applicability cannot silently turn it into a deferral.
+    from m0_invariant_scope import LEDGER, load as scope_load, verify_document
+    scope_doc, _ = scope_load(LEDGER)
+    verify_document(scope_doc, source, source_bytes, assessment, assessment_bytes)
+
     statements = source["entries"]
     assessed = assessment["entries"]
 

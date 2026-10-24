@@ -117,6 +117,24 @@ def evaluate(docs):
             "Waivers require independent validity verification"
         )
 
+    # Verify the candidate population against the governing statement
+    # digests. Pending decisions remain real M0 closure blockers.
+    from m0_invariant_scope import (
+        LEDGER, SOURCE, ASSESSMENT, load as scope_load, verify_document,
+    )
+    try:
+        scope_doc, _ = scope_load(LEDGER)
+        source_doc, source_raw = scope_load(SOURCE)
+        assessed_doc, assessed_raw = scope_load(ASSESSMENT)
+        scope_counts = verify_document(
+            scope_doc, source_doc, source_raw, assessed_doc, assessed_raw
+        )
+        if scope_counts["pending"]:
+            fail("M0-IR-SCOPE", str(scope_counts["pending"]) +
+                 " invariant scope decisions pending")
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        fail("M0-IR-SCOPE", "Invalid invariant scope ledger: " + str(exc))
+
     assessment = a.get("entries", [])
     ir_entries = ir.get("entries", [])
     lr_entries = lr.get("entries", [])
