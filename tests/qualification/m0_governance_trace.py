@@ -48,10 +48,19 @@ def main():
         require(bool(entry["qualification_refs"]),
                 identity + ":MISSING_QUALIFICATION")
 
-        require(entry["status"] is None,
-                identity + ":FALSE_NORMATIVE_STATUS")
-        require(review["normative_approval"] is False,
-                identity + ":FALSE_APPROVAL")
+        # ir.verify() authenticates the owner-signed assessment and
+        # validates executable qualification obligations. The
+        # governance trace must follow the authenticated approval
+        # rather than assume that every invariant remains pending.
+        require(type(review["normative_approval"]) is bool,
+                identity + ":INVALID_APPROVAL_TYPE")
+
+        expected_status = (
+            "ACTIVE" if review["normative_approval"] else None
+        )
+
+        require(entry["status"] == expected_status,
+                identity + ":NORMATIVE_STATUS_MISMATCH")
 
         for reference in entry["implementation_refs"]:
             require((ROOT / reference).is_file(),

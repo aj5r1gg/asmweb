@@ -4,7 +4,7 @@
 Derives fixtures from the established runtime-invariant qualification.
 The source fixture is not modified. All generated binaries are temporary.
 
-Positive: 13 failure fixtures, 11 classifications, 2 success fixtures.
+Positive: 20 failure fixtures, 11 classifications, 2 success fixtures.
 Negative: bypass adapter; first missing publication must fail case 2.
 """
 
@@ -170,8 +170,8 @@ section .text
     call asm_runtime_ready_validate_diagnose"""
 
     require(
-        "VALIDATOR_CALLS_15",
-        source.count(RAW_VALIDATOR) == 15,
+        "VALIDATOR_CALLS_22",
+        source.count(RAW_VALIDATOR) == 22,
     )
 
     source = source.replace(RAW_VALIDATOR, replacement)
@@ -184,11 +184,12 @@ section .text
 
     matches = list(pattern.finditer(source))
 
-    require("FAILURE_FIXTURES_13", len(matches) == 13)
+    require("FAILURE_FIXTURES_20", len(matches) == 20)
 
     require(
-        "FAILURE_CASES_2_TO_14",
-        {int(m.group(3)) for m in matches} == set(range(2, 15)),
+        "FAILURE_CASES_2_TO_14_AND_16_TO_22",
+        {int(m.group(3)) for m in matches}
+        == (set(range(2, 15)) | set(range(16, 23))),
     )
 
     require(
@@ -237,8 +238,8 @@ matrix_initialisation_failed:
 """
 
     require(
-        "ADAPTER_CALLS_15",
-        source.count(ADAPTER) == 15,
+        "ADAPTER_CALLS_22",
+        source.count(ADAPTER) == 22,
     )
 
     return source
@@ -306,9 +307,9 @@ def main():
     negative = positive.replace(ADAPTER, RAW_VALIDATOR)
 
     require(
-        "MUTATION_REPLACEMENTS_15",
+        "MUTATION_REPLACEMENTS_22",
         negative.count(ADAPTER) == 0
-        and negative.count(RAW_VALIDATOR) == 15,
+        and negative.count(RAW_VALIDATOR) == 22,
     )
 
     with tempfile.TemporaryDirectory(
@@ -330,7 +331,7 @@ def main():
             2,
         )
 
-    print("READY_FAILURE_FIXTURES=13")
+    print("READY_FAILURE_FIXTURES=20")
     print("READY_FAILURE_CLASSES=11")
     print("READY_SUCCESS_FIXTURES=2")
     print("MATRIX_ADAPTER_BYPASS_MUTATION=REJECTED")

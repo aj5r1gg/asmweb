@@ -40,6 +40,14 @@ def main():
         if entry["m0_applicability"] == "CANDIDATE_APPLICABLE"
     )
 
+    unapproved_candidate = next(
+        i for i, entry in enumerate(assessment["entries"])
+        if (
+            entry["m0_applicability"] == "CANDIDATE_APPLICABLE"
+            and entry["normative_approval"] is False
+        )
+    )
+
     unassessed = next(
         i for i, entry in enumerate(assessment["entries"])
         if entry["m0_applicability"] == "UNASSESSED"
@@ -88,8 +96,22 @@ def main():
         changed["entries"][candidate]["m0_applicability"] = "UNASSESSED"
         rejected("STALE_COUNTS", changed)
 
+        # Select a genuinely unapproved candidate. Mutating an
+        # already-approved record to True would be a no-op and would
+        # provide no adversarial coverage.
         changed = copy.deepcopy(assessment)
-        changed["entries"][candidate]["normative_approval"] = True
+
+        require(
+            changed["entries"][unapproved_candidate][
+                "normative_approval"
+            ] is False,
+            "FORGED_APPROVAL_TARGET_ALREADY_APPROVED",
+        )
+
+        changed["entries"][unapproved_candidate][
+            "normative_approval"
+        ] = True
+
         rejected("FALSE_NORMATIVE_APPROVAL", changed)
 
         changed = copy.deepcopy(assessment)
@@ -109,7 +131,12 @@ def main():
     )
 
     print("PUBLISHED_IR=UNCHANGED")
-    print("NORMATIVE_APPROVALS=ZERO")
+    approved = sum(
+        entry["normative_approval"] is True
+        for entry in assessment["entries"]
+    )
+    require(approved == 36, "APPROVAL_BASELINE_MISMATCH")
+    print(f"NORMATIVE_APPROVALS={approved}")
     print("M0_IR_DYNAMIC_ASSESSMENT=PASS")
 
 

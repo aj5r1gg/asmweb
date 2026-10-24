@@ -101,14 +101,21 @@ def build():
             "normative statement disagreement",
         )
 
+        # The worklist does not grant normative approval.
+        # Independently adopted M0 decisions are reported as
+        # current authority, not as approvals by this worklist.
         require(
-            a["normative_approval"] is False,
-            "unexpected normative approval",
+            type(a["normative_approval"]) is bool,
+            "invalid normative approval type",
+        )
+
+        expected_status = (
+            "ACTIVE" if a["normative_approval"] else None
         )
 
         require(
-            r["status"] is None,
-            "unexpected authoritative status",
+            r["status"] == expected_status,
+            "assessment/register authority disagreement: " + identity,
         )
 
         entries.append({
@@ -117,6 +124,8 @@ def build():
             "normative_statement": s["normative_statement"],
             "engineering_applicability_candidate":
                 a["m0_applicability"],
+            "current_normative_approval": a["normative_approval"],
+            "current_authoritative_status": r["status"],
             "existing_implementation_refs":
                 a["implementation_refs"],
             "existing_qualification_refs":
@@ -147,6 +156,9 @@ def build():
         "entry_count": 144,
         "individual_semantic_reviews_completed": 0,
         "normative_approvals": 0,
+        "current_adopted_normative_approvals": sum(
+            e["current_normative_approval"] for e in entries
+        ),
         "authoritative_ir_complete": False,
         "entries": entries,
     }

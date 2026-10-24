@@ -22,28 +22,27 @@ def main():
     baseline = gate.evaluate(original)
     baseline_ids = {identity for identity, _ in baseline}
 
-    required = {
-        "M0-BLOCKERS",
-        "M0-IR-APPROVAL",
-        "M0-IR-CONTENT",
-        "M0-IR-AUTHORITY",
-        "M0-OWNERSHIP",
-        "M0-AUTHORITY",
-        "M0-APPROVAL",
-    }
+    # The current owner-signed M0 foundation baseline has 36 required
+    # and approved invariants, six approved deferrals, and no pending
+    # scope decisions. Engineering eligibility must reflect that state.
+    require(not baseline_ids, "CURRENT_M0_BASELINE_HAS_BLOCKERS")
 
-    require(required <= baseline_ids, "BASELINE_BLOCKER_MISSING")
-    # A resolved production configuration must not remain as a stale
-    # administrative blocker, even while IR and ownership remain open.
-    actual_milestone_blockers = {
-        item["blocker_id"]
-        for item in original["milestone"]["blocked_items"]
-    }
+    # Eligibility and formal milestone closure are separate decisions.
+    # The milestone remains BLOCKED until independently authorised
+    # closure is recorded through its governing process.
     require(
-        actual_milestone_blockers == {"M0-BLOCK-IR"},
+        original["milestone"]["implementation_state"] == "BLOCKED"
+        and original["milestone"]["closure_status"] == "BLOCKED",
+        "FORMAL_M0_STATUS_UNEXPECTED",
+    )
+
+    require(
+        original["milestone"]["blocked_items"] == [],
         "STALE_OR_UNEXPECTED_M0_MILESTONE_BLOCKER",
     )
-    print("M0_CONFIGURATION_BLOCKER=RESOLVED")
+
+    print("M0_ENGINEERING_ELIGIBILITY=VERIFIED")
+    print("M0_FORMAL_CLOSURE=NOT_CLAIMED")
     resolved = {
         "M0-LR-STATUS",
         "M0-LR-AUTHORITY",
@@ -91,38 +90,81 @@ def main():
 
     print("FINAL_APPROVAL_SEPARATE_FROM_ELIGIBILITY=PASS")
 
-    print("UNRESOLVED_BASELINE=REJECTED")
+    print("ELIGIBLE_BASELINE=VERIFIED")
 
+    # The global IR completeness flag is not an M0-local eligibility
+    # predicate. Falsifying it must not be treated as qualification
+    # evidence or as an independently verified global authority claim.
+    false_global_ir = copy.deepcopy(original)
+    false_global_ir["ir"]["authoritative_ir_complete"] = True
+
+    require(
+        gate.evaluate(false_global_ir) == baseline,
+        "GLOBAL_IR_FLAG_CHANGED_M0_ELIGIBILITY",
+    )
+    print("GLOBAL_IR_COMPLETION_FLAG=NOT_M0_AUTHORITY")
+
+    # Mutations affecting authenticated M0 authority, the adopted
+    # production LR, or the signed milestone must fail closed.
     mutations = (
-        ("false_milestone_label", "milestone",
-         lambda d: d.update(closure_status="CLOSED")),
-        ("false_ir_authority", "ir",
-         lambda d: d.update(authoritative_ir_complete=True)),
-        ("false_lr_authority", "lr",
-         lambda d: d.update(authoritative_lr_complete=False)),
-        ("false_approval_enablement", "authority",
-         lambda d: d.update(approval_enabled=True)),
-        ("false_ownership_approval", "ownership",
-         lambda d: d["entries"][0].update(
-             review_status="APPROVED",
-             approved_first_mandatory_milestone="M0",
-         )),
+        (
+            "false_milestone_label",
+            "milestone",
+            lambda d: d.update(closure_status="CLOSED"),
+            "M0-AUTHORITY",
+        ),
+        (
+            "false_lr_authority",
+            "lr",
+            lambda d: d.update(authoritative_lr_complete=False),
+            "M0-LR-AUTHORITY",
+        ),
+        (
+            "false_approval_enablement",
+            "authority",
+            lambda d: d.update(approval_enabled=False),
+            "M0-APPROVAL",
+        ),
     )
 
-    for name, member, mutation in mutations:
+    for name, member, mutation, expected_blocker in mutations:
         changed = copy.deepcopy(original)
         mutation(changed[member])
-        result = gate.evaluate(changed)
 
-        require(bool(result), name + ":FALSE_CLOSURE")
-        if name == "false_lr_authority":
-            require(
-                "M0-LR-AUTHORITY" in {
-                    identity for identity, _ in result
-                },
-                "LR_AUTHORITY_DOWNGRADE_ACCEPTED",
-            )
+        result = gate.evaluate(changed)
+        result_ids = {identity for identity, _ in result}
+
+        require(
+            expected_blocker in result_ids,
+            name + ":EXPECTED_BLOCKER_MISSING",
+        )
+
         print(name + "=REJECTED")
+
+    # Mutate a requirement that is actually M0-owned, rather than
+    # assuming that the first registry entry belongs to M0.
+    altered_ownership = copy.deepcopy(original)
+    m0_rows = [
+        row for row in altered_ownership["ownership"]["entries"]
+        if row.get("requirement_id") == "REQ-M0-001"
+    ]
+
+    require(
+        len(m0_rows) == 1,
+        "M0_OWNERSHIP_MUTATION_TARGET_MISSING",
+    )
+
+    m0_rows[0]["review_status"] = "PENDING"
+
+    ownership_ids = {
+        identity for identity, _ in gate.evaluate(altered_ownership)
+    }
+
+    require(
+        "M0-OWNERSHIP" in ownership_ids,
+        "FALSE_M0_OWNERSHIP_APPROVAL_ACCEPTED",
+    )
+    print("false_ownership_approval=REJECTED")
 
     # The all-green-looking fixture must still reject an
     # unsupported ELM. Diagnostic testing is evaluated independently.

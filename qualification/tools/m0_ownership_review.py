@@ -123,16 +123,33 @@ def build():
             "registry/source disagreement: " + identity,
         )
 
-        # The baseline has no approved assignments.
-        # Any unexpected change must receive separate reconciliation.
-        require(
-            owner["review_status"] == "UNREVIEWED",
-            "unexpected review status: " + identity,
-        )
-        require(
-            owner["approved_first_mandatory_milestone"] is None,
-            "unexpected approval: " + identity,
-        )
+        # Report existing ownership decisions without creating any.
+        # Five explicit M0 assignments have been owner-approved.
+        # All other requirements remain unreviewed.
+        approved_m0 = {
+            "REQ-M0-001",
+            "REQ-M0-002",
+            "REQ-M0-003",
+            "REQ-M0-004",
+            "REQ-M0-005",
+        }
+
+        if identity in approved_m0:
+            require(
+                owner["review_status"] == "APPROVED"
+                and owner["approved_first_mandatory_milestone"] == "M0"
+                and owner["decision_authority_refs"] == [
+                    "qualification/requirements/"
+                    "m0-ownership-adoption-v0.1.sig"
+                ],
+                "M0 ownership decision mismatch: " + identity,
+            )
+        else:
+            require(
+                owner["review_status"] == "UNREVIEWED"
+                and owner["approved_first_mandatory_milestone"] is None,
+                "unexpected non-M0 ownership decision: " + identity,
+            )
 
         entries.append({
             "sequence": index,
@@ -156,8 +173,14 @@ def build():
         "status": "DRAFT_NOT_AUTHORITATIVE",
         "approval_enabled": False,
         "requirement_count": len(entries),
-        "approved_decision_count": 0,
-        "unreviewed_count": len(entries),
+        "approved_decision_count": sum(
+            e["current_review_status"] == "APPROVED"
+            for e in entries
+        ),
+        "unreviewed_count": sum(
+            e["current_review_status"] == "UNREVIEWED"
+            for e in entries
+        ),
         "source_sha256": digest(source_file),
         "membership_sha256": digest(member_file),
         "ownership_sha256": digest(owner_file),
@@ -178,8 +201,9 @@ def verify():
         "population error",
     )
     require(
-        expected["approved_decision_count"] == 0,
-        "false approval count",
+        expected["approved_decision_count"] == 5
+        and expected["unreviewed_count"] == 996,
+        "ownership decision count mismatch",
     )
     require(
         all(not e["normative_approval"] for e in expected["entries"]),

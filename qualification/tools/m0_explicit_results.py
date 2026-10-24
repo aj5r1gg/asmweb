@@ -151,12 +151,16 @@ def build():
             and proposal["approval_evidence_ref"] is None,
             "unexpected proposal approval: " + identity,
         )
+        # An approved ownership assignment is distinct from
+        # engineering qualification and formal milestone closure.
         require(
-            decisions[identity]["review_status"] == "UNREVIEWED"
+            decisions[identity]["review_status"] == "APPROVED"
             and decisions[identity][
                 "approved_first_mandatory_milestone"
-            ] is None,
-            "unexpected ownership decision: " + identity,
+            ] == "M0"
+            and decisions[identity].get("decision_authority_refs")
+            == ["qualification/requirements/m0-ownership-adoption-v0.1.sig"],
+            "M0 ownership approval mismatch: " + identity,
         )
 
         if identity in TESTS:
@@ -176,7 +180,7 @@ def build():
             "requirement_id": identity,
             "normative_statement": statements[identity],
             "proposed_first_mandatory_milestone": "M0",
-            "ownership_approved": False,
+            "ownership_approved": True,
             "engineering_result": status,
             "formal_qualification_status": "NOT_QUALIFIED",
             "evidence_refs": evidence_refs,
@@ -189,7 +193,9 @@ def build():
         "status": "ENGINEERING_EVIDENCE_NOT_FORMAL_QUALIFICATION",
         "authoritative_m0_population_complete": False,
         "milestone_closed": False,
-        "approved_ownership_count": 0,
+        "approved_ownership_count": sum(
+            e["ownership_approved"] for e in entries
+        ),
         "proposal_source_sha256":
             sha((ROOT / proposal_path).read_bytes()),
         "requirements_source_sha256":
@@ -222,12 +228,12 @@ def verify():
             "engineering pass count")
     require(expected["blocked_count"] == 1,
             "blocked count")
-    require(expected["approved_ownership_count"] == 0,
-            "false authority")
+    require(expected["approved_ownership_count"] == 5,
+            "M0 ownership approval mismatch")
     require(
         all(
             e["formal_qualification_status"] == "NOT_QUALIFIED"
-            and e["ownership_approved"] is False
+            and e["ownership_approved"] is True
             for e in expected["entries"]
         ),
         "false formal qualification",
@@ -235,7 +241,7 @@ def verify():
     print("EXPLICIT_M0_REQUIREMENTS=5")
     print("ENGINEERING_PASS=4")
     print("BLOCKED=1")
-    print("OWNERSHIP_APPROVED=0")
+    print("OWNERSHIP_APPROVED=5")
     print("FORMAL_M0_QUALIFICATION=NOT_ESTABLISHED")
     print("M0_EXPLICIT_RESULT_QUALIFICATION=PASS")
 

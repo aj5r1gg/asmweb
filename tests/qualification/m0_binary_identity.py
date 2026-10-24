@@ -111,13 +111,16 @@ def main():
         stored["normative_ir_complete"] is False,
         "FALSE_IR_AUTHORITY",
     )
+    # The nine-limit M0 production LR and its reconciled ELM have
+    # been authoritatively adopted. This does not imply that the
+    # complete normative IR or formal M0 qualification is complete.
     require(
-        stored["normative_lr_complete"] is False,
-        "FALSE_LR_AUTHORITY",
+        stored["normative_lr_complete"] is True,
+        "M0_LR_AUTHORITY_MISSING",
     )
     require(
-        stored["authoritative_elm_adopted"] is False,
-        "FALSE_ELM_AUTHORITY",
+        stored["authoritative_elm_adopted"] is True,
+        "M0_ELM_ADOPTION_MISSING",
     )
     require(
         stored["formal_m0_qualification"] is False,
@@ -126,7 +129,8 @@ def main():
 
     print("ORIGINAL_BINARY=UNCHANGED")
     print("ORIGINAL_CONFIGURATION=UNCHANGED")
-    print("NORMATIVE_AUTHORITY=NOT_CLAIMED")
+    print("M0_PRODUCTION_LR_ELM=ADOPTED")
+    print("FULL_IR_AND_FORMAL_M0_QUALIFICATION=NOT_CLAIMED")
     print("REQ_M0_005_ENGINEERING_QUALIFICATION=PASS")
 
 

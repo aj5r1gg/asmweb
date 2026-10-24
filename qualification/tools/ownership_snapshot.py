@@ -99,6 +99,38 @@ def read_member(role, relative):
     }, document
 
 
+def validate_contract_state(contract):
+    """Validate observable contract state without granting authority.
+
+    This snapshot remains read-only and non-effective. Recognition
+    of enabled approval flags does not authenticate an individual
+    ownership decision or publish an approval.
+    """
+    approval = contract.get("approval_enabled")
+    publication = contract.get("effective_publication_enabled")
+    authority = contract.get("authority_status")
+
+    if type(approval) is not bool:
+        raise ValueError("invalid approval enablement type")
+
+    if type(publication) is not bool:
+        raise ValueError("invalid publication enablement type")
+
+    if publication and not approval:
+        raise ValueError("publication enabled without approval")
+
+    if approval and authority != "ESTABLISHED":
+        raise ValueError("approval enabled without established authority")
+
+    if publication and authority != "ESTABLISHED":
+        raise ValueError("publication enabled without established authority")
+
+    if approval and contract.get("status") != (
+        "M0_LOCAL_AUTHORITY_ESTABLISHED"
+    ):
+        raise ValueError("inconsistent established authority status")
+
+
 def main():
     members = []
     documents = {}
@@ -147,13 +179,7 @@ def main():
     if contract.get("contract_version") != "0.2":
         raise ValueError("unexpected ownership contract version")
 
-    if (
-        contract.get("approval_enabled") is not False
-        or contract.get("effective_publication_enabled") is not False
-    ):
-        raise ValueError(
-            "baseline inspector cannot process enabled approvals"
-        )
+    validate_contract_state(contract)
 
     manifest = {
         "format": "ASMWEB_OWNERSHIP_BASELINE_SNAPSHOT_V1",
