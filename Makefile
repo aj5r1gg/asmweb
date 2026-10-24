@@ -1405,3 +1405,8 @@ qualify-m0-invariant-scope:
 	python3 -B tests/qualification/m0_invariant_scope.py
 	python3 -B tests/qualification/m0_ir_assessment_dynamic.py
 	python3 -B tests/qualification/m0_signed_ir_projection.py
+
+# Executable M0 foundation property tests for previously unlinked obligations.
+.PHONY: qualify-m0-unmapped-runtime-obligations
+qualify-m0-unmapped-runtime-obligations:
+	python3 -B tests/qualification/m0_unmapped_runtime_obligations.py
