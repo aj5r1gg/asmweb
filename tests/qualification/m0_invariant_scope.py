@@ -28,6 +28,7 @@ def main():
         'INV-OBJ-ASYNC-001': 'M2',
         'INV-OBJ-EVENT-001': 'M2',
         'INV-MEM-SCRATCH-001': 'M4',
+        'INV-OBJ-PARENT-001': 'M2',
     }
     if approved:
         assert approved == expected, 'UNEXPECTED_LIVE_DEFERRALS'
