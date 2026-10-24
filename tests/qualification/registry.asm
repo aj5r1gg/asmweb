@@ -921,6 +921,82 @@ _start:
     jne .fail_25
 
 
+
+    ; ===== Adversarial mutation of previously VALID registry =====
+    ; Exact field is restored before assessing each result.
+
+    ; CASE 26 — OLR_OBJECT_ID_ZERO
+    mov r12, [rel valid_olr + ASMWEB_OLR_VALIDATION_ENTRY.object_id]
+    mov qword [rel valid_olr + ASMWEB_OLR_VALIDATION_ENTRY.object_id], 0
+    lea rdi, [rel valid_set]
+    call asm_registry_validate
+    mov [rel valid_olr + ASMWEB_OLR_VALIDATION_ENTRY.object_id], r12
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_26
+
+    ; CASE 27 — OLR_EFFECTIVE_STRIDE_TOO_SMALL
+    mov r12, [rel valid_olr + ASMWEB_OLR_VALIDATION_ENTRY.effective_stride_bytes]
+    mov qword [rel valid_olr + ASMWEB_OLR_VALIDATION_ENTRY.effective_stride_bytes], 1
+    lea rdi, [rel valid_set]
+    call asm_registry_validate
+    mov [rel valid_olr + ASMWEB_OLR_VALIDATION_ENTRY.effective_stride_bytes], r12
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_27
+
+    ; CASE 28 — OLR_INVALID_POOLED_VALUE
+    mov r12, [rel valid_olr + ASMWEB_OLR_VALIDATION_ENTRY.pooled]
+    mov qword [rel valid_olr + ASMWEB_OLR_VALIDATION_ENTRY.pooled], 2
+    lea rdi, [rel valid_set]
+    call asm_registry_validate
+    mov [rel valid_olr + ASMWEB_OLR_VALIDATION_ENTRY.pooled], r12
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_28
+
+    ; CASE 29 — MOT_LIMIT_ID_ZERO
+    mov r12, [rel valid_mot + ASMWEB_MOT_VALIDATION_ENTRY.limit_id]
+    mov qword [rel valid_mot + ASMWEB_MOT_VALIDATION_ENTRY.limit_id], 0
+    lea rdi, [rel valid_set]
+    call asm_registry_validate
+    mov [rel valid_mot + ASMWEB_MOT_VALIDATION_ENTRY.limit_id], r12
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_29
+
+    ; CASE 30 — MOT_CONFIGURED_GT_PHYSICAL
+    mov r12, [rel valid_mot + ASMWEB_MOT_VALIDATION_ENTRY.configured_capacity]
+    mov qword [rel valid_mot + ASMWEB_MOT_VALIDATION_ENTRY.configured_capacity], 9
+    lea rdi, [rel valid_set]
+    call asm_registry_validate
+    mov [rel valid_mot + ASMWEB_MOT_VALIDATION_ENTRY.configured_capacity], r12
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_30
+
+    ; CASE 31 — MOT_UNKNOWN_OWNER
+    mov r12, [rel valid_mot + ASMWEB_MOT_VALIDATION_ENTRY.owner_resource_id]
+    mov qword [rel valid_mot + ASMWEB_MOT_VALIDATION_ENTRY.owner_resource_id], 0xDEAD
+    lea rdi, [rel valid_set]
+    call asm_registry_validate
+    mov [rel valid_mot + ASMWEB_MOT_VALIDATION_ENTRY.owner_resource_id], r12
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_31
+
+    ; CASE 32 — RCT_RESOURCE_ID_ZERO
+    mov r12, [rel valid_rct + ASMWEB_RCT_VALIDATION_ENTRY.resource_id]
+    mov qword [rel valid_rct + ASMWEB_RCT_VALIDATION_ENTRY.resource_id], 0
+    lea rdi, [rel valid_set]
+    call asm_registry_validate
+    mov [rel valid_rct + ASMWEB_RCT_VALIDATION_ENTRY.resource_id], r12
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_32
+
+    ; CASE 33 — RCT_RESERVED_GT_CONFIGURED
+    mov r12, [rel valid_rct + ASMWEB_RCT_VALIDATION_ENTRY.reserved_capacity]
+    mov qword [rel valid_rct + ASMWEB_RCT_VALIDATION_ENTRY.reserved_capacity], 5
+    lea rdi, [rel valid_set]
+    call asm_registry_validate
+    mov [rel valid_rct + ASMWEB_RCT_VALIDATION_ENTRY.reserved_capacity], r12
+    cmp eax, ASMWEB_RESOURCE_INTEGRITY
+    jne .fail_33
+
     xor edi, edi
     call asm_linux_exit
     ud2
@@ -1049,5 +1125,45 @@ _start:
 
 .fail_25:
     mov edi, 25
+    call asm_linux_exit
+    ud2
+
+.fail_26:
+    mov edi, 26
+    call asm_linux_exit
+    ud2
+
+.fail_27:
+    mov edi, 27
+    call asm_linux_exit
+    ud2
+
+.fail_28:
+    mov edi, 28
+    call asm_linux_exit
+    ud2
+
+.fail_29:
+    mov edi, 29
+    call asm_linux_exit
+    ud2
+
+.fail_30:
+    mov edi, 30
+    call asm_linux_exit
+    ud2
+
+.fail_31:
+    mov edi, 31
+    call asm_linux_exit
+    ud2
+
+.fail_32:
+    mov edi, 32
+    call asm_linux_exit
+    ud2
+
+.fail_33:
+    mov edi, 33
     call asm_linux_exit
     ud2
