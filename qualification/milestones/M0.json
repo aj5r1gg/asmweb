@@ -32,10 +32,6 @@
     {
       "blocker_id": "M0-BLOCK-IR",
       "description": "The complete 144-identity IR representation exists. 42 M0 foundation invariants are identified as engineering applicability candidates under the governing section 34 scope. Remaining work includes verified applicability decisions, implementation mappings, machine expressions, normative dispositions and qualification evidence."
-    },
-    {
-      "blocker_id": "M0-BLOCK-CONFIGURATION",
-      "description": "A deterministic build-specific configuration identity exists and is bound to the canonical production limit mappings. Completion requires authoritative configuration adoption, complete dependency/provenance reconciliation and applicable normative qualification."
     }
   ],
   "waivers": [],
@@ -65,6 +61,7 @@
     "M0 IR applicability assessment identifies five READY and configuration-related candidate invariants with existing implementation and qualification references. All 144 identities are accounted for; unresolved applicability and formal normative review remain open.",
     "M0 LR representation now supports all fields required by Invariants & Limits Register v0.3 §6 for the nine production MOT capacities. Values and canonical LIM-* mappings derive from existing NASM authority. Semantic completion, applicability across other resource classes and normative adoption remain outstanding.",
     "M0 IR schema implementation: 144 controlled identities are populated into the complete §5 entry structure. Unapproved status decisions remain null in the draft rather than being falsely assigned ACTIVE or DEFERRED. At least one multiline normative source statement requires extraction repair.",
-    "The truncated INV-WRK-PARSER-001 extraction was restored from the governing v0.3 specification. M0 candidate assessment now includes registry, memory, ownership, accounting, checked-arithmetic and configuration foundations identified by section 34. Candidates are not approvals."
+    "The truncated INV-WRK-PARSER-001 extraction was restored from the governing v0.3 specification. M0 candidate assessment now includes registry, memory, ownership, accounting, checked-arithmetic and configuration foundations identified by section 34. Candidates are not approvals.",
+    "M0 production LR/ELM adoption completed and verified by the nine-limit production baseline and closure-gate reconciliation. The former M0-BLOCK-CONFIGURATION milestone blocker is resolved for that production scope. Any later binary or configuration drift must fail the independently checked LR/ELM acceptance conditions. This does not qualify the normative IR or approve requirement ownership."
   ]
 }

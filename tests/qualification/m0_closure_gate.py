@@ -33,6 +33,17 @@ def main():
     }
 
     require(required <= baseline_ids, "BASELINE_BLOCKER_MISSING")
+    # A resolved production configuration must not remain as a stale
+    # administrative blocker, even while IR and ownership remain open.
+    actual_milestone_blockers = {
+        item["blocker_id"]
+        for item in original["milestone"]["blocked_items"]
+    }
+    require(
+        actual_milestone_blockers == {"M0-BLOCK-IR"},
+        "STALE_OR_UNEXPECTED_M0_MILESTONE_BLOCKER",
+    )
+    print("M0_CONFIGURATION_BLOCKER=RESOLVED")
     resolved = {
         "M0-LR-STATUS",
         "M0-LR-AUTHORITY",
