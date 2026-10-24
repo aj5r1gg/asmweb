@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Install build and test dependencies
-        run: dnf install -y git make nasm binutils python3 findutils coreutils openssh-clients
+        run: dnf install -y git make nasm binutils python3 findutils coreutils openssh-clients openssl
       - name: Check out repository
         uses: actions/checkout@v5
         with:
@@ -35,6 +35,20 @@ jobs:
           git rev-parse HEAD
       - name: Build production executable
         run: make all
+      - name: Provision independent owner trust anchor
+        shell: bash
+        env:
+          ASMWEB_OWNER_PUBLIC_PEM: ${{ vars.ASMWEB_OWNER_PUBLIC_PEM }}
+        run: |
+          set -euo pipefail
+          test -n "$ASMWEB_OWNER_PUBLIC_PEM"
+          install -d -m 700 "$HOME/.config/asmweb"
+          printf '%s\n' "$ASMWEB_OWNER_PUBLIC_PEM" > "$HOME/.config/asmweb/owner-public.pem"
+          chmod 600 "$HOME/.config/asmweb/owner-public.pem"
+          printf '%s  %s\n' \
+            'caf351edca696b16eb76c77aa851744ffebb8621683bb83438f2c611019dca2c' \
+            "$HOME/.config/asmweb/owner-public.pem" | sha256sum --check
+          openssl pkey -pubin -in "$HOME/.config/asmweb/owner-public.pem" -noout
       - name: Verify full-schema Invariant Register
         run: python3 -B qualification/tools/m0_normative_ir.py verify
       - name: Verify M0 full-schema Limit Register
