@@ -143,6 +143,11 @@ section .text
 ;   26 NULL semantics failed
 ;   27 candidate corruption not detected
 ;   28 ABI/DF preservation failed
+;   29 publication corruption accepted
+;   30 generation count corruption accepted
+;   31 generation storage byte corruption accepted
+;   32 management accounting corruption accepted
+;   33 zero generation corruption accepted or recovery failed
 ; ===========================================================================
 
 _start:
@@ -842,6 +847,72 @@ _start:
 
 
     ; =======================================================================
+    ; CASE 22 — publication marker corruption must fail validation
+    ; =======================================================================
+
+    mov qword [rel candidate + ASMWEB_STALE_CANDIDATE.ready], 0
+    lea rdi, [rel candidate]
+    call asm_stale_candidate_validate
+    mov qword [rel candidate + ASMWEB_STALE_CANDIDATE.ready], 1
+    cmp eax, ASMWEB_STALE_RESULT_INTEGRITY
+    jne .fail_29
+
+    ; =======================================================================
+    ; CASE 23 — generation count corruption must fail validation
+    ; =======================================================================
+
+    inc qword [rel candidate + ASMWEB_STALE_CANDIDATE.generation_count]
+    lea rdi, [rel candidate]
+    call asm_stale_candidate_validate
+    dec qword [rel candidate + ASMWEB_STALE_CANDIDATE.generation_count]
+    cmp eax, ASMWEB_STALE_RESULT_INTEGRITY
+    jne .fail_30
+
+    ; =======================================================================
+    ; CASE 24 — generation byte count corruption must fail validation
+    ; =======================================================================
+
+    add qword [rel candidate + ASMWEB_STALE_CANDIDATE.generation_bytes], 8
+    lea rdi, [rel candidate]
+    call asm_stale_candidate_validate
+    sub qword [rel candidate + ASMWEB_STALE_CANDIDATE.generation_bytes], 8
+    cmp eax, ASMWEB_STALE_RESULT_INTEGRITY
+    jne .fail_31
+
+    ; =======================================================================
+    ; CASE 25 — management accounting corruption must fail validation
+    ; =======================================================================
+
+    inc qword [rel candidate + ASMWEB_STALE_CANDIDATE.management_bytes_total]
+    lea rdi, [rel candidate]
+    call asm_stale_candidate_validate
+    dec qword [rel candidate + ASMWEB_STALE_CANDIDATE.management_bytes_total]
+    cmp eax, ASMWEB_STALE_RESULT_INTEGRITY
+    jne .fail_32
+
+    ; =======================================================================
+    ; CASE 26 — zero generation must fail validation, then recover
+    ; =======================================================================
+
+    mov r14, [rel generations]
+    mov qword [rel generations], 0
+    lea rdi, [rel candidate]
+    call asm_stale_candidate_validate
+    mov [rel generations], r14
+    cmp eax, ASMWEB_STALE_RESULT_INTEGRITY
+    jne .fail_33
+
+    lea rdi, [rel candidate]
+    call asm_stale_candidate_validate
+    cmp eax, ASMWEB_STALE_RESULT_OK
+    jne .fail_33
+
+    lea rdi, [rel pool]
+    call asm_typed_pool_quiescent
+    cmp eax, ASMWEB_RESOURCE_OK
+    jne .fail_33
+
+    ; =======================================================================
     ; PASS
     ; =======================================================================
 
@@ -987,5 +1058,30 @@ _start:
 
 .fail_28:
     mov edi, 28
+    call asm_linux_exit
+    ud2
+
+.fail_29:
+    mov edi, 29
+    call asm_linux_exit
+    ud2
+
+.fail_30:
+    mov edi, 30
+    call asm_linux_exit
+    ud2
+
+.fail_31:
+    mov edi, 31
+    call asm_linux_exit
+    ud2
+
+.fail_32:
+    mov edi, 32
+    call asm_linux_exit
+    ud2
+
+.fail_33:
+    mov edi, 33
     call asm_linux_exit
     ud2
