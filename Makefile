@@ -1410,3 +1410,8 @@ qualify-m0-invariant-scope:
 .PHONY: qualify-m0-unmapped-runtime-obligations
 qualify-m0-unmapped-runtime-obligations:
 	python3 -B tests/qualification/m0_unmapped_runtime_obligations.py
+
+# M1 network syscall ABI qualification
+.PHONY: qualify-m1-network-abi
+qualify-m1-network-abi:
+	python3 -B tests/qualification/m1_network_abi_contract.py
