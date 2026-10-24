@@ -145,15 +145,24 @@ def verify_document(ledger, source, source_raw, assessment, assessment_raw, *, s
     check(ledger['review_status']!='CLOSED' or (signature_verified and pending==0), 'unsupported scope closure')
     return {'pending':pending,'required':mandatory,'deferred':deferred}
 
-def verify():
+def verified_decisions(*, public_key=TRUSTED_KEY, signature=SIGNATURE):
+    """Return reviewed scope decisions only after verifying the actual signer.
+
+    This API is shared by the IR projector and closure gate. Calling
+    verify_document(..., signature_verified=True) is not an authority check.
+    """
     source, sb = load(SOURCE)
     assessment, ab = load(ASSESSMENT)
     ledger, _ = load(LEDGER)
     signed = ledger.get('authority_status') == 'ESTABLISHED'
     if signed:
-        verify_owner_signature(ledger)
-    result = verify_document(ledger, source, sb, assessment, ab,
+        verify_owner_signature(ledger, public_key, signature)
+    counts = verify_document(ledger, source, sb, assessment, ab,
                              signature_verified=signed)
+    return ledger, counts
+
+def verify():
+    ledger, result = verified_decisions()
     print('M0_SCOPE_IDENTITIES='+str(len(ledger['entries'])))
     print('M0_SCOPE_PENDING='+str(result['pending']))
     print('M0_DEFER_PROPOSALS='+str(sum(e['proposal']=='DEFER_CANDIDATE' for e in ledger['entries'])))

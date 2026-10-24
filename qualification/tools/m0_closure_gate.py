@@ -119,21 +119,27 @@ def evaluate(docs):
 
     # Verify the candidate population against the governing statement
     # digests. Pending decisions remain real M0 closure blockers.
-    from m0_invariant_scope import (
-        LEDGER, SOURCE, ASSESSMENT, load as scope_load, verify_document,
-    )
+    from m0_invariant_scope import verified_decisions
     try:
-        scope_doc, _ = scope_load(LEDGER)
-        source_doc, source_raw = scope_load(SOURCE)
-        assessed_doc, assessed_raw = scope_load(ASSESSMENT)
-        scope_counts = verify_document(
-            scope_doc, source_doc, source_raw, assessed_doc, assessed_raw
-        )
+        scope_doc, scope_counts = verified_decisions()
         if scope_counts["pending"]:
             fail("M0-IR-SCOPE", str(scope_counts["pending"]) +
                  " invariant scope decisions pending")
     except (OSError, ValueError, KeyError, TypeError) as exc:
-        fail("M0-IR-SCOPE", "Invalid invariant scope ledger: " + str(exc))
+        fail("M0-IR-SCOPE", "Invalid or unauthorised invariant scope: " + str(exc))
+        scope_doc = {"entries": []}
+
+    # Deferral never counts as qualified M0 behaviour, but a verified
+    # deferral is not a missing M0 obligation either. Eligibility still
+    # requires every M0_REQUIRED record to independently qualify.
+    required_ids = {
+        row["invariant_id"] for row in scope_doc["entries"]
+        if row["decision"] == "M0_REQUIRED"
+    }
+    deferred_ids = {
+        row["invariant_id"] for row in scope_doc["entries"]
+        if row["decision"] == "DEFERRED_APPROVED"
+    }
 
     assessment = a.get("entries", [])
     ir_entries = ir.get("entries", [])

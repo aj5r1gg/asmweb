@@ -104,9 +104,14 @@ def build():
 
     # Source-bound scope ledger is mandatory: changing a candidate's
     # applicability cannot silently turn it into a deferral.
-    from m0_invariant_scope import LEDGER, load as scope_load, verify_document
-    scope_doc, _ = scope_load(LEDGER)
-    verify_document(scope_doc, source, source_bytes, assessment, assessment_bytes)
+    from m0_invariant_scope import verified_decisions
+    scope_doc, scope_counts = verified_decisions()
+    # The IR builder may be given temporary inputs by adversarial tests;
+    # never verify one assessment and silently render another.
+    from m0_invariant_scope import ASSESSMENT as SCOPE_ASSESSMENT
+    require(assessment_bytes == SCOPE_ASSESSMENT.read_bytes(),
+            "IR input differs from authenticated scope assessment")
+    scope_rows = {row["invariant_id"]: row for row in scope_doc["entries"]}
 
     statements = source["entries"]
     assessed = assessment["entries"]
@@ -227,6 +232,27 @@ def build():
                 "Normative status and qualification not approved.",
             ],
         })
+
+        if candidate:
+            decision = scope_rows[identity]
+            if decision["decision"] != "REVIEW_REQUIRED":
+                # Owner-signed scope is not an IR qualification. Preserve
+                # status=None until the independent per-invariant contract
+                # has been proved and normatively adopted.
+                record["scope"] = (
+                    "M0_FOUNDATION" if decision["decision"] == "M0_REQUIRED"
+                    else "DEFERRED_FROM_M0"
+                )
+                record["first_required_milestone"] = (
+                    decision["first_mandatory_milestone"]
+                )
+                record["evidence_refs"] = list(
+                    decision["qualified_evidence_refs"]
+                )
+                record["notes"].append(
+                    "Owner-signed scope decision: " + decision["decision"]
+                )
+                record["notes"].append(decision["semantic_rationale"])
 
         if candidate:
             record["notes"].append(
