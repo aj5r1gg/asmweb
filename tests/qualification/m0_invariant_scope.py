@@ -12,9 +12,34 @@ import m0_invariant_scope as scope
 def main():
     source,sb=scope.load(scope.SOURCE)
     assessment,ab=scope.load(scope.ASSESSMENT)
-    baseline,_=scope.load(scope.LEDGER)
-    result=scope.verify_document(baseline,source,sb,assessment,ab)
-    assert result=={'pending':42,'required':0,'deferred':0}
+    # Production may already contain authentic owner-approved decisions.
+    # Verify that ledger with the real trust anchor; never treat its
+    # signed rows as the unsigned baseline for forgery mutations.
+    live, live_counts = scope.verified_decisions()
+    assert sum(live_counts.values()) == 42
+    approved = {
+        row['invariant_id']: row['first_mandatory_milestone']
+        for row in live['entries']
+        if row['decision'] == 'DEFERRED_APPROVED'
+    }
+    expected = {
+        'INV-QUE-OWNER-001': 'M2',
+        'INV-BUF-BORROW-001': 'M2',
+        'INV-OBJ-ASYNC-001': 'M2',
+        'INV-OBJ-EVENT-001': 'M2',
+        'INV-MEM-SCRATCH-001': 'M4',
+    }
+    if approved:
+        assert approved == expected, 'UNEXPECTED_LIVE_DEFERRALS'
+        print('LIVE_OWNER_SIGNED_DEFERRALS=VERIFIED')
+    else:
+        print('LIVE_SCOPE_DECISIONS=UNSIGNED_BASELINE')
+
+    # Independent controlled unsigned fixture for negative tests and
+    # synthetic signed-approval exercises; do not modify production data.
+    baseline = scope.initial()
+    result = scope.verify_document(baseline,source,sb,assessment,ab)
+    assert result == {'pending':42,'required':0,'deferred':0}
     def rejects(label,modify):
         doc=copy.deepcopy(baseline)
         modify(doc)
